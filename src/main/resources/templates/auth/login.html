@@ -1,0 +1,8 @@
+<form th:action="@{/login}" method="post">
+    <input type="text" name="username" placeholder="Usuario"/>
+    <input type="password" name="password" placeholder="Contraseña"/>
+
+    <button type="submit">Entrar</button>
+
+    <p th:if="${error}" th:text="${error}"></p>
+</form>
