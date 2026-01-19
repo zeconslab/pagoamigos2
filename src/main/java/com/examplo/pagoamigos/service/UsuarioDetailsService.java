@@ -3,11 +3,13 @@ package com.examplo.pagoamigos.service;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.stereotype.Service;
 
 import com.examplo.pagoamigos.model.User;
 import com.examplo.pagoamigos.repository.UserRepository;
 import com.examplo.pagoamigos.security.UsuarioDetails;
 
+@Service
 public class UsuarioDetailsService implements UserDetailsService{
     private final UserRepository userRepository;
 

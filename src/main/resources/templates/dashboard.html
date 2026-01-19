@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8" />
+    <title>Dashboard</title>
+</head>
+<body>
+    <h1>Bienvenido, <span th:text="${username}">Usuario</span></h1>
+
+    <section th:if="${isValidator}">
+        <h2>Panel del Validador</h2>
+        <p>Aquí va la información específica para validadores.</p>
+    </section>
+
+    <section th:if="${isSolicitante}">
+        <h2>Panel del Solicitante</h2>
+        <p>Aquí va la información específica para solicitantes.</p>
+    </section>
+
+    <p th:if="${!isValidator} && ${!isSolicitante}">No tienes roles asignados.</p>
+
+    <form th:action="@{/logout}" method="post">
+        <button type="submit">Cerrar sesión</button>
+    </form>
+</body>
+</html>
