@@ -10,7 +10,7 @@ public class DashboardController {
 
     @GetMapping("/dashboard")
     public String dashboard(Model model, Authentication authentication) {
-        
+
         if (authentication != null) {
             model.addAttribute("username", authentication.getName());
             boolean isValidator = authentication.getAuthorities().stream()
