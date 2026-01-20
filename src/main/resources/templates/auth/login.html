@@ -261,6 +261,23 @@
                   Inicia sesión para coordinar una compra conjunta con tu amigo
                 </p>
               </div>
+              
+              <!-- Mensaje de error -->
+              <div th:if="${Error}" class="mb-6 p-4 bg-rose-50 border border-rose-200 rounded-xl animate-fade-in-up">
+                <div class="flex items-center gap-3">
+                  <span class="material-symbols-outlined text-rose-600 text-xl">error</span>
+                  <p class="text-sm font-bold text-rose-700" th:text="${Error}">Error</p>
+                </div>
+              </div>
+              
+              <!-- Mensaje de logout exitoso -->
+              <div th:if="${Logout}" class="mb-6 p-4 bg-emerald-50 border border-emerald-200 rounded-xl animate-fade-in-up">
+                <div class="flex items-center gap-3">
+                  <span class="material-symbols-outlined text-emerald-600 text-xl">check_circle</span>
+                  <p class="text-sm font-bold text-emerald-700" th:text="${Logout}">Logout exitoso</p>
+                </div>
+              </div>
+              
               <form class="space-y-6" action="/login" method="post">
                 <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
                 <div class="space-y-2 animate-fade-in-up stagger-2">
@@ -310,6 +327,7 @@
                       type="password"
                     />
                     <button
+                      id="togglePassword"
                       class="material-symbols-outlined absolute right-4 top-1/2 -translate-y-1/2 text-slate-300 hover:text-slate-500 transition-colors"
                       type="button"
                     >
@@ -391,4 +409,21 @@
       </footer>
     </div>
   </body>
+  <script>
+    // Toggle password visibility
+    (function() {
+      const toggleBtn = document.getElementById('togglePassword');
+      const passwordInput = document.getElementById('password');
+      
+      if (toggleBtn && passwordInput) {
+        toggleBtn.addEventListener('click', function() {
+          const type = passwordInput.getAttribute('type') === 'password' ? 'text' : 'password';
+          passwordInput.setAttribute('type', type);
+          
+          // Toggle icon
+          this.textContent = type === 'password' ? 'visibility_off' : 'visibility';
+        });
+      }
+    })();
+  </script>
 </html>
