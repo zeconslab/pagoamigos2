@@ -65,6 +65,19 @@
       .btn-action {
         @apply flex items-center justify-center size-8 rounded-lg transition-all border;
       }
+      @keyframes dropdown-enter {
+        from {
+          opacity: 0;
+          transform: translateY(-10px) scale(0.95);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0) scale(1);
+        }
+      }
+      .dropdown-enter {
+        animation: dropdown-enter 0.2s ease-out forwards;
+      }
     </style>
   </head>
   <body
@@ -656,19 +669,28 @@
       const menu = document.getElementById('userMenu');
       const toggle = document.getElementById('userMenuToggle');
       if(!btn || !menu) return;
+      
       function closeMenu(){
         menu.classList.add('hidden');
+        menu.classList.remove('dropdown-enter');
         btn.setAttribute('aria-expanded','false');
       }
+      
       function openMenu(){
         menu.classList.remove('hidden');
+        // Forzar reflow para que la animación funcione
+        menu.offsetHeight;
+        menu.classList.add('dropdown-enter');
         btn.setAttribute('aria-expanded','true');
       }
+      
       function toggleMenu(e){
         e.stopPropagation();
         if(menu.classList.contains('hidden')) openMenu(); else closeMenu();
       }
+      
       btn.addEventListener('click', toggleMenu);
+      
       // Make the name/role area toggle the menu as well
       if(toggle){
         toggle.addEventListener('click', toggleMenu);
@@ -676,8 +698,10 @@
           if(e.key === 'Enter' || e.key === ' ') { e.preventDefault(); toggleMenu(e); }
         });
       }
+      
       // Close on outside click
       document.addEventListener('click', function(){ closeMenu(); });
+      
       // Close on ESC
       document.addEventListener('keydown', function(e){ if(e.key === 'Escape') closeMenu(); });
     })();
