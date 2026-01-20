@@ -1,94 +1,641 @@
-<!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
-<head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Dashboard - Pago Amigos</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            background-color: #f4f4f4;
-            margin: 0;
-            padding: 2rem;
-        }
-        .container {
-            max-width: 1200px;
-            margin: 0 auto;
-            background: white;
-            padding: 2rem;
-            border-radius: 8px;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-        }
-        h1 {
-            color: #333;
-            border-bottom: 2px solid #007bff;
-            padding-bottom: 0.5rem;
-        }
-        .role-section {
-            margin: 2rem 0;
-            padding: 1.5rem;
-            background-color: #f8f9fa;
-            border-left: 4px solid #007bff;
-            border-radius: 4px;
-        }
-        .role-section h2 {
-            color: #007bff;
-            margin-top: 0;
-        }
-        .logout-btn {
-            padding: 0.75rem 1.5rem;
-            background-color: #dc3545;
-            color: white;
-            border: none;
-            border-radius: 4px;
-            cursor: pointer;
-            font-size: 1rem;
-        }
-        .logout-btn:hover {
-            background-color: #c82333;
-        }
-        .no-role {
-            color: #721c24;
-            background-color: #f8d7da;
-            padding: 1rem;
-            border-radius: 4px;
-            border: 1px solid #f5c6cb;
-        }
+<!doctype html>
+<html class="light" lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+    <title>Approver Dashboard - Compra Amigos Enterprise</title>
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <link
+      href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&amp;family=Noto+Sans:wght@400;500&amp;display=swap"
+      rel="stylesheet"
+    />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap"
+      rel="stylesheet"
+    />
+    <script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            colors: {
+              primary: "#e67e22",
+              secondary: "#2c3e50",
+              "background-light": "#f8fafc",
+              "background-dark": "#0f172a",
+              "border-muted": "#e2e8f0",
+            },
+            fontFamily: {
+              display: ["Plus Jakarta Sans", "sans-serif"],
+              sans: ["Plus Jakarta Sans", "sans-serif"],
+            },
+            borderRadius: {
+              DEFAULT: "0.375rem",
+              lg: "0.5rem",
+              xl: "0.75rem",
+              "2xl": "1rem",
+              full: "9999px",
+            },
+          },
+        },
+      };
+    </script>
+    <style type="text/tailwindcss">
+      :root {
+        --primary-color: #e67e22;
+      }
+      .status-pill {
+        @apply px-2 py-0.5 rounded text-[10px] font-bold uppercase tracking-wider;
+      }
+      .status-pending {
+        @apply bg-amber-100 text-amber-700 border border-amber-200;
+      }
+      .status-rejected {
+        @apply bg-rose-100 text-rose-700 border border-rose-200;
+      }
+      .status-approved {
+        @apply bg-emerald-100 text-emerald-700 border border-emerald-200;
+      }
+      th {
+        @apply text-left px-4 py-3 text-[10px] font-bold text-slate-500 uppercase tracking-wider border-b border-slate-100;
+      }
+      td {
+        @apply px-4 py-3 text-sm text-slate-600 border-b border-slate-50;
+      }
+      .btn-action {
+        @apply flex items-center justify-center size-8 rounded-lg transition-all border;
+      }
     </style>
-</head>
-<body>
-    <div class="container">
-        <h1>Bienvenido, <span th:text="${username}">Usuario</span></h1>
-
-        <section th:if="${isValidator}" class="role-section">
-            <h2>✓ Panel del Validador</h2>
-            <p>Como <strong>Validador</strong>, puedes:</p>
-            <ul>
-                <li>Revisar y aprobar solicitudes de pago</li>
-                <li>Validar documentos y comprobantes</li>
-                <li>Generar reportes de validación</li>
-                <li>Gestionar rechazos y observaciones</li>
-            </ul>
-        </section>
-
-        <section th:if="${isSolicitante}" class="role-section">
-            <h2>✓ Panel del Solicitante</h2>
-            <p>Como <strong>Solicitante</strong>, puedes:</p>
-            <ul>
-                <li>Crear nuevas solicitudes de pago</li>
-                <li>Adjuntar documentos y comprobantes</li>
-                <li>Consultar el estado de tus solicitudes</li>
-                <li>Revisar el historial de pagos</li>
-            </ul>
-        </section>
-
-        <p th:if="${!isValidator and !isSolicitante}" class="no-role">
-            <strong>Atención:</strong> No tienes roles asignados. Por favor, contacta al administrador del sistema.
-        </p>
-
-        <form th:action="@{/logout}" method="post" style="margin-top: 2rem;">
-            <button type="submit" class="logout-btn">Cerrar sesión</button>
-        </form>
+  </head>
+  <body
+    class="bg-background-light dark:bg-background-dark font-sans text-slate-900 dark:text-[#f8f7f5] antialiased"
+  >
+    <div class="min-h-screen flex flex-col">
+      <header
+        class="flex items-center justify-between px-4 py-2 border-b border-slate-200 bg-white sticky top-0 z-50 shadow-sm"
+      >
+        <div class="flex items-center gap-6">
+          <div class="flex items-center gap-2">
+            <div
+              class="size-7 bg-primary rounded flex items-center justify-center text-white"
+            >
+              <span class="material-symbols-outlined text-lg font-bold"
+                >handshake</span
+              >
+            </div>
+            <div class="flex flex-col">
+              <h2 class="text-slate-900 text-sm font-extrabold leading-none">
+                Compra Amigos
+              </h2>
+              <span
+                class="text-[8px] uppercase tracking-widest font-bold text-primary/80"
+                >Enterprise</span
+              >
+            </div>
+          </div>
+          <nav class="flex items-center gap-4">
+            <a
+              class="text-[11px] font-bold uppercase tracking-wider text-primary border-b-2 border-primary pb-2 mt-2"
+              href="#"
+              >Pending Approvals</a
+            >
+            <a
+              class="text-[11px] font-bold uppercase tracking-wider text-slate-500 hover:text-primary transition-colors pb-2 mt-2"
+              href="#"
+              >Approval History</a
+            >
+            <a
+              class="text-[11px] font-bold uppercase tracking-wider text-slate-500 hover:text-primary transition-colors pb-2 mt-2"
+              href="#"
+              >Reports</a
+            >
+          </nav>
+        </div>
+        <div class="flex items-center gap-4">
+          <div
+            class="flex items-center gap-2 px-2 py-1 bg-slate-50 rounded border border-slate-100"
+          >
+            <div class="size-6 rounded-full bg-slate-200 overflow-hidden">
+              <img
+                alt="User profile"
+                class="w-full h-full object-cover"
+                src="https://lh3.googleusercontent.com/aida-public/AB6AXuA9282gWLnaqGN2n8QXABgTX7mDU9xyzviH4TS4l10d6rXvrgdr7XaG-blt7J_QZI3K_nTHgqD4XtjtGt2UPEfk2QHZqevj-OdoREZM8XBf-7vl0Rvp473NhY6iw8Z2fCn5_KLrE__j0icsuzo40Sdpr48rTc0DdBDmy2weNnVUgJT2b7-QlEmyfY1SDjHnxc_mmxl-UkDkndVg0mODQQvLZ3vUEywepX0tcK1jxNRttD1AmYR4dzoy3yeZpfYU_OkKCmC78VgxwFo"
+              />
+            </div>
+            <div class="flex flex-col">
+              <span class="text-[10px] font-bold text-slate-700 leading-none"
+                >Sarah Smith</span
+              >
+              <span class="text-[8px] text-slate-400 font-bold uppercase"
+                >Approver Role</span
+              >
+            </div>
+            <span class="material-symbols-outlined text-slate-400 text-sm"
+              >expand_more</span
+            >
+          </div>
+        </div>
+      </header>
+      <main class="flex-1 p-4 max-w-7xl mx-auto w-full space-y-4">
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+          <div
+            class="bg-white p-4 rounded-lg border border-slate-200 flex items-center gap-4 shadow-sm"
+          >
+            <div
+              class="size-10 rounded-lg bg-amber-50 text-amber-600 flex items-center justify-center"
+            >
+              <span class="material-symbols-outlined text-2xl"
+                >pending_actions</span
+              >
+            </div>
+            <div>
+              <p
+                class="text-[10px] font-bold text-slate-500 uppercase tracking-wider"
+              >
+                Pending My Approval
+              </p>
+              <p class="text-2xl font-extrabold text-slate-900 leading-none">
+                08
+              </p>
+            </div>
+          </div>
+          <div
+            class="bg-white p-4 rounded-lg border border-slate-200 flex items-center gap-4 shadow-sm"
+          >
+            <div
+              class="size-10 rounded-lg bg-emerald-50 text-emerald-600 flex items-center justify-center"
+            >
+              <span class="material-symbols-outlined text-2xl">verified</span>
+            </div>
+            <div>
+              <p
+                class="text-[10px] font-bold text-slate-500 uppercase tracking-wider"
+              >
+                Recently Approved
+              </p>
+              <p class="text-2xl font-extrabold text-slate-900 leading-none">
+                124
+              </p>
+            </div>
+          </div>
+          <div
+            class="bg-white p-4 rounded-lg border border-slate-200 flex items-center gap-4 shadow-sm"
+          >
+            <div
+              class="size-10 rounded-lg bg-primary/10 text-primary flex items-center justify-center"
+            >
+              <span class="material-symbols-outlined text-2xl"
+                >account_balance_wallet</span
+              >
+            </div>
+            <div>
+              <p
+                class="text-[10px] font-bold text-slate-500 uppercase tracking-wider"
+              >
+                Total Budget Managed
+              </p>
+              <p class="text-2xl font-extrabold text-slate-900 leading-none">
+                $285.5k
+              </p>
+            </div>
+          </div>
+        </div>
+        <div
+          class="bg-white rounded-lg border border-slate-200 shadow-sm overflow-hidden"
+        >
+          <div
+            class="px-4 py-3 border-b border-slate-100 flex items-center justify-between bg-slate-50/30"
+          >
+            <div class="flex items-center gap-2">
+              <span class="material-symbols-outlined text-slate-400 text-lg"
+                >list_alt</span
+              >
+              <h3
+                class="text-xs font-extrabold text-slate-900 uppercase tracking-tight"
+              >
+                Pending Approvals Queue
+              </h3>
+            </div>
+            <div class="flex items-center gap-2">
+              <div class="relative">
+                <span
+                  class="material-symbols-outlined absolute left-2 top-1/2 -translate-y-1/2 text-slate-400 text-sm"
+                  >search</span
+                >
+                <input
+                  class="text-[11px] pl-7 pr-3 py-1 bg-white border-slate-200 rounded w-64 focus:ring-1 focus:ring-primary/20 focus:border-primary outline-none"
+                  placeholder="Search by requester or ID..."
+                  type="text"
+                />
+              </div>
+              <button
+                class="flex items-center gap-1 text-[11px] font-bold text-slate-500 hover:text-slate-700 bg-white border border-slate-200 px-2 py-1 rounded"
+              >
+                <span class="material-symbols-outlined text-sm">sort</span>
+                Priority
+              </button>
+            </div>
+          </div>
+          <div class="overflow-x-auto">
+            <table class="w-full border-collapse">
+              <thead>
+                <tr class="bg-slate-50/50">
+                  <th>Request ID</th>
+                  <th>Requester</th>
+                  <th>Item &amp; Description</th>
+                  <th>Amount</th>
+                  <th>Date Requested</th>
+                  <th class="text-center">Details</th>
+                  <th class="text-right px-6">Review Action</th>
+                </tr>
+              </thead>
+              <tbody class="divide-y divide-slate-50">
+                <tr class="hover:bg-slate-50/50 transition-colors">
+                  <td class="font-bold text-slate-900">#PR-9012</td>
+                  <td>
+                    <div class="flex items-center gap-2">
+                      <div
+                        class="size-6 rounded-full bg-slate-100 overflow-hidden"
+                      >
+                        <img
+                          alt="User"
+                          src="https://lh3.googleusercontent.com/aida-public/AB6AXuA3yhfQ-dckABOR_tiatacxr-8_7MWVSb2a2NTlStuYoCWAy9PNbgxj-VfbU0hL-DT6YfGcXJiOKu_0pAYaBoOzToFAuvxZemlTEWUiJYZhOxaWfV0lSvyBmerf746B1GT4n1S9BYHxwYx5MBCJ59RFu0wM2UOTizaZ1GCpxAGWwI7-hu3ibFlme_NWwb2p_oVHetQ5FmLYSM4a8nl7CcIW04XM0ibV8FpajMDAAay-yOWWjg-9FocfPeuaRhgKnG7fu0x6ldWWmgA"
+                        />
+                      </div>
+                      <span class="font-semibold text-slate-700">Jane Doe</span>
+                    </div>
+                  </td>
+                  <td>
+                    <div class="flex flex-col">
+                      <span class="font-semibold text-slate-800"
+                        >MacBook Pro M3 Max</span
+                      >
+                      <span class="text-[10px] text-slate-400"
+                        >Engineering Dept - Tech Refresh</span
+                      >
+                    </div>
+                  </td>
+                  <td class="font-extrabold text-slate-900">$3,499.00</td>
+                  <td class="text-xs text-slate-500">2 hours ago</td>
+                  <td class="text-center">
+                    <button class="text-slate-400 hover:text-primary">
+                      <span class="material-symbols-outlined text-lg"
+                        >visibility</span
+                      >
+                    </button>
+                  </td>
+                  <td class="text-right px-6">
+                    <div class="flex items-center justify-end gap-2">
+                      <button
+                        class="btn-action bg-rose-50 border-rose-100 text-rose-600 hover:bg-rose-600 hover:text-white group"
+                        title="Reject"
+                      >
+                        <span class="material-symbols-outlined text-sm"
+                          >close</span
+                        >
+                      </button>
+                      <button
+                        class="btn-action bg-emerald-50 border-emerald-100 text-emerald-600 hover:bg-emerald-600 hover:text-white"
+                        title="Approve"
+                      >
+                        <span
+                          class="material-symbols-outlined text-sm font-bold"
+                          >check</span
+                        >
+                      </button>
+                    </div>
+                  </td>
+                </tr>
+                <tr class="hover:bg-slate-50/50 transition-colors">
+                  <td class="font-bold text-slate-900">#PR-9008</td>
+                  <td>
+                    <div class="flex items-center gap-2">
+                      <div
+                        class="size-6 rounded-full bg-slate-100 overflow-hidden"
+                      >
+                        <img
+                          alt="User"
+                          src="https://lh3.googleusercontent.com/aida-public/AB6AXuDDpw55y6IInmLG61U0JZ1qfgn6vaj0W6kKt_71VEbZOiK_AT868Dvsjm4_VscETn_Lx4Z8l7D4lWUSh5vwkdhRGgZtjmF6TAAUSE3XrephQIohew0QPWzQ5ezJlM4P3-iuY-3XgUF7dhYShVIc1fbISvc4ZPb32k7A7sxUO_MM2xy3vfcoEHtopd7-Eo4vYO3SZRC-Z3oILrHZWqfCtn2DrbqsgVso5OjwGAajPjyZaaikZtt7477sVYXB2oyfrnneqp2peuzkfaQ"
+                        />
+                      </div>
+                      <span class="font-semibold text-slate-700"
+                        >Mike Jones</span
+                      >
+                    </div>
+                  </td>
+                  <td>
+                    <div class="flex flex-col">
+                      <span class="font-semibold text-slate-800"
+                        >SaaS Renewal (Github)</span
+                      >
+                      <span class="text-[10px] text-slate-400"
+                        >Annual Subscription - Enterprise</span
+                      >
+                    </div>
+                  </td>
+                  <td class="font-extrabold text-slate-900">$12,200.00</td>
+                  <td class="text-xs text-slate-500">5 hours ago</td>
+                  <td class="text-center">
+                    <button class="text-slate-400 hover:text-primary">
+                      <span class="material-symbols-outlined text-lg"
+                        >visibility</span
+                      >
+                    </button>
+                  </td>
+                  <td class="text-right px-6">
+                    <div class="flex items-center justify-end gap-2">
+                      <button
+                        class="btn-action bg-rose-50 border-rose-100 text-rose-600 hover:bg-rose-600 hover:text-white"
+                        title="Reject"
+                      >
+                        <span class="material-symbols-outlined text-sm"
+                          >close</span
+                        >
+                      </button>
+                      <button
+                        class="btn-action bg-emerald-50 border-emerald-100 text-emerald-600 hover:bg-emerald-600 hover:text-white"
+                        title="Approve"
+                      >
+                        <span
+                          class="material-symbols-outlined text-sm font-bold"
+                          >check</span
+                        >
+                      </button>
+                    </div>
+                  </td>
+                </tr>
+                <tr class="hover:bg-slate-50/50 transition-colors">
+                  <td class="font-bold text-slate-900">#PR-8995</td>
+                  <td>
+                    <div class="flex items-center gap-2">
+                      <div
+                        class="size-6 rounded-full bg-slate-100 overflow-hidden"
+                      >
+                        <img
+                          alt="User"
+                          src="https://lh3.googleusercontent.com/aida-public/AB6AXuCFcgDuf_tf3ivdE4Kfw_Z885jKxIc_YWRfq47uMayjO3P-a7sPNZYO3XcWalz_-srO3mB1Pjrvme9HYBiY0Q2RWIAOhgkL_CZtmO_yhB5rSn11iBuGIqOXVmyPPgF_-GUWFUj4aOH_w8AhFcGq9Fpeh7fZW4SvdYXJnKbnG4BAJAI-6nqlLrwr5YXFOZMBRNP586QMZ-AHO3n7FCKX4k81zLXyJTP9UwUIJch1rSJ8TLUw2xQqW6PFVnICXQZKBgZcIaLPe_JwcoQ"
+                        />
+                      </div>
+                      <span class="font-semibold text-slate-700"
+                        >Carlos Ruiz</span
+                      >
+                    </div>
+                  </td>
+                  <td>
+                    <div class="flex flex-col">
+                      <span class="font-semibold text-slate-800"
+                        >Office Chairs (x5)</span
+                      >
+                      <span class="text-[10px] text-slate-400"
+                        >Operations - Floor 4</span
+                      >
+                    </div>
+                  </td>
+                  <td class="font-extrabold text-slate-900">$1,850.00</td>
+                  <td class="text-xs text-slate-500">Yesterday</td>
+                  <td class="text-center">
+                    <button class="text-slate-400 hover:text-primary">
+                      <span class="material-symbols-outlined text-lg"
+                        >visibility</span
+                      >
+                    </button>
+                  </td>
+                  <td class="text-right px-6">
+                    <div class="flex items-center justify-end gap-2">
+                      <button
+                        class="btn-action bg-rose-50 border-rose-100 text-rose-600 hover:bg-rose-600 hover:text-white"
+                        title="Reject"
+                      >
+                        <span class="material-symbols-outlined text-sm"
+                          >close</span
+                        >
+                      </button>
+                      <button
+                        class="btn-action bg-emerald-50 border-emerald-100 text-emerald-600 hover:bg-emerald-600 hover:text-white"
+                        title="Approve"
+                      >
+                        <span
+                          class="material-symbols-outlined text-sm font-bold"
+                          >check</span
+                        >
+                      </button>
+                    </div>
+                  </td>
+                </tr>
+                <tr class="hover:bg-slate-50/50 transition-colors">
+                  <td class="font-bold text-slate-900">#PR-8991</td>
+                  <td>
+                    <div class="flex items-center gap-2">
+                      <div
+                        class="size-6 rounded-full bg-slate-100 overflow-hidden"
+                      >
+                        <img
+                          alt="User"
+                          src="https://lh3.googleusercontent.com/aida-public/AB6AXuBhVoCGAlqhWNzZyyZYaKUK_CBgeZI6rxr7hhfgtT2kZ-_jX1X9YmEGUvS4ejk-Kl3oMFZkUq5vGMQc3TYZ3MAHiz3mT1r_TK0-E-aSim8RKFRoAmnfJEb6MEqfNb7yJLMHoNWPaG9D_YUVjfoIDM9wCkpXpBz9zIFSOCHBS1EdRYGe7_7sTzKT4tY_w76C_WjUZpAmagrhDvsfqKKhVuI9CnmiImqD4e1vDqkYbER6qThneoq2L1LbMPa5iLqh4XVD9J1NJ7MnVmA"
+                        />
+                      </div>
+                      <span class="font-semibold text-slate-700">Anna Kim</span>
+                    </div>
+                  </td>
+                  <td>
+                    <div class="flex flex-col">
+                      <span class="font-semibold text-slate-800"
+                        >Marketing Assets Bundle</span
+                      >
+                      <span class="text-[10px] text-slate-400"
+                        >Creative Services - Campaign Q4</span
+                      >
+                    </div>
+                  </td>
+                  <td class="font-extrabold text-slate-900">$820.00</td>
+                  <td class="text-xs text-slate-500">Oct 26, 2024</td>
+                  <td class="text-center">
+                    <button class="text-slate-400 hover:text-primary">
+                      <span class="material-symbols-outlined text-lg"
+                        >visibility</span
+                      >
+                    </button>
+                  </td>
+                  <td class="text-right px-6">
+                    <div class="flex items-center justify-end gap-2">
+                      <button
+                        class="btn-action bg-rose-50 border-rose-100 text-rose-600 hover:bg-rose-600 hover:text-white"
+                        title="Reject"
+                      >
+                        <span class="material-symbols-outlined text-sm"
+                          >close</span
+                        >
+                      </button>
+                      <button
+                        class="btn-action bg-emerald-50 border-emerald-100 text-emerald-600 hover:bg-emerald-600 hover:text-white"
+                        title="Approve"
+                      >
+                        <span
+                          class="material-symbols-outlined text-sm font-bold"
+                          >check</span
+                        >
+                      </button>
+                    </div>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+          <div
+            class="px-4 py-2 bg-slate-50 border-t border-slate-100 flex items-center justify-between text-[10px] font-bold text-slate-400 uppercase tracking-widest"
+          >
+            <span>8 requests awaiting your review</span>
+            <div class="flex items-center gap-4">
+              <button
+                class="hover:text-primary disabled:opacity-30"
+                disabled=""
+              >
+                Previous
+              </button>
+              <button class="hover:text-primary">Next</button>
+            </div>
+          </div>
+        </div>
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-4">
+          <div
+            class="lg:col-span-2 bg-white rounded-lg border border-slate-200 p-4 shadow-sm"
+          >
+            <h4
+              class="text-xs font-extrabold text-slate-900 uppercase tracking-tight mb-4 flex items-center gap-2"
+            >
+              <span class="material-symbols-outlined text-emerald-500 text-lg"
+                >history</span
+              >
+              Recent Activity History
+            </h4>
+            <div class="space-y-3">
+              <div
+                class="flex items-center justify-between py-2 border-b border-slate-50"
+              >
+                <div class="flex items-center gap-3">
+                  <div
+                    class="size-8 rounded-full bg-emerald-100 text-emerald-600 flex items-center justify-center"
+                  >
+                    <span class="material-symbols-outlined text-sm"
+                      >done_all</span
+                    >
+                  </div>
+                  <div>
+                    <p class="text-[11px] font-bold text-slate-800">
+                      Approved #PR-8821 Cloud Server Expansion
+                    </p>
+                    <p class="text-[9px] text-slate-400 uppercase font-bold">
+                      Oct 24, 2024 • Requester: John Doe
+                    </p>
+                  </div>
+                </div>
+                <span class="text-xs font-bold text-slate-900">$1,250.00</span>
+              </div>
+              <div
+                class="flex items-center justify-between py-2 border-b border-slate-50"
+              >
+                <div class="flex items-center gap-3">
+                  <div
+                    class="size-8 rounded-full bg-rose-100 text-rose-600 flex items-center justify-center"
+                  >
+                    <span class="material-symbols-outlined text-sm">close</span>
+                  </div>
+                  <div>
+                    <p class="text-[11px] font-bold text-slate-800">
+                      Rejected #PR-8815 Software Upgrade
+                    </p>
+                    <p class="text-[9px] text-slate-400 uppercase font-bold">
+                      Oct 23, 2024 • Requester: Sam Lee
+                    </p>
+                  </div>
+                </div>
+                <span class="text-xs font-bold text-slate-900">$4,500.00</span>
+              </div>
+            </div>
+            <button
+              class="w-full mt-4 py-2 text-[10px] font-bold text-slate-500 hover:text-primary border-t border-slate-50 uppercase tracking-widest transition-colors"
+            >
+              View Full Approval Logs
+            </button>
+          </div>
+          <div
+            class="bg-white rounded-lg border border-slate-200 p-4 shadow-sm"
+          >
+            <h4
+              class="text-xs font-extrabold text-slate-900 uppercase tracking-tight mb-4 flex items-center gap-2"
+            >
+              <span class="material-symbols-outlined text-primary text-lg"
+                >pie_chart</span
+              >
+              Budget Utilization
+            </h4>
+            <div class="space-y-4">
+              <div>
+                <div
+                  class="flex justify-between text-[10px] font-bold uppercase mb-1"
+                >
+                  <span class="text-slate-500">IT Infrastructure</span>
+                  <span class="text-slate-900">75%</span>
+                </div>
+                <div
+                  class="w-full h-1.5 bg-slate-100 rounded-full overflow-hidden"
+                >
+                  <div class="h-full bg-primary w-3/4"></div>
+                </div>
+              </div>
+              <div>
+                <div
+                  class="flex justify-between text-[10px] font-bold uppercase mb-1"
+                >
+                  <span class="text-slate-500">Marketing</span>
+                  <span class="text-slate-900">42%</span>
+                </div>
+                <div
+                  class="w-full h-1.5 bg-slate-100 rounded-full overflow-hidden"
+                >
+                  <div class="h-full bg-secondary w-[42%]"></div>
+                </div>
+              </div>
+              <div>
+                <div
+                  class="flex justify-between text-[10px] font-bold uppercase mb-1"
+                >
+                  <span class="text-slate-500">Operations</span>
+                  <span class="text-slate-900">18%</span>
+                </div>
+                <div
+                  class="w-full h-1.5 bg-slate-100 rounded-full overflow-hidden"
+                >
+                  <div class="h-full bg-emerald-500 w-[18%]"></div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </main>
+      <footer
+        class="flex items-center justify-between px-6 py-3 text-[9px] font-bold uppercase tracking-widest text-slate-400 border-t border-slate-200 bg-white"
+      >
+        <div class="flex items-center gap-4">
+          <p th:text="'© ' + ${T(java.time.Year).now().getValue()} + ' Compra Amigos'"></p>
+          <span class="opacity-20">|</span>
+          <div class="flex items-center gap-1.5 text-green-600">
+            <span class="size-1 bg-green-500 rounded-full"></span>
+            System Operational
+          </div>
+        </div>
+        <div class="flex gap-4">
+          <a class="hover:text-primary transition-colors" href="#"
+            >Review Policies</a
+          >
+          <a class="hover:text-primary transition-colors" href="#"
+            >Support Desk</a
+          >
+          <a class="hover:text-primary transition-colors" href="#"
+            >Audit Terms</a
+          >
+        </div>
+      </footer>
     </div>
-</body>
+  </body>
 </html>

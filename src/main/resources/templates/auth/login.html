@@ -262,6 +262,7 @@
                 </p>
               </div>
               <form class="space-y-6" th:action="@{/login}" method="post">
+                <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
                 <div class="space-y-2 animate-fade-in-up stagger-2">
                   <label
                     class="text-[11px] font-black text-slate-deep uppercase tracking-[0.2em] ml-1"
@@ -323,6 +324,7 @@
                     <input
                       class="size-5 rounded-md border-slate-200 bg-white/50 text-corporate-orange focus:ring-corporate-orange/20 focus:ring-offset-0 transition-all cursor-pointer appearance-none checked:bg-corporate-orange"
                       id="remember"
+                      name="remember-me"
                       type="checkbox"
                     />
                     <span
