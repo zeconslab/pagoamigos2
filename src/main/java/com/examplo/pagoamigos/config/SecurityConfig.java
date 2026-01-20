@@ -1,16 +1,27 @@
 package com.examplo.pagoamigos.config;
 
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.SimpleUrlAuthenticationFailureHandler;
+import org.springframework.security.web.authentication.logout.LogoutSuccessHandler;
 import org.springframework.security.web.csrf.CookieCsrfTokenRepository;
+import org.springframework.security.web.csrf.CsrfToken;
+import org.springframework.security.web.csrf.CsrfTokenRepository;
+import org.springframework.security.web.csrf.CsrfTokenRequestAttributeHandler;
+import org.springframework.security.web.csrf.DefaultCsrfToken;
+
+import java.io.IOException;
+import java.util.UUID;
 
 @Configuration
 @EnableWebSecurity
@@ -42,9 +53,10 @@ public class SecurityConfig {
             // Configuración de logout seguro
             .logout(logout -> logout 
                 .logoutUrl("/logout")
-                .logoutSuccessUrl("/login")
+                .logoutSuccessHandler(customLogoutSuccessHandler())
                 .invalidateHttpSession(true)
                 .deleteCookies("JSESSIONID")
+                .clearAuthentication(true)
                 .permitAll()
             )
             // Protección de sesiones
@@ -52,10 +64,15 @@ public class SecurityConfig {
                 .maximumSessions(1)
                 .maxSessionsPreventsLogin(false)
             )
-            // Usar Cookie CSRF repository para evitar crear sesión al renderizar formularios
-            .csrf(csrf -> csrf
-                .csrfTokenRepository(CookieCsrfTokenRepository.withHttpOnlyFalse())
-            )
+            // CSRF con cookies para evitar crear sesión en formularios
+            .csrf(csrf -> {
+                CookieCsrfTokenRepository tokenRepository = CookieCsrfTokenRepository.withHttpOnlyFalse();
+                CsrfTokenRequestAttributeHandler requestHandler = new CsrfTokenRequestAttributeHandler();
+                requestHandler.setCsrfRequestAttributeName("_csrf");
+                
+                csrf.csrfTokenRepository(tokenRepository)
+                    .csrfTokenRequestHandler(requestHandler);
+            })
             // Headers de seguridad
             .headers(headers -> headers
                 .contentSecurityPolicy(csp -> csp
@@ -94,8 +111,23 @@ public class SecurityConfig {
         return handler;
     }
 
-    @Bean
-    public PasswordEncoder passwordEncoder() {
+    @Bean    public LogoutSuccessHandler customLogoutSuccessHandler() {
+        return new LogoutSuccessHandler() {
+            @Override
+            public void onLogoutSuccess(HttpServletRequest request, HttpServletResponse response,
+                                       Authentication authentication) throws IOException {
+                // Generar nuevo token CSRF después del logout
+                CookieCsrfTokenRepository tokenRepository = CookieCsrfTokenRepository.withHttpOnlyFalse();
+                CsrfToken newToken = new DefaultCsrfToken("X-CSRF-TOKEN", "_csrf", UUID.randomUUID().toString());
+                tokenRepository.saveToken(newToken, request, response);
+                
+                // Redirigir al login
+                response.sendRedirect("/login?logout");
+            }
+        };
+    }
+
+    @Bean    public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder(12); // Aumentado a 12 rounds para mayor seguridad
     }
 }
