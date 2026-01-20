@@ -1,6 +1,6 @@
 name: CI/CD Spring Boot
 
-en:
+on:
   push:
     branches:
       - main
