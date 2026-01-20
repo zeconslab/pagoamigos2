@@ -63,10 +63,23 @@ public class SecurityConfig {
                         "script-src 'self' 'unsafe-inline' https://cdn.tailwindcss.com; " +
                         "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; " +
                         "font-src 'self' https://fonts.gstatic.com; " +
-                        "img-src 'self' data: https://lh3.googleusercontent.com https://grainy-gradients.vercel.app;")
+                        "img-src 'self' data: https://lh3.googleusercontent.com https://grainy-gradients.vercel.app; " +
+                        "frame-ancestors 'none'; " +
+                        "base-uri 'self'; " +
+                        "form-action 'self';")
                 )
                 .frameOptions(frame -> frame.deny())
                 .xssProtection(xss -> xss.disable()) // XSS Protection obsoleto en navegadores modernos con CSP
+                .httpStrictTransportSecurity(hsts -> hsts
+                    .includeSubDomains(true)
+                    .maxAgeInSeconds(31536000) // 1 año
+                )
+                .referrerPolicy(referrer -> referrer
+                    .policy(org.springframework.security.web.header.writers.ReferrerPolicyHeaderWriter.ReferrerPolicy.STRICT_ORIGIN_WHEN_CROSS_ORIGIN)
+                )
+                .permissionsPolicy(permissions -> permissions
+                    .policy("geolocation=(), microphone=(), camera=()")
+                )
             )
             // CSRF habilitado por defecto (Spring Security 6+)
             .userDetailsService(userDetailsService);
