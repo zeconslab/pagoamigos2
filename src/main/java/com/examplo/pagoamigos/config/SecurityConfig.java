@@ -42,9 +42,9 @@ public class SecurityConfig {
             // Configuración de logout seguro
             .logout(logout -> logout 
                 .logoutUrl("/logout")
-                .logoutSuccessUrl("/login?logout=true")
+                .logoutSuccessUrl("/login")
                 .invalidateHttpSession(true)
-                .deleteCookies("JSESSIONID", "XSRF-TOKEN")
+                .deleteCookies("JSESSIONID")
                 .permitAll()
             )
             // Protección de sesiones

@@ -15,6 +15,23 @@ public class UsuarioDetails implements UserDetails {
         this.user = user;
     }
 
+    /**
+     * Devuelve el nombre completo del usuario para mostrar en las vistas.
+     */
+    public String getFullName() {
+        StringBuilder sb = new StringBuilder();
+        if (user.getName() != null) sb.append(user.getName());
+        if (user.getPaternalLastName() != null) sb.append(" ").append(user.getPaternalLastName());
+        if (user.getMaternalLastName() != null) sb.append(" ").append(user.getMaternalLastName());
+        String full = sb.toString().trim();
+        return full.isEmpty() ? user.getEmail() : full;
+    }
+
+    /** Exponer el objeto User subyacente si se necesita en templates */
+    public User getUser() {
+        return this.user;
+    }
+
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         return  user.getRoles().stream().map(rol -> new SimpleGrantedAuthority("ROLE_" + rol.getNombre())).toList();
