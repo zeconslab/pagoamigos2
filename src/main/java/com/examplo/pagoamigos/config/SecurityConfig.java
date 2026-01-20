@@ -54,7 +54,11 @@ public class SecurityConfig {
             // Headers de seguridad
             .headers(headers -> headers
                 .contentSecurityPolicy(csp -> csp
-                    .policyDirectives("default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; img-src 'self' data:;")
+                    .policyDirectives("default-src 'self'; " +
+                        "script-src 'self' 'unsafe-inline' https://cdn.tailwindcss.com; " +
+                        "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; " +
+                        "font-src 'self' https://fonts.gstatic.com; " +
+                        "img-src 'self' data: https://lh3.googleusercontent.com https://grainy-gradients.vercel.app;")
                 )
                 .frameOptions(frame -> frame.deny())
                 .xssProtection(xss -> xss.disable()) // XSS Protection obsoleto en navegadores modernos con CSP
