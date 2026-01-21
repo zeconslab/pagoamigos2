@@ -13,4 +13,7 @@ public interface ProductRepository extends JpaRepository<Product, Long> {
 
 	// Obtener todos los productos asociados a un usuario (independiente de estatus)
 	List<Product> findByUsers_Id(Long userId);
+
+	// Buscar por varios estatus para un usuario
+	List<Product> findByUsers_IdAndStatusIn(Long userId, List<Integer> statuses);
 }

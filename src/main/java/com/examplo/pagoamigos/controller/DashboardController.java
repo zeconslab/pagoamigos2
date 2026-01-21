@@ -42,20 +42,8 @@ public class DashboardController {
 
         // Filtrar productos según rol/usuario: ambos ven solo productos asociados a su usuario
         List<Product> products = new ArrayList<>();
-        boolean isValidator = Boolean.TRUE.equals(model.getAttribute("isValidator"));
-        if (authentication != null && email != null) {
-            userRepository.findByEmail(email).ifPresent(u -> {
-                if (u.getId() != null) {
-                    if (isValidator) {
-                        // Validador: ver sus productos con estatus APROBADO (2)
-                        products.addAll(productRepository.findByUsers_Id(u.getId()));
-                    } else {
-                        // Solicitante: ver sus productos con estatus PENDIENTE (1)
-                        products.addAll(productRepository.findByUsers_Id(u.getId()));
-                    }
-                }
-            });
-        }
+        products = productRepository.findAll();
+
         model.addAttribute("products", products);
 
         // Conteo: usar el tamaño de la lista filtrada

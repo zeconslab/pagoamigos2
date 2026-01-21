@@ -6,7 +6,8 @@ package com.examplo.pagoamigos;
  */
 public enum Estatus_Products {
     PENDIENTE(1, "PENDIENTE"),
-    APROBADO(2, "APROBADO");
+    APROBADO(2, "APROBADO"),
+    CONCLUIDO(3, "CONCLUIDO");
 
     private final int code;
     private final String label;
