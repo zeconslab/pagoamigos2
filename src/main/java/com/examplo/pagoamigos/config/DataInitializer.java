@@ -80,6 +80,10 @@ public class DataInitializer {
                 logger.info("Usuario solicitante creado: solicitante@pagoamigos.com / Solicitante123!");
             }
 
+            // Obtener referencias a los usuarios creados (si existen)
+            User solicitanteUser = userRepository.findByEmail("solicitante@pagoamigos.com").orElse(null);
+            User validatorUser = userRepository.findByEmail("validator@pagoamigos.com").orElse(null);
+
             // Crear productos de ejemplo y asociarlos a usuarios (si no existen)
             if (productRepository.count() == 0) {
                 List<Product> products = new ArrayList<>();
@@ -97,36 +101,39 @@ public class DataInitializer {
                 };
                 Double[] prices = new Double[] {3499.00, 599.00, 129.00, 59.00, 349.00, 199.00, 499.00, 149.00, 89.00, 129.00};
 
-                // Obtener referencias a los usuarios creados (si existen)
-                User solicitanteUser = userRepository.findByEmail("solicitante@pagoamigos.com").orElse(null);
-                User validatorUser = userRepository.findByEmail("validator@pagoamigos.com").orElse(null);
-
                 for (int i = 0; i < names.length; i++) {
                     Product p = new Product();
                     p.setName(names[i]);
                     p.setPrice(prices[i]);
                     // Set status: first 3 -> PENDIENTE (1), next 3 -> APROBADO (2), rest PENDIENTE
+                    // TODOS los productos tienen validator asignado
                     if (i < 3) {
                         p.setStatus(1); // PENDIENTE
-                        // creador: solicitante
                         if (solicitanteUser != null) p.setCreator(solicitanteUser);
+                        if (validatorUser != null) p.setValidator(validatorUser);
                     } else if (i < 6) {
                         p.setStatus(2); // APROBADO
-                        // creador: solicitante; validador: validator
                         if (solicitanteUser != null) p.setCreator(solicitanteUser);
                         if (validatorUser != null) p.setValidator(validatorUser);
                     } else {
                         p.setStatus(1);
                         if (solicitanteUser != null) p.setCreator(solicitanteUser);
+                        if (validatorUser != null) p.setValidator(validatorUser);
                     }
                     products.add(productRepository.save(p));
                 }
                 logger.info("Productos creados: {}", products.size());
+            }
 
-                // Establecer amistad entre solicitante y validador usando helper (gestiona ambas direcciones)
-                if (solicitanteUser != null && validatorUser != null) {
+            // Establecer amistad entre solicitante y validador (SIEMPRE, fuera del bloque de productos)
+            if (solicitanteUser != null && validatorUser != null) {
+                // Verificar si ya son amigos para no duplicar
+                boolean alreadyFriends = solicitanteUser.getFriends() != null && 
+                                         solicitanteUser.getFriends().contains(validatorUser);
+                
+                if (!alreadyFriends) {
+                    logger.info("Estableciendo amistad entre {} y {}", solicitanteUser.getEmail(), validatorUser.getEmail());
                     solicitanteUser.addFriend(validatorUser);
-                    // Forzar persistencia inmediata y confirmar
                     userRepository.saveAndFlush(solicitanteUser);
                     userRepository.saveAndFlush(validatorUser);
 
@@ -137,6 +144,8 @@ public class DataInitializer {
                             sReload == null ? 0 : (sReload.getFriends() == null ? 0 : sReload.getFriends().size()));
                     logger.info("Validator friends after save: {}",
                             vReload == null ? 0 : (vReload.getFriends() == null ? 0 : vReload.getFriends().size()));
+                } else {
+                    logger.info("Los usuarios {} y {} ya son amigos", solicitanteUser.getEmail(), validatorUser.getEmail());
                 }
             }
 

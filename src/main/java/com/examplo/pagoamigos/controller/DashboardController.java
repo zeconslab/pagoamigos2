@@ -40,19 +40,34 @@ public class DashboardController {
             model.addAttribute("isSolicitante", isSolicitante);
         }
 
-        // Filtrar productos según rol/usuario: ambos ven solo productos asociados a su usuario
+        // Filtrar productos: cargar productos entre el usuario y sus amigos
         List<Product> products = new ArrayList<>();
         boolean isValidator = Boolean.TRUE.equals(model.getAttribute("isValidator"));
         if (authentication != null && email != null) {
             userRepository.findByEmail(email).ifPresent(u -> {
                 if (u.getId() != null) {
                     if (isValidator) {
-                        // Validador: ver productos asignados a él con estatus PENDIENTE (1)
+                        // Validador: ver productos donde es validador con estatus PENDIENTE (1)
                         products.addAll(productRepository.findByValidator_IdAndStatus(u.getId(), Estatus_Products.PENDIENTE.getCode()));
                     } else {
-                        // Solicitante: ver sus productos con estatus PENDIENTE (1)
+                        // Solicitante: ver productos donde es creador con estatus PENDIENTE (1)
                         products.addAll(productRepository.findByCreator_IdAndStatus(u.getId(), Estatus_Products.PENDIENTE.getCode()));
                     }
+                    
+                    // Opcional: también cargar productos donde el usuario participa con sus amigos
+                    // (productos donde creator o validator es alguno de sus amigos)
+                    // Descomenta si quieres ver productos de amigos:
+                    /*
+                    if (u.getFriends() != null) {
+                        for (User friend : u.getFriends()) {
+                            if (isValidator) {
+                                products.addAll(productRepository.findByCreator_IdAndStatus(friend.getId(), Estatus_Products.PENDIENTE.getCode()));
+                            } else {
+                                products.addAll(productRepository.findByValidator_IdAndStatus(friend.getId(), Estatus_Products.PENDIENTE.getCode()));
+                            }
+                        }
+                    }
+                    */
                 }
             });
         }
