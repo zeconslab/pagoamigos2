@@ -11,6 +11,7 @@ import org.springframework.boot.CommandLineRunner;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.jdbc.core.JdbcTemplate;
 
 import com.examplo.pagoamigos.model.Product;
 import com.examplo.pagoamigos.repository.ProductRepository;
@@ -29,7 +30,8 @@ public class DataInitializer {
     CommandLineRunner initDatabase(UserRepository userRepository, 
                                    RolRepository rolRepository, 
                                    PasswordEncoder passwordEncoder,
-                                   ProductRepository productRepository) {
+                                   ProductRepository productRepository,
+                                   JdbcTemplate jdbcTemplate) {
         return args -> {
             logger.info("Iniciando carga de datos de prueba...");
 
@@ -125,16 +127,17 @@ public class DataInitializer {
                 logger.info("Productos creados: {}", products.size());
             }
 
-            // Establecer amistad entre solicitante y validador (SIEMPRE, fuera del bloque de productos)
+            // Establecer amistad entre solicitante y validador usando inserción directa en la tabla join
             if (solicitanteUser != null && validatorUser != null) {
                 logger.info("Estableciendo amistad entre {} y {}", solicitanteUser.getEmail(), validatorUser.getEmail());
-                // Dentro de transacción, acceder directamente a friends (se inicializará LAZY)
-                solicitanteUser.getFriends().add(validatorUser);
-                validatorUser.getFriends().add(solicitanteUser);
-                userRepository.saveAndFlush(solicitanteUser);
-                userRepository.saveAndFlush(validatorUser);
-
-                logger.info("Amistad establecida correctamente entre {} amigos", solicitanteUser.getFriends().size());
+                try {
+                    String sql = "IF NOT EXISTS (SELECT 1 FROM user_friends WHERE user_id = ? AND friend_id = ?) INSERT INTO user_friends (user_id, friend_id) VALUES (?, ?)";
+                    jdbcTemplate.update(sql, solicitanteUser.getId(), validatorUser.getId(), solicitanteUser.getId(), validatorUser.getId());
+                    jdbcTemplate.update(sql, validatorUser.getId(), solicitanteUser.getId(), validatorUser.getId(), solicitanteUser.getId());
+                    logger.info("Amistad insertada en la tabla user_friends");
+                } catch (Exception ex) {
+                    logger.warn("No fue posible insertar amistad en user_friends: {}", ex.getMessage());
+                }
             }
 
             logger.info("Carga de datos de prueba completada.");
