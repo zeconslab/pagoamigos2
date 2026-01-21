@@ -12,7 +12,7 @@
   <link
     href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap"
     rel="stylesheet" />
-    <link rel="icon" href="/favicon.svg" type="image/svg+xml">
+  <link rel="icon" href="/favicon.svg" type="image/svg+xml">
   <script id="tailwind-config">
     tailwind.config = {
       darkMode: "class",
@@ -116,11 +116,11 @@
         </div>
         <nav class="flex items-center gap-4">
           <a sec:authorize="hasAnyRole('SOLICITANTE','VALIDATOR')"
-            class="nav-link text-[11px] font-bold uppercase tracking-wider pb-2 mt-2" 
-            href="/dashboard" data-path="/dashboard">Tablero</a>
-          <a sec:authorize="hasRole('SOLICITANTE')" 
-            class="nav-link text-[11px] font-bold uppercase tracking-wider pb-2 mt-2"
-            href="/history" data-path="/history">Historial de Aprobación</a>
+            class="nav-link text-[11px] font-bold uppercase tracking-wider pb-2 mt-2" href="/dashboard"
+            data-path="/dashboard">Tablero</a>
+          <a sec:authorize="hasRole('SOLICITANTE')"
+            class="nav-link text-[11px] font-bold uppercase tracking-wider pb-2 mt-2" href="/history"
+            data-path="/history">Historial de Aprobación</a>
         </nav>
       </div>
       <div class="flex items-center gap-4">
@@ -152,8 +152,7 @@
                 role="menuitem">Configuración</a>
               <div class="border-t border-slate-100 my-1"></div>
               <form th:action="@{/logout}" method="post" class="m-0">
-                <input th:if="${_csrfParameterName != null}" type="hidden"
-                  th:name="${_csrfParameterName}"
+                <input th:if="${_csrfParameterName != null}" type="hidden" th:name="${_csrfParameterName}"
                   th:value="${_csrfToken}" />
                 <button type="submit" class="w-full text-left px-4 py-2 text-sm text-rose-600 hover:bg-rose-50"
                   role="menuitem">Cerrar sesión</button>
@@ -217,7 +216,7 @@
             <div class="relative">
               <span
                 class="material-symbols-outlined absolute left-2 top-1/2 -translate-y-1/2 text-slate-400 text-sm">search</span>
-                <input
+              <input
                 class="text-[11px] pl-7 pr-3 py-1 bg-white border-slate-200 rounded w-64 focus:ring-1 focus:ring-primary/20 focus:border-primary outline-none"
                 placeholder="Buscar por solicitante o ID..." type="text" />
             </div>
@@ -233,7 +232,10 @@
             <thead>
               <tr class="bg-slate-50/50">
                 <th sec:authorize="hasRole('VALIDATOR')">ID de solicitud</th>
-                <th sec:authorize="hasRole('SOLICITANTE')">ID de solicitud</th>
+                <th sec:authorize="hasRole('SOLICITANTE')">ID</th>
+                <th sec:authorize="hasRole('VALIDATOR')">Solicitante</th>
+                <th sec:authorize="hasRole('SOLICITANTE')">Validador</th>
+
                 <!-- <th>Solicitante</th>
                 <th>Artículo y descripción</th>
                 <th>Monto</th>
@@ -252,15 +254,37 @@
                 </td>
               </tr>
               <tr th:each="product : ${products}" class="hover:bg-slate-50/50 transition-colors">
-                <td sec:authorize="hasRole('VALIDATOR')" class="font-bold text-slate-900" th:text="'#SL-' + ${product.id}">#1</td>
-                <td sec:authorize="hasRole('SOLICITANTE')" class="font-bold text-slate-900" th:text="'#-' + ${product.id}">#1</td>
+                <td sec:authorize="hasRole('VALIDATOR')" class="font-bold text-slate-900"
+                  th:text="'#SL-' + ${product.id}">#1</td>
+                <td sec:authorize="hasRole('SOLICITANTE')" class="font-bold text-slate-900"
+                  th:text="'#-' + ${product.id}">#1</td>
+                <td sec:authorize="hasRole('VALIDATOR')" class="font-bold text-slate-900"
+                  th:text="${product.solicitante}">Solicitante</td>
+                <td sec:authorize="hasRole('SOLICITANTE')" th:text="${product.validador}">
+                  <div class="flex items-center gap-2">
+                    <div class="size-6 rounded-full bg-slate-100 overflow-hidden">
+                      <img alt="User"
+                        src="https://lh3.googleusercontent.com/aida-public/AB6AXuDDpw55y6IInmLG61U0JZ1qfgn6vaj0W6kKt_71VEbZOiK_AT868Dvsjm4_VscETn_Lx4Z8l7D4lWUSh5vwkdhRGgZtjmF6TAAUSE3XrephQIohew0QPWzQ5ezJlM4P3-iuY-3XgUF7dhYShVIc1fbISvc4ZPb32k7A7sxUO_MM2xy3vfcoEHtopd7-Eo4vYO3SZRC-Z3oILrHZWqfCtn2DrbqsgVso5OjwGAajPjyZaaikZtt7477sVYXB2oyfrnneqp2peuzkfaQ" />
+                    </div>
+                    <span class="font-semibold text-slate-700">Validador</span>
+                  </div>
+                </td>
+                <td sec:authorize="hasRole('VALIDATOR')" th:text="${product.solicitante}">
+                  <div class="flex items-center gap-2">
+                    <div class="size-6 rounded-full bg-slate-100 overflow-hidden">
+                      <img alt="User"
+                        src="https://lh3.googleusercontent.com/aida-public/AB6AXuDDpw55y6IInmLG61U0JZ1qfgn6vaj0W6kKt_71VEbZOiK_AT868Dvsjm4_VscETn_Lx4Z8l7D4lWUSh5vwkdhRGgZtjmF6TAAUSE3XrephQIohew0QPWzQ5ezJlM4P3-iuY-3XgUF7dhYShVIc1fbISvc4ZPb32k7A7sxUO_MM2xy3vfcoEHtopd7-Eo4vYO3SZRC-Z3oILrHZWqfCtn2DrbqsgVso5OjwGAajPjyZaaikZtt7477sVYXB2oyfrnneqp2peuzkfaQ" />
+                    </div>
+                    <span class="font-semibold text-slate-700">Solicitante</span>
+                  </div>
+                </td>
               </tr>
             </tbody>
           </table>
         </div>
 
         <!-- Sección de Productos -->
-      <!-- <div class="bg-white rounded-lg border border-slate-200 shadow-sm overflow-hidden">
+        <!-- <div class="bg-white rounded-lg border border-slate-200 shadow-sm overflow-hidden">
         <div class="px-4 py-3 border-b border-slate-100 flex items-center justify-between bg-slate-50/30">
           <div class="flex items-center gap-2">
             <span class="material-symbols-outlined text-slate-400 text-lg">inventory_2</span>
@@ -314,7 +338,12 @@
 
         <div
           class="px-4 py-2 bg-slate-50 border-t border-slate-100 flex items-center justify-between text-[10px] font-bold text-slate-400 uppercase tracking-widest">
-            <span th:text="${pendingCount} + ' solicitudes a la espera de tu revisión'">0 solicitudes a la espera de tu revisión</span>
+          <span sec:authorize="hasRole('VALIDATOR')"
+            th:text="${pendingCount} + ' solicitudes a la espera de tu revisión'">0 solicitudes pendientes</span>
+          <span sec:authorize="hasRole('SOLICITANTE')"
+            th:text="${pendingCount} + ' solicitudes a la espera de tu revisión'">0 solicitudes a la espera de tu
+            revisión</span>
+
           <div class="flex items-center gap-4">
             <button class="hover:text-primary disabled:opacity-30" disabled="">
               Anterior
@@ -325,7 +354,7 @@
       </div>
       <div class="grid grid-cols-1 lg:grid-cols-3 gap-4">
         <div class="lg:col-span-2 bg-white rounded-lg border border-slate-200 p-4 shadow-sm">
-            <h4 class="text-xs font-extrabold text-slate-900 uppercase tracking-tight mb-4 flex items-center gap-2">
+          <h4 class="text-xs font-extrabold text-slate-900 uppercase tracking-tight mb-4 flex items-center gap-2">
             <span class="material-symbols-outlined text-emerald-500 text-lg">history</span>
             Historial de actividad reciente
           </h4>
@@ -363,10 +392,10 @@
               <span class="text-xs font-bold text-slate-900">$4,500.00</span>
             </div>
           </div>
-            <button
+          <button
             class="w-full mt-4 py-2 text-[10px] font-bold text-slate-500 hover:text-primary border-t border-slate-50 uppercase tracking-widest transition-colors">
             Ver registros completos de aprobaciones
-            </button>
+          </button>
         </div>
         <div class="bg-white rounded-lg border border-slate-200 p-4 shadow-sm">
           <h4 class="text-xs font-extrabold text-slate-900 uppercase tracking-tight mb-4 flex items-center gap-2">
@@ -411,8 +440,8 @@
         <p th:text="'© ' + ${T(java.time.Year).now().getValue()} + ' Compra Amigos'"></p>
         <span class="opacity-20">|</span>
         <div class="flex items-center gap-1.5 text-green-600">
-              <span class="size-1 bg-green-500 rounded-full"></span>
-            Sistema operativo
+          <span class="size-1 bg-green-500 rounded-full"></span>
+          Sistema operativo
         </div>
       </div>
       <div class="flex gap-4">
@@ -426,10 +455,10 @@
   <script src="/js/loading.js"></script>
   <script>
     // Activate navigation link based on current path
-    (function() {
+    (function () {
       const currentPath = window.location.pathname;
       const navLinks = document.querySelectorAll('.nav-link');
-      
+
       navLinks.forEach(link => {
         const linkPath = link.getAttribute('data-path');
         if (linkPath === currentPath) {
