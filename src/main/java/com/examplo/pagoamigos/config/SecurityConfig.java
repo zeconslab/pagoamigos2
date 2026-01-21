@@ -27,7 +27,7 @@ public class SecurityConfig {
         http
             // Configuración de autorización
             .authorizeHttpRequests(auth -> auth
-                .requestMatchers("/login", "/error", "/error/**", "/css/**", "/js/**", "/images/**", "/logout", "/favicon.ico", "/.well-known/**").permitAll()
+                .requestMatchers("/login", "/error", "/error/**", "/css/**", "/js/**", "/images/**", "/logout", "/favicon.ico", "/favicon.svg", "/.well-known/**").permitAll()
                 .requestMatchers("/dashboard/**").hasAnyRole("VALIDATOR", "SOLICITANTE")
                 .anyRequest().authenticated()
             )
