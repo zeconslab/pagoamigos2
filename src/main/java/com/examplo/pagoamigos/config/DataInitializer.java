@@ -102,29 +102,17 @@ public class DataInitializer {
                         "Licencia Office 365"
                 };
                 Double[] prices = new Double[] {3499.00, 599.00, 129.00, 59.00, 349.00, 199.00, 499.00, 149.00, 89.00, 129.00};
-
                 for (int i = 0; i < names.length; i++) {
-                    Product p = new Product();
-                    p.setName(names[i]);
-                    p.setPrice(prices[i]);
-                    // Set status: first 3 -> PENDIENTE (1), next 3 -> APROBADO (2), rest PENDIENTE
-                    // TODOS los productos tienen validator asignado
-                    if (i < 3) {
-                        p.setStatus(1); // PENDIENTE
-                        if (solicitanteUser != null) p.setCreator(solicitanteUser);
-                        if (validatorUser != null) p.setValidator(validatorUser);
-                    } else if (i < 6) {
-                        p.setStatus(2); // APROBADO
-                        if (solicitanteUser != null) p.setCreator(solicitanteUser);
-                        if (validatorUser != null) p.setValidator(validatorUser);
-                    } else {
-                        p.setStatus(1);
-                        if (solicitanteUser != null) p.setCreator(solicitanteUser);
-                        if (validatorUser != null) p.setValidator(validatorUser);
-                    }
-                    products.add(productRepository.save(p));
+                    Product product = new Product();
+                    product.setName(names[i]);
+                    product.setPrice(prices[i]);
+                    product.setStatus(1); // PENDIENTE
+                    product.setCreator(solicitanteUser);
+                    product.setValidator(validatorUser);
+                    products.add(product);
+                    productRepository.save(product);
+                    logger.info("Producto creado: {} - ${}", names[i], prices[i]);
                 }
-                logger.info("Productos creados: {}", products.size());
             }
 
             // Establecer amistad entre solicitante y validador usando inserción directa en la tabla join
