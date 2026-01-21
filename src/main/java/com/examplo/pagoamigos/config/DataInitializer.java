@@ -11,6 +11,7 @@ import org.springframework.boot.CommandLineRunner;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.examplo.pagoamigos.model.Product;
 import com.examplo.pagoamigos.repository.ProductRepository;
@@ -26,6 +27,7 @@ public class DataInitializer {
     private static final Logger logger = LoggerFactory.getLogger(DataInitializer.class);
 
     @Bean
+    @Transactional
     CommandLineRunner initDatabase(UserRepository userRepository, 
                                    RolRepository rolRepository, 
                                    PasswordEncoder passwordEncoder,
@@ -128,17 +130,13 @@ public class DataInitializer {
             // Establecer amistad entre solicitante y validador (SIEMPRE, fuera del bloque de productos)
             if (solicitanteUser != null && validatorUser != null) {
                 logger.info("Estableciendo amistad entre {} y {}", solicitanteUser.getEmail(), validatorUser.getEmail());
-                solicitanteUser.addFriend(validatorUser);
+                // Dentro de transacción, acceder directamente a friends (se inicializará LAZY)
+                solicitanteUser.getFriends().add(validatorUser);
+                validatorUser.getFriends().add(solicitanteUser);
                 userRepository.saveAndFlush(solicitanteUser);
                 userRepository.saveAndFlush(validatorUser);
 
-                // Recargar y loguear counts para verificar
-                User sReload = userRepository.findById(solicitanteUser.getId()).orElse(null);
-                User vReload = userRepository.findById(validatorUser.getId()).orElse(null);
-                logger.info("Solicitante friends after save: {}",
-                        sReload == null ? 0 : (sReload.getFriends() == null ? 0 : sReload.getFriends().size()));
-                logger.info("Validator friends after save: {}",
-                        vReload == null ? 0 : (vReload.getFriends() == null ? 0 : vReload.getFriends().size()));
+                logger.info("Amistad establecida correctamente entre {} amigos", solicitanteUser.getFriends().size());
             }
 
             logger.info("Carga de datos de prueba completada.");
