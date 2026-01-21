@@ -1,6 +1,5 @@
 package com.examplo.pagoamigos.model;
 
-import java.util.Set;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -11,6 +10,11 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.JoinTable;
 import jakarta.persistence.ManyToMany;
+
+import java.util.HashSet;
+import java.util.Set;
+
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import jakarta.validation.constraints.Email;
@@ -73,11 +77,11 @@ public class User {
     private Set<Rol> roles;
 
     // Amigos (usuarios relacionados entre sí)
-    @ManyToMany(fetch = FetchType.LAZY)
-    @JoinTable(name = "user_friends",
+        @ManyToMany(fetch = FetchType.LAZY, cascade = {CascadeType.PERSIST, CascadeType.MERGE})
+        @JoinTable(name = "user_friends",
             joinColumns = @JoinColumn(name = "user_id"),
             inverseJoinColumns = @JoinColumn(name = "friend_id"))
-    private Set<User> friends;
+        private Set<User> friends = new HashSet<>();
 
     // Productos que creó este usuario
     @OneToMany(mappedBy = "creator", fetch = FetchType.LAZY)
@@ -86,4 +90,20 @@ public class User {
     // Productos que este usuario valida
     @OneToMany(mappedBy = "validator", fetch = FetchType.LAZY)
     private Set<Product> validatedProducts;
+
+    public void addFriend(User friend) {
+        if (friend == null || friend.equals(this)) return;
+        if (this.friends == null) this.friends = new HashSet<>();
+        if (friend.getFriends() == null) friend.setFriends(new HashSet<>());
+        if (this.friends.add(friend)) {
+            friend.getFriends().add(this);
+        }
+    }
+
+    public void removeFriend(User friend) {
+        if (friend == null || this.friends == null) return;
+        if (this.friends.remove(friend)) {
+            if (friend.getFriends() != null) friend.getFriends().remove(this);
+        }
+    }
 }

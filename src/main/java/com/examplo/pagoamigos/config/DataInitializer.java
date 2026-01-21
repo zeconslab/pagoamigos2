@@ -123,12 +123,10 @@ public class DataInitializer {
                 }
                 logger.info("Productos creados: {}", products.size());
 
-                // Establecer amistad entre solicitante y validador
+                // Establecer amistad entre solicitante y validador usando helper (gestiona ambas direcciones)
                 if (solicitanteUser != null && validatorUser != null) {
-                    if (solicitanteUser.getFriends() == null) solicitanteUser.setFriends(new HashSet<>());
-                    if (validatorUser.getFriends() == null) validatorUser.setFriends(new HashSet<>());
-                    solicitanteUser.getFriends().add(validatorUser);
-                    validatorUser.getFriends().add(solicitanteUser);
+                    solicitanteUser.addFriend(validatorUser);
+                    // guardar uno de los dos es suficiente si está gestionado; guardamos ambos para asegurar sincronía
                     userRepository.save(solicitanteUser);
                     userRepository.save(validatorUser);
                 }
