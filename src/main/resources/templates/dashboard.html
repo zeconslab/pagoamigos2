@@ -115,11 +115,11 @@
         </div>
         <nav class="flex items-center gap-4">
           <a sec:authorize="hasAnyRole('SOLICITANTE','VALIDATOR')"
-            class="text-[11px] font-bold uppercase tracking-wider text-primary border-b-2 border-primary pb-2 mt-2" 
-            href="/dashboard">Tablero</a>
+            class="nav-link text-[11px] font-bold uppercase tracking-wider pb-2 mt-2" 
+            href="/dashboard" data-path="/dashboard">Tablero</a>
           <a sec:authorize="hasRole('SOLICITANTE')" 
-            class="text-[11px] font-bold uppercase tracking-wider text-slate-500 hover:text-primary transition-colors pb-2 mt-2"
-            href="/history">Historial de Aprobación</a>
+            class="nav-link text-[11px] font-bold uppercase tracking-wider pb-2 mt-2"
+            href="/history" data-path="/history">Historial de Aprobación</a>
         </nav>
       </div>
       <div class="flex items-center gap-4">
@@ -510,6 +510,24 @@
   </div>
   <div th:replace="~{loading :: loading}"></div>
   <script src="/js/loading.js"></script>
+  <script>
+    // Activate navigation link based on current path
+    (function() {
+      const currentPath = window.location.pathname;
+      const navLinks = document.querySelectorAll('.nav-link');
+      
+      navLinks.forEach(link => {
+        const linkPath = link.getAttribute('data-path');
+        if (linkPath === currentPath) {
+          link.classList.add('active');
+          link.classList.remove('no-active');
+        } else {
+          link.classList.add('no-active');
+          link.classList.remove('active');
+        }
+      });
+    })();
+  </script>
 </body>
 <script>
   (function () {
