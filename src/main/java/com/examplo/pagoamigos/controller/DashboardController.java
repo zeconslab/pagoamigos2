@@ -27,9 +27,10 @@ public class DashboardController {
     @GetMapping("/dashboard")
     public String dashboard(Model model, Authentication authentication) {
 
-        String email = authentication.getName();
-        
+        String email = null;
+
         if (authentication != null) {
+            email = authentication.getName();
             model.addAttribute("username", authentication.getName());
             boolean isValidator = authentication.getAuthorities().stream().anyMatch(a -> a.getAuthority().equals("ROLE_VALIDATOR"));
             boolean isSolicitante = authentication.getAuthorities().stream().anyMatch(a -> a.getAuthority().equals("ROLE_SOLICITANTE"));
