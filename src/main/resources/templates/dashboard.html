@@ -233,6 +233,7 @@
             <thead>
               <tr class="bg-slate-50/50">
                 <th sec:authorize="hasRole('VALIDATOR')">ID de solicitud</th>
+                <th sec:authorize="hasRole('SOLICITANTE')">ID de solicitud</th>
                 <!-- <th>Solicitante</th>
                 <th>Artículo y descripción</th>
                 <th>Monto</th>
@@ -252,6 +253,7 @@
               </tr>
               <tr th:each="product : ${products}" class="hover:bg-slate-50/50 transition-colors">
                 <td sec:authorize="hasRole('VALIDATOR')" class="font-bold text-slate-900" th:text="'#SL-' + ${product.id}">#1</td>
+                <td sec:authorize="hasRole('SOLICITANTE')" class="font-bold text-slate-900" th:text="'#-' + ${product.id}">#1</td>
               </tr>
             </tbody>
           </table>
