@@ -30,8 +30,6 @@ import java.util.UUID;
 public class SecurityConfig {
     
     private final UserDetailsService userDetailsService;
-    @Value("${app.form-action-origin:https://pagoamigos.pimentel.cloud}")
-    private String formActionOrigin;
 
     public SecurityConfig(UserDetailsService userDetailsService) {
         this.userDetailsService = userDetailsService;
@@ -70,6 +68,12 @@ public class SecurityConfig {
             // CSRF con cookies para evitar crear sesión en formularios
             .csrf(csrf -> {
                 CookieCsrfTokenRepository tokenRepository = CookieCsrfTokenRepository.withHttpOnlyFalse();
+                tokenRepository.setCookieCustomizer(cookie -> {
+                    cookie.secure(true);  // Requerido para HTTPS en producción
+                    cookie.sameSite("Lax");  // Permite cookies en POST forms
+                    cookie.path("/");
+                });
+                
                 CsrfTokenRequestAttributeHandler requestHandler = new CsrfTokenRequestAttributeHandler();
                 requestHandler.setCsrfRequestAttributeName("_csrf");
                 
@@ -86,8 +90,7 @@ public class SecurityConfig {
                         "img-src 'self' data: https://lh3.googleusercontent.com https://grainy-gradients.vercel.app; " +
                         "frame-ancestors 'none'; " +
                         "base-uri 'self'; " +
-                        // Allow the application's deployed origin for form submissions (from properties)
-                        "form-action 'self' " + formActionOrigin + ";")
+                        "form-action 'self';")
                 )
                 .frameOptions(frame -> frame.deny())
                 .xssProtection(xss -> xss.disable()) // XSS Protection obsoleto en navegadores modernos con CSP
@@ -123,6 +126,12 @@ public class SecurityConfig {
                                        Authentication authentication) throws IOException {
                 // Generar nuevo token CSRF después del logout
                 CookieCsrfTokenRepository tokenRepository = CookieCsrfTokenRepository.withHttpOnlyFalse();
+                tokenRepository.setCookieCustomizer(cookie -> {
+                    cookie.secure(true);
+                    cookie.sameSite("Lax");
+                    cookie.path("/");
+                });
+                
                 CsrfToken newToken = new DefaultCsrfToken("X-CSRF-TOKEN", "_csrf", UUID.randomUUID().toString());
                 tokenRepository.saveToken(newToken, request, response);
                 

@@ -26,6 +26,12 @@ public class LoginController {
         // Si no existe el token, crear uno nuevo
         if (csrfToken == null) {
             CookieCsrfTokenRepository tokenRepository = CookieCsrfTokenRepository.withHttpOnlyFalse();
+            tokenRepository.setCookieCustomizer(cookie -> {
+                cookie.secure(true);  // Requerido para HTTPS en producción
+                cookie.sameSite("Lax");
+                cookie.path("/");
+            });
+            
             csrfToken = new DefaultCsrfToken("X-CSRF-TOKEN", "_csrf", UUID.randomUUID().toString());
             tokenRepository.saveToken(csrfToken, request, response);
             request.setAttribute("_csrf", csrfToken);
