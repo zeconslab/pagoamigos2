@@ -31,12 +31,12 @@ public class Product {
     private Integer status;
 
     // Usuario que creó la solicitud (solicitante)
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "creator_id")
     private User creator;
 
     // Usuario que validará (amigo/validador)
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "validator_id")
     private User validator;
 }
