@@ -258,9 +258,8 @@
                   th:text="'#SL-' + ${product.id}">#1</td>
                 <td sec:authorize="hasRole('SOLICITANTE')" class="font-bold text-slate-900"
                   th:text="'#-' + ${product.id}">#1</td>
-                <td sec:authorize="hasRole('VALIDATOR')" class="font-bold text-slate-900"
-                  th:text="${product.creator != null ? product.creator.name : ''}">Solicitante</td>
-                <td sec:authorize="hasRole('SOLICITANTE')" th:text="${product.validator != null ? product.validator.name : ''}">
+                
+                  <td sec:authorize="hasRole('SOLICITANTE')" th:text="${product.validator != null ? product.validator.name : ''}">
                   <div class="flex items-center gap-2">
                     <div class="size-6 rounded-full bg-slate-100 overflow-hidden">
                       <img alt="User"
@@ -269,6 +268,7 @@
                     <span class="font-semibold text-slate-700">Validador</span>
                   </div>
                 </td>
+                
                 <td sec:authorize="hasRole('VALIDATOR')" th:text="${product.creator != null ? product.creator.name : ''}">
                   <div class="flex items-center gap-2">
                     <div class="size-6 rounded-full bg-slate-100 overflow-hidden">
