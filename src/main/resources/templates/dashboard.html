@@ -151,7 +151,9 @@
                 role="menuitem">Configuración</a>
               <div class="border-t border-slate-100 my-1"></div>
               <form th:action="@{/logout}" method="post" class="m-0">
-                <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
+                <input th:if="${_csrfParameterName != null}" type="hidden"
+                  th:name="${_csrfParameterName}"
+                  th:value="${_csrfToken}" />
                 <button type="submit" class="w-full text-left px-4 py-2 text-sm text-rose-600 hover:bg-rose-50"
                   role="menuitem">Cerrar sesión</button>
               </form>
