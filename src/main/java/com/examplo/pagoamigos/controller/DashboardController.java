@@ -48,10 +48,10 @@ public class DashboardController {
                 if (u.getId() != null) {
                     if (isValidator) {
                         // Validador: ver productos donde es validador con estatus PENDIENTE (1)
-                        products.addAll(productRepository.findByValidator_IdAndStatus(u.getId(), Estatus_Products.PENDIENTE.getCode()));
+                        products.addAll(productRepository.findByValidator_IdAndStatusWithValidator(u.getId(), Estatus_Products.PENDIENTE.getCode()));
                     } else {
                         // Solicitante: ver productos donde es creador con estatus PENDIENTE (1)
-                        products.addAll(productRepository.findByCreator_IdAndStatus(u.getId(), Estatus_Products.PENDIENTE.getCode()));
+                        products.addAll(productRepository.findByCreator_IdAndStatusWithCreator(u.getId(), Estatus_Products.PENDIENTE.getCode()));
                     }
                     
                     // Opcional: también cargar productos donde el usuario participa con sus amigos
