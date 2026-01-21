@@ -236,6 +236,7 @@
                 <th sec:authorize="hasRole('VALIDATOR')">Solicitante</th>
                 <th sec:authorize="hasRole('SOLICITANTE')">Validador</th>
                 <th>Monto</th>
+                <th>Estatus</th>
 
                 <!-- <th>Solicitante</th>
                 <th>Artículo y descripción</th>
@@ -281,6 +282,13 @@
                 </td>
 
                 <td class="font-extrabold text-slate-900" th:text="${product.price}">price</td>
+                <td class="font-extrabold text-slate-900">
+                  <span th:switch="${product.status}">
+                    <span th:case="1" class="status-pill status-pending" th:text="'Pendiente'">Pendiente</span>
+                    <span th:case="2" class="status-pill status-approved" th:text="'Aprobado'">Aprobado</span>
+                    <span th:case="*" class="status-pill status-rejected" th:text="${product.status}">Desconocido</span>
+                  </span>
+                </td>
               </tr>
             </tbody>
           </table>
