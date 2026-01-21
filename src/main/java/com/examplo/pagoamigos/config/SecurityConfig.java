@@ -4,6 +4,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
@@ -29,6 +30,8 @@ import java.util.UUID;
 public class SecurityConfig {
     
     private final UserDetailsService userDetailsService;
+    @Value("${app.form-action-origin:https://pagoamigos.pimentel.cloud}")
+    private String formActionOrigin;
 
     public SecurityConfig(UserDetailsService userDetailsService) {
         this.userDetailsService = userDetailsService;
@@ -83,7 +86,8 @@ public class SecurityConfig {
                         "img-src 'self' data: https://lh3.googleusercontent.com https://grainy-gradients.vercel.app; " +
                         "frame-ancestors 'none'; " +
                         "base-uri 'self'; " +
-                        "form-action 'self';")
+                        // Allow the application's deployed origin for form submissions (from properties)
+                        "form-action 'self' " + formActionOrigin + ";")
                 )
                 .frameOptions(frame -> frame.deny())
                 .xssProtection(xss -> xss.disable()) // XSS Protection obsoleto en navegadores modernos con CSP
@@ -111,7 +115,8 @@ public class SecurityConfig {
         return handler;
     }
 
-    @Bean    public LogoutSuccessHandler customLogoutSuccessHandler() {
+    @Bean    
+    public LogoutSuccessHandler customLogoutSuccessHandler() {
         return new LogoutSuccessHandler() {
             @Override
             public void onLogoutSuccess(HttpServletRequest request, HttpServletResponse response,
@@ -127,7 +132,8 @@ public class SecurityConfig {
         };
     }
 
-    @Bean    public PasswordEncoder passwordEncoder() {
+    @Bean    
+    public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder(12); // Aumentado a 12 rounds para mayor seguridad
     }
 }
