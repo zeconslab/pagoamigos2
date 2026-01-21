@@ -86,6 +86,7 @@ public class DataInitializer {
             User solicitanteUser = userRepository.findByEmail("solicitante@pagoamigos.com").orElse(null);
             User validatorUser = userRepository.findByEmail("validator@pagoamigos.com").orElse(null);
 
+            logger.info("Inicia creación de productos de ejemplo");
             // Crear productos de ejemplo y asociarlos a usuarios (si no existen)
             if (productRepository.count() == 0) {
                 List<Product> products = new ArrayList<>();
