@@ -4,7 +4,7 @@
 <head>
   <meta charset="utf-8" />
   <meta content="width=device-width, initial-scale=1.0" name="viewport" />
-  <title>Approver Dashboard - Compra Amigos Enterprise</title>
+  <title>Panel de Aprobación - Compra Amigos</title>
   <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
   <link
     href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&amp;family=Noto+Sans:wght@400;500&amp;display=swap"
@@ -110,7 +110,7 @@
             <h2 class="text-slate-900 text-sm font-extrabold leading-none">
               Compra Amigos
             </h2>
-            <span class="text-[8px] uppercase tracking-widest font-bold text-primary/80">Enterprise</span>
+            <span class="text-[8px] uppercase tracking-widest font-bold text-primary/80">Empresa</span>
           </div>
         </div>
         <nav class="flex items-center gap-4">
@@ -170,7 +170,7 @@
           </div>
           <div>
             <p class="text-[10px] font-bold text-slate-500 uppercase tracking-wider">
-              Pending My Approval
+              Pendientes para mi aprobación
             </p>
             <p class="text-2xl font-extrabold text-slate-900 leading-none">
               08
@@ -183,7 +183,7 @@
           </div>
           <div>
             <p class="text-[10px] font-bold text-slate-500 uppercase tracking-wider">
-              Recently Approved
+              Recientemente aprobadas
             </p>
             <p class="text-2xl font-extrabold text-slate-900 leading-none">
               124
@@ -196,7 +196,7 @@
           </div>
           <div>
             <p class="text-[10px] font-bold text-slate-500 uppercase tracking-wider">
-              Total Budget Managed
+              Presupuesto total gestionado
             </p>
             <p class="text-2xl font-extrabold text-slate-900 leading-none">
               $285.5k
@@ -209,16 +209,16 @@
           <div class="flex items-center gap-2">
             <span class="material-symbols-outlined text-slate-400 text-lg">list_alt</span>
             <h3 class="text-xs font-extrabold text-slate-900 uppercase tracking-tight">
-              Pending Approvals Queue
+              Cola de aprobaciones pendientes
             </h3>
           </div>
           <div class="flex items-center gap-2">
             <div class="relative">
               <span
                 class="material-symbols-outlined absolute left-2 top-1/2 -translate-y-1/2 text-slate-400 text-sm">search</span>
-              <input
+                <input
                 class="text-[11px] pl-7 pr-3 py-1 bg-white border-slate-200 rounded w-64 focus:ring-1 focus:ring-primary/20 focus:border-primary outline-none"
-                placeholder="Search by requester or ID..." type="text" />
+                placeholder="Buscar por solicitante o ID..." type="text" />
             </div>
             <button
               class="flex items-center gap-1 text-[11px] font-bold text-slate-500 hover:text-slate-700 bg-white border border-slate-200 px-2 py-1 rounded">
@@ -231,13 +231,13 @@
           <table class="w-full border-collapse">
             <thead>
               <tr class="bg-slate-50/50">
-                <th>Request ID</th>
-                <th>Requester</th>
-                <th>Item &amp; Description</th>
-                <th>Amount</th>
-                <th>Date Requested</th>
-                <th class="text-center">Details</th>
-                <th class="text-right px-6">Review Action</th>
+                <th>ID de solicitud</th>
+                <th>Solicitante</th>
+                <th>Artículo y descripción</th>
+                <th>Monto</th>
+                <th>Fecha de solicitud</th>
+                <th class="text-center">Detalles</th>
+                <th class="text-right px-6">Acción</th>
               </tr>
             </thead>
             <tbody class="divide-y divide-slate-50">
@@ -269,12 +269,12 @@
                   <div class="flex items-center justify-end gap-2">
                     <button
                       class="btn-action bg-rose-50 border-rose-100 text-rose-600 hover:bg-rose-600 hover:text-white group"
-                      title="Reject">
+                      title="Rechazar">
                       <span class="material-symbols-outlined text-sm">close</span>
                     </button>
                     <button
                       class="btn-action bg-emerald-50 border-emerald-100 text-emerald-600 hover:bg-emerald-600 hover:text-white"
-                      title="Approve">
+                      title="Aprobar">
                       <span class="material-symbols-outlined text-sm font-bold">check</span>
                     </button>
                   </div>
@@ -402,20 +402,20 @@
         </div>
         <div
           class="px-4 py-2 bg-slate-50 border-t border-slate-100 flex items-center justify-between text-[10px] font-bold text-slate-400 uppercase tracking-widest">
-          <span>8 requests awaiting your review</span>
+            <span>8 solicitudes a la espera de tu revisión</span>
           <div class="flex items-center gap-4">
             <button class="hover:text-primary disabled:opacity-30" disabled="">
-              Previous
+              Anterior
             </button>
-            <button class="hover:text-primary">Next</button>
+            <button class="hover:text-primary">Siguiente</button>
           </div>
         </div>
       </div>
       <div class="grid grid-cols-1 lg:grid-cols-3 gap-4">
         <div class="lg:col-span-2 bg-white rounded-lg border border-slate-200 p-4 shadow-sm">
-          <h4 class="text-xs font-extrabold text-slate-900 uppercase tracking-tight mb-4 flex items-center gap-2">
+            <h4 class="text-xs font-extrabold text-slate-900 uppercase tracking-tight mb-4 flex items-center gap-2">
             <span class="material-symbols-outlined text-emerald-500 text-lg">history</span>
-            Recent Activity History
+            Historial de actividad reciente
           </h4>
           <div class="space-y-3">
             <div class="flex items-center justify-between py-2 border-b border-slate-50">
@@ -425,10 +425,10 @@
                 </div>
                 <div>
                   <p class="text-[11px] font-bold text-slate-800">
-                    Approved #PR-8821 Cloud Server Expansion
+                    Aprobado #PR-8821 Expansión de servidores en la nube
                   </p>
                   <p class="text-[9px] text-slate-400 uppercase font-bold">
-                    Oct 24, 2024 • Requester: John Doe
+                    Oct 24, 2024 • Solicitante: John Doe
                   </p>
                 </div>
               </div>
@@ -451,15 +451,15 @@
               <span class="text-xs font-bold text-slate-900">$4,500.00</span>
             </div>
           </div>
-          <button
+            <button
             class="w-full mt-4 py-2 text-[10px] font-bold text-slate-500 hover:text-primary border-t border-slate-50 uppercase tracking-widest transition-colors">
-            View Full Approval Logs
-          </button>
+            Ver registros completos de aprobaciones
+            </button>
         </div>
         <div class="bg-white rounded-lg border border-slate-200 p-4 shadow-sm">
           <h4 class="text-xs font-extrabold text-slate-900 uppercase tracking-tight mb-4 flex items-center gap-2">
             <span class="material-symbols-outlined text-primary text-lg">pie_chart</span>
-            Budget Utilization
+            Utilización del presupuesto
           </h4>
           <div class="space-y-4">
             <div>
@@ -499,14 +499,14 @@
         <p th:text="'© ' + ${T(java.time.Year).now().getValue()} + ' Compra Amigos'"></p>
         <span class="opacity-20">|</span>
         <div class="flex items-center gap-1.5 text-green-600">
-          <span class="size-1 bg-green-500 rounded-full"></span>
-          System Operational
+              <span class="size-1 bg-green-500 rounded-full"></span>
+            Sistema operativo
         </div>
       </div>
       <div class="flex gap-4">
-        <a class="hover:text-primary transition-colors" href="#">Review Policies</a>
-        <a class="hover:text-primary transition-colors" href="#">Support Desk</a>
-        <a class="hover:text-primary transition-colors" href="#">Audit Terms</a>
+        <a class="hover:text-primary transition-colors" href="#">Revisar políticas</a>
+        <a class="hover:text-primary transition-colors" href="#">Soporte</a>
+        <a class="hover:text-primary transition-colors" href="#">Términos de auditoría</a>
       </div>
     </footer>
   </div>

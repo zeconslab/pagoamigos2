@@ -10,6 +10,16 @@
     .glass-overlay .glass-card {
       box-shadow: 0 24px 60px rgba(2,6,23,0.28), 0 6px 18px rgba(2,6,23,0.12);
     }
+    /* Entrance transition when the 'hidden' class is removed by loading.js */
+    #global-loading {
+      opacity: 0;
+      transform: translateY(8px) scale(0.99);
+      transition: opacity 220ms cubic-bezier(.2,.8,.2,1), transform 220ms cubic-bezier(.2,.8,.2,1);
+    }
+    #global-loading:not(.hidden) {
+      opacity: 1;
+      transform: translateY(0) scale(1);
+    }
   </style>
   <div id="global-loading" class="hidden fixed inset-0 z-[100] flex items-center justify-center glass-overlay">
     <div
@@ -19,14 +29,14 @@
         <div class="absolute inset-0 rounded-full animate-spin spinner-gradient"></div>
       </div>
       <div class="space-y-3">
-        <h3 class="text-sm font-extrabold text-slate-900 uppercase tracking-tight">Processing Action</h3>
-        <p class="text-[12px] font-medium text-slate-500 leading-relaxed px-4">
-          Validating Request and Synchronizing Payment Schedule...
-        </p>
+        <h3 class="text-sm font-extrabold text-slate-900 uppercase tracking-tight">Procesando acción</h3>
+          <p class="text-[12px] font-medium text-slate-500 leading-relaxed px-4">
+            Validando la solicitud...
+          </p>
       </div>
       <div class="flex items-center gap-1.5 opacity-40">
         <div class="size-1 bg-primary rounded-full"></div>
-        <span class="text-[8px] font-extrabold uppercase tracking-[0.2em] text-slate-400">Secure Protocol</span>
+        <span class="text-[8px] font-extrabold uppercase tracking-[0.2em] text-slate-400">Protocolo seguro</span>
       </div>
     </div>
   </div>
