@@ -126,9 +126,17 @@ public class DataInitializer {
                 // Establecer amistad entre solicitante y validador usando helper (gestiona ambas direcciones)
                 if (solicitanteUser != null && validatorUser != null) {
                     solicitanteUser.addFriend(validatorUser);
-                    // guardar uno de los dos es suficiente si está gestionado; guardamos ambos para asegurar sincronía
-                    userRepository.save(solicitanteUser);
-                    userRepository.save(validatorUser);
+                    // Forzar persistencia inmediata y confirmar
+                    userRepository.saveAndFlush(solicitanteUser);
+                    userRepository.saveAndFlush(validatorUser);
+
+                    // Recargar y loguear counts para verificar
+                    User sReload = userRepository.findById(solicitanteUser.getId()).orElse(null);
+                    User vReload = userRepository.findById(validatorUser.getId()).orElse(null);
+                    logger.info("Solicitante friends after save: {}",
+                            sReload == null ? 0 : (sReload.getFriends() == null ? 0 : sReload.getFriends().size()));
+                    logger.info("Validator friends after save: {}",
+                            vReload == null ? 0 : (vReload.getFriends() == null ? 0 : vReload.getFriends().size()));
                 }
             }
 
