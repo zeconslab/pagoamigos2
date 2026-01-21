@@ -127,26 +127,18 @@ public class DataInitializer {
 
             // Establecer amistad entre solicitante y validador (SIEMPRE, fuera del bloque de productos)
             if (solicitanteUser != null && validatorUser != null) {
-                // Verificar si ya son amigos para no duplicar
-                boolean alreadyFriends = solicitanteUser.getFriends() != null && 
-                                         solicitanteUser.getFriends().contains(validatorUser);
-                
-                if (!alreadyFriends) {
-                    logger.info("Estableciendo amistad entre {} y {}", solicitanteUser.getEmail(), validatorUser.getEmail());
-                    solicitanteUser.addFriend(validatorUser);
-                    userRepository.saveAndFlush(solicitanteUser);
-                    userRepository.saveAndFlush(validatorUser);
+                logger.info("Estableciendo amistad entre {} y {}", solicitanteUser.getEmail(), validatorUser.getEmail());
+                solicitanteUser.addFriend(validatorUser);
+                userRepository.saveAndFlush(solicitanteUser);
+                userRepository.saveAndFlush(validatorUser);
 
-                    // Recargar y loguear counts para verificar
-                    User sReload = userRepository.findById(solicitanteUser.getId()).orElse(null);
-                    User vReload = userRepository.findById(validatorUser.getId()).orElse(null);
-                    logger.info("Solicitante friends after save: {}",
-                            sReload == null ? 0 : (sReload.getFriends() == null ? 0 : sReload.getFriends().size()));
-                    logger.info("Validator friends after save: {}",
-                            vReload == null ? 0 : (vReload.getFriends() == null ? 0 : vReload.getFriends().size()));
-                } else {
-                    logger.info("Los usuarios {} y {} ya son amigos", solicitanteUser.getEmail(), validatorUser.getEmail());
-                }
+                // Recargar y loguear counts para verificar
+                User sReload = userRepository.findById(solicitanteUser.getId()).orElse(null);
+                User vReload = userRepository.findById(validatorUser.getId()).orElse(null);
+                logger.info("Solicitante friends after save: {}",
+                        sReload == null ? 0 : (sReload.getFriends() == null ? 0 : sReload.getFriends().size()));
+                logger.info("Validator friends after save: {}",
+                        vReload == null ? 0 : (vReload.getFriends() == null ? 0 : vReload.getFriends().size()));
             }
 
             logger.info("Carga de datos de prueba completada.");
