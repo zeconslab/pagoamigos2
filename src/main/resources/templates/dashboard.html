@@ -173,8 +173,8 @@
             <p class="text-[10px] font-bold text-slate-500 uppercase tracking-wider">
               Pendientes para mi aprobación
             </p>
-            <p class="text-2xl font-extrabold text-slate-900 leading-none">
-              08
+            <p class="text-2xl font-extrabold text-slate-900 leading-none" th:text="${pendingCount}">
+              0
             </p>
           </div>
         </div>
@@ -312,7 +312,7 @@
 
         <div
           class="px-4 py-2 bg-slate-50 border-t border-slate-100 flex items-center justify-between text-[10px] font-bold text-slate-400 uppercase tracking-widest">
-            <span>8 solicitudes a la espera de tu revisión</span>
+            <span th:text="${pendingCount} + ' solicitudes a la espera de tu revisión'">0 solicitudes a la espera de tu revisión</span>
           <div class="flex items-center gap-4">
             <button class="hover:text-primary disabled:opacity-30" disabled="">
               Anterior

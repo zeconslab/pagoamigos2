@@ -101,17 +101,27 @@ public class DataInitializer {
                     Product p = new Product();
                     p.setName(names[i]);
                     p.setPrice(prices[i]);
+                    // Set status: first 3 -> PENDIENTE (1), next 3 -> APROBADO (2), rest PENDIENTE
+                    if (i < 3) {
+                        p.setStatus(1); // PENDIENTE - belong to solicitante
+                    } else if (i < 6) {
+                        p.setStatus(2); // APROBADO - belong to validator
+                    } else {
+                        p.setStatus(1);
+                    }
                     products.add(productRepository.save(p));
                 }
                 logger.info("Productos creados: {}", products.size());
 
                 // Asociar algunos productos a los usuarios creados
                 userRepository.findByEmail("solicitante@pagoamigos.com").ifPresent(u -> {
+                    // Asociar solo productos PENDIENTE al solicitante
                     u.setProducts(new HashSet<>(products.subList(0, 3)));
                     userRepository.save(u);
                 });
 
                 userRepository.findByEmail("validator@pagoamigos.com").ifPresent(u -> {
+                    // Asociar solo productos APROBADO al validador
                     u.setProducts(new HashSet<>(products.subList(3, 6)));
                     userRepository.save(u);
                 });

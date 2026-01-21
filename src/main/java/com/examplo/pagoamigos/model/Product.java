@@ -25,6 +25,7 @@ public class Product {
 
     private String name;
     private Double price;
+    private int status;
 
     @ManyToMany(mappedBy = "products")
     private Set<User> users;
