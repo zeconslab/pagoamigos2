@@ -9,11 +9,19 @@ import java.util.List;
 @Repository
 public interface ProductRepository extends JpaRepository<Product, Long> {
 	List<Product> findByStatus(int status);
-	List<Product> findByUsers_IdAndStatus(Long userId, int status);
 
-	// Obtener todos los productos asociados a un usuario (independiente de estatus)
-	List<Product> findByUsers_Id(Long userId);
+	// Buscar por creator/validator
+	List<Product> findByCreator_IdAndStatus(Long creatorId, int status);
+	List<Product> findByValidator_IdAndStatus(Long validatorId, int status);
 
-	// Buscar por varios estatus para un usuario
-	List<Product> findByUsers_IdAndStatusIn(Long userId, List<Integer> statuses);
+	// Obtener todos los productos creados/validados por un usuario (independiente de estatus)
+	List<Product> findByCreator_Id(Long creatorId);
+	List<Product> findByValidator_Id(Long validatorId);
+
+	// Productos entre dos usuarios (creator -> validator)
+	List<Product> findByCreator_IdAndValidator_Id(Long creatorId, Long validatorId);
+
+	// Buscar por varios estatus para creator/validator
+	List<Product> findByCreator_IdAndStatusIn(Long creatorId, List<Integer> statuses);
+	List<Product> findByValidator_IdAndStatusIn(Long validatorId, List<Integer> statuses);
 }

@@ -11,6 +11,7 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.JoinTable;
 import jakarta.persistence.ManyToMany;
+import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
@@ -71,7 +72,18 @@ public class User {
     @JoinTable(name = "user_roles", joinColumns = @JoinColumn(name = "user_id"), inverseJoinColumns = @JoinColumn(name = "rol_id"))
     private Set<Rol> roles;
 
+    // Amigos (usuarios relacionados entre sí)
     @ManyToMany(fetch = FetchType.LAZY)
-    @JoinTable(name = "user_products", joinColumns = @JoinColumn(name = "user_id"), inverseJoinColumns = @JoinColumn(name = "product_id"))
-    private Set<Product> products;
+    @JoinTable(name = "user_friends",
+            joinColumns = @JoinColumn(name = "user_id"),
+            inverseJoinColumns = @JoinColumn(name = "friend_id"))
+    private Set<User> friends;
+
+    // Productos que creó este usuario
+    @OneToMany(mappedBy = "creator", fetch = FetchType.LAZY)
+    private Set<Product> createdProducts;
+
+    // Productos que este usuario valida
+    @OneToMany(mappedBy = "validator", fetch = FetchType.LAZY)
+    private Set<Product> validatedProducts;
 }

@@ -97,34 +97,41 @@ public class DataInitializer {
                 };
                 Double[] prices = new Double[] {3499.00, 599.00, 129.00, 59.00, 349.00, 199.00, 499.00, 149.00, 89.00, 129.00};
 
+                // Obtener referencias a los usuarios creados (si existen)
+                User solicitanteUser = userRepository.findByEmail("solicitante@pagoamigos.com").orElse(null);
+                User validatorUser = userRepository.findByEmail("validator@pagoamigos.com").orElse(null);
+
                 for (int i = 0; i < names.length; i++) {
                     Product p = new Product();
                     p.setName(names[i]);
                     p.setPrice(prices[i]);
                     // Set status: first 3 -> PENDIENTE (1), next 3 -> APROBADO (2), rest PENDIENTE
                     if (i < 3) {
-                        p.setStatus(1); // PENDIENTE - belong to solicitante
+                        p.setStatus(1); // PENDIENTE
+                        // creador: solicitante
+                        if (solicitanteUser != null) p.setCreator(solicitanteUser);
                     } else if (i < 6) {
-                        p.setStatus(2); // APROBADO - belong to validator
+                        p.setStatus(2); // APROBADO
+                        // creador: solicitante; validador: validator
+                        if (solicitanteUser != null) p.setCreator(solicitanteUser);
+                        if (validatorUser != null) p.setValidator(validatorUser);
                     } else {
                         p.setStatus(1);
+                        if (solicitanteUser != null) p.setCreator(solicitanteUser);
                     }
                     products.add(productRepository.save(p));
                 }
                 logger.info("Productos creados: {}", products.size());
 
-                // Asociar algunos productos a los usuarios creados
-                userRepository.findByEmail("solicitante@pagoamigos.com").ifPresent(u -> {
-                    // Asociar solo productos PENDIENTE al solicitante
-                    u.setProducts(new HashSet<>(products.subList(0, 3)));
-                    userRepository.save(u);
-                });
-
-                userRepository.findByEmail("validator@pagoamigos.com").ifPresent(u -> {
-                    // Asociar solo productos APROBADO al validador
-                    u.setProducts(new HashSet<>(products.subList(3, 6)));
-                    userRepository.save(u);
-                });
+                // Establecer amistad entre solicitante y validador
+                if (solicitanteUser != null && validatorUser != null) {
+                    if (solicitanteUser.getFriends() == null) solicitanteUser.setFriends(new HashSet<>());
+                    if (validatorUser.getFriends() == null) validatorUser.setFriends(new HashSet<>());
+                    solicitanteUser.getFriends().add(validatorUser);
+                    validatorUser.getFriends().add(solicitanteUser);
+                    userRepository.save(solicitanteUser);
+                    userRepository.save(validatorUser);
+                }
             }
 
             logger.info("Carga de datos de prueba completada.");

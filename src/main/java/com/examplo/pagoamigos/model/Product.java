@@ -7,8 +7,10 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
-import jakarta.persistence.ManyToMany;
+import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.FetchType;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -28,6 +30,13 @@ public class Product {
     @Column(nullable = true)
     private Integer status;
 
-    @ManyToMany(mappedBy = "products")
-    private Set<User> users;
+    // Usuario que creó la solicitud (solicitante)
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "creator_id")
+    private User creator;
+
+    // Usuario que validará (amigo/validador)
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "validator_id")
+    private User validator;
 }
