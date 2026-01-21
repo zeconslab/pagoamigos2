@@ -11,7 +11,6 @@ import org.springframework.boot.CommandLineRunner;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.transaction.annotation.Transactional;
 
 import com.examplo.pagoamigos.model.Product;
 import com.examplo.pagoamigos.repository.ProductRepository;
@@ -27,7 +26,6 @@ public class DataInitializer {
     private static final Logger logger = LoggerFactory.getLogger(DataInitializer.class);
 
     @Bean
-    @Transactional
     CommandLineRunner initDatabase(UserRepository userRepository, 
                                    RolRepository rolRepository, 
                                    PasswordEncoder passwordEncoder,
