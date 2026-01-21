@@ -114,13 +114,12 @@
           </div>
         </div>
         <nav class="flex items-center gap-4">
-          <a sec:authorize="hasRole('SOLICITANTE','VALIDATOR')"
-            class="text-[11px] font-bold uppercase tracking-wider pb-2 mt-2" href="#"
-            th:classappend="${#httpServletRequest.requestURI.startsWith('/dashboard') ? 'active' : 'no-active'}">Tablero</a>
-          <a sec:authorize="hasRole('SOLICITANTE')" class="text-[11px] font-bold uppercase tracking-wider pb-2 mt-2"
-            href="#"
-            th:classappend="${#httpServletRequest.requestURI.startsWith('/history') ? 'active' : 'no-active'}">Historial
-            de Aprobación</a>
+          <a sec:authorize="hasAnyRole('SOLICITANTE','VALIDATOR')"
+            class="text-[11px] font-bold uppercase tracking-wider text-primary border-b-2 border-primary pb-2 mt-2" 
+            href="/dashboard">Tablero</a>
+          <a sec:authorize="hasRole('SOLICITANTE')" 
+            class="text-[11px] font-bold uppercase tracking-wider text-slate-500 hover:text-primary transition-colors pb-2 mt-2"
+            href="/history">Historial de Aprobación</a>
         </nav>
       </div>
       <div class="flex items-center gap-4">
@@ -509,8 +508,8 @@
       </div>
     </footer>
   </div>
-  <div th:replace="fragments/loading :: loading"></div>
-  <script src="/src/main/resources/static/js/loading.js"></script>
+  <div th:replace="~{loading :: loading}"></div>
+  <script src="/js/loading.js"></script>
 </body>
 <script>
   (function () {

@@ -10,7 +10,6 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.SimpleUrlAuthenticationFailureHandler;
-import org.springframework.security.web.csrf.CookieCsrfTokenRepository;
 
 @Configuration
 @EnableWebSecurity
@@ -28,7 +27,7 @@ public class SecurityConfig {
         http
             // Configuración de autorización
             .authorizeHttpRequests(auth -> auth
-                .requestMatchers("/login", "/error", "/error/**", "/css/**", "/js/**", "/images/**", "/logout", "/favicon.ico").permitAll()
+                .requestMatchers("/login", "/error", "/error/**", "/css/**", "/js/**", "/images/**", "/logout", "/favicon.ico", "/.well-known/**").permitAll()
                 .requestMatchers("/dashboard/**").hasAnyRole("VALIDATOR", "SOLICITANTE")
                 .anyRequest().authenticated()
             )
@@ -53,18 +52,7 @@ public class SecurityConfig {
                 .maximumSessions(1)
                 .maxSessionsPreventsLogin(false)
             )
-            // CSRF con cookies para evitar crear sesión en formularios
-            .csrf(csrf -> {
-                CookieCsrfTokenRepository tokenRepository = CookieCsrfTokenRepository.withHttpOnlyFalse();
-                tokenRepository.setCookieCustomizer(cookie -> {
-                    cookie.secure(true);  // Requerido para HTTPS en producción
-                    cookie.sameSite("Lax");  // Permite cookies en POST forms
-                    cookie.path("/");
-                    cookie.maxAge(3600); // 1 hora
-                });
-                
-                csrf.csrfTokenRepository(tokenRepository);
-            })
+            // CSRF habilitado con configuración predeterminada (basado en sesión)
             // Headers de seguridad
             .headers(headers -> headers
                 .contentSecurityPolicy(csp -> csp
