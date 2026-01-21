@@ -251,7 +251,7 @@
                 </td>
               </tr>
               <tr th:each="product : ${products}" class="hover:bg-slate-50/50 transition-colors">
-                <td class="font-bold text-slate-900" th:text="'#' + ${product.id}">#1</td>
+                <td sec:authorize="hasRole('VALIDATOR')" class="font-bold text-slate-900" th:text="'#SL-' + ${product.id}">#1</td>
               </tr>
             </tbody>
           </table>
