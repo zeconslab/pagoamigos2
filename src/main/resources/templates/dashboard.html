@@ -232,7 +232,7 @@
           <table class="w-full border-collapse">
             <thead>
               <tr class="bg-slate-50/50">
-                <th>ID de solicitud</th>
+                <th sec:authorize="hasRole('VALIDATOR')">ID de solicitud</th>
                 <th>Solicitante</th>
                 <th>Artículo y descripción</th>
                 <th>Monto</th>
@@ -242,165 +242,74 @@
               </tr>
             </thead>
             <tbody class="divide-y divide-slate-50">
-              <tr class="hover:bg-slate-50/50 transition-colors">
-                <td class="font-bold text-slate-900">#PR-9012</td>
-                <td>
-                  <div class="flex items-center gap-2">
-                    <div class="size-6 rounded-full bg-slate-100 overflow-hidden">
-                      <img alt="User"
-                        src="https://lh3.googleusercontent.com/aida-public/AB6AXuA3yhfQ-dckABOR_tiatacxr-8_7MWVSb2a2NTlStuYoCWAy9PNbgxj-VfbU0hL-DT6YfGcXJiOKu_0pAYaBoOzToFAuvxZemlTEWUiJYZhOxaWfV0lSvyBmerf746B1GT4n1S9BYHxwYx5MBCJ59RFu0wM2UOTizaZ1GCpxAGWwI7-hu3ibFlme_NWwb2p_oVHetQ5FmLYSM4a8nl7CcIW04XM0ibV8FpajMDAAay-yOWWjg-9FocfPeuaRhgKnG7fu0x6ldWWmgA" />
-                    </div>
-                    <span class="font-semibold text-slate-700">Jane Doe</span>
-                  </div>
-                </td>
-                <td>
-                  <div class="flex flex-col">
-                    <span class="font-semibold text-slate-800">MacBook Pro M3 Max</span>
-                    <span class="text-[10px] text-slate-400">Engineering Dept - Tech Refresh</span>
-                  </div>
-                </td>
-                <td class="font-extrabold text-slate-900">$3,499.00</td>
-                <td class="text-xs text-slate-500">2 hours ago</td>
-                <td class="text-center">
-                  <button class="text-slate-400 hover:text-primary">
-                    <span class="material-symbols-outlined text-lg">visibility</span>
-                  </button>
-                </td>
-                <td class="text-right px-6">
-                  <div class="flex items-center justify-end gap-2">
-                    <button
-                      class="btn-action bg-rose-50 border-rose-100 text-rose-600 hover:bg-rose-600 hover:text-white group"
-                      title="Rechazar">
-                      <span class="material-symbols-outlined text-sm">close</span>
-                    </button>
-                    <button
-                      class="btn-action bg-emerald-50 border-emerald-100 text-emerald-600 hover:bg-emerald-600 hover:text-white"
-                      title="Aprobar">
-                      <span class="material-symbols-outlined text-sm font-bold">check</span>
-                    </button>
+              <tr th:if="${products.isEmpty()}" class="hover:bg-slate-50/50 transition-colors">
+                <td colspan="3" class="text-center py-8">
+                  <div class="flex flex-col items-center gap-2">
+                    <span class="material-symbols-outlined text-slate-300 text-4xl">inventory_2</span>
+                    <p class="text-sm text-slate-400 font-semibold">No hay productos disponibles</p>
                   </div>
                 </td>
               </tr>
-              <tr class="hover:bg-slate-50/50 transition-colors">
-                <td class="font-bold text-slate-900">#PR-9008</td>
-                <td>
-                  <div class="flex items-center gap-2">
-                    <div class="size-6 rounded-full bg-slate-100 overflow-hidden">
-                      <img alt="User"
-                        src="https://lh3.googleusercontent.com/aida-public/AB6AXuDDpw55y6IInmLG61U0JZ1qfgn6vaj0W6kKt_71VEbZOiK_AT868Dvsjm4_VscETn_Lx4Z8l7D4lWUSh5vwkdhRGgZtjmF6TAAUSE3XrephQIohew0QPWzQ5ezJlM4P3-iuY-3XgUF7dhYShVIc1fbISvc4ZPb32k7A7sxUO_MM2xy3vfcoEHtopd7-Eo4vYO3SZRC-Z3oILrHZWqfCtn2DrbqsgVso5OjwGAajPjyZaaikZtt7477sVYXB2oyfrnneqp2peuzkfaQ" />
-                    </div>
-                    <span class="font-semibold text-slate-700">Mike Jones</span>
-                  </div>
-                </td>
-                <td>
-                  <div class="flex flex-col">
-                    <span class="font-semibold text-slate-800">SaaS Renewal (Github)</span>
-                    <span class="text-[10px] text-slate-400">Annual Subscription - Enterprise</span>
-                  </div>
-                </td>
-                <td class="font-extrabold text-slate-900">$12,200.00</td>
-                <td class="text-xs text-slate-500">5 hours ago</td>
-                <td class="text-center">
-                  <button class="text-slate-400 hover:text-primary">
-                    <span class="material-symbols-outlined text-lg">visibility</span>
-                  </button>
-                </td>
-                <td class="text-right px-6">
-                  <div class="flex items-center justify-end gap-2">
-                    <button
-                      class="btn-action bg-rose-50 border-rose-100 text-rose-600 hover:bg-rose-600 hover:text-white"
-                      title="Reject">
-                      <span class="material-symbols-outlined text-sm">close</span>
-                    </button>
-                    <button
-                      class="btn-action bg-emerald-50 border-emerald-100 text-emerald-600 hover:bg-emerald-600 hover:text-white"
-                      title="Approve">
-                      <span class="material-symbols-outlined text-sm font-bold">check</span>
-                    </button>
-                  </div>
-                </td>
-              </tr>
-              <tr class="hover:bg-slate-50/50 transition-colors">
-                <td class="font-bold text-slate-900">#PR-8995</td>
-                <td>
-                  <div class="flex items-center gap-2">
-                    <div class="size-6 rounded-full bg-slate-100 overflow-hidden">
-                      <img alt="User"
-                        src="https://lh3.googleusercontent.com/aida-public/AB6AXuCFcgDuf_tf3ivdE4Kfw_Z885jKxIc_YWRfq47uMayjO3P-a7sPNZYO3XcWalz_-srO3mB1Pjrvme9HYBiY0Q2RWIAOhgkL_CZtmO_yhB5rSn11iBuGIqOXVmyPPgF_-GUWFUj4aOH_w8AhFcGq9Fpeh7fZW4SvdYXJnKbnG4BAJAI-6nqlLrwr5YXFOZMBRNP586QMZ-AHO3n7FCKX4k81zLXyJTP9UwUIJch1rSJ8TLUw2xQqW6PFVnICXQZKBgZcIaLPe_JwcoQ" />
-                    </div>
-                    <span class="font-semibold text-slate-700">Carlos Ruiz</span>
-                  </div>
-                </td>
-                <td>
-                  <div class="flex flex-col">
-                    <span class="font-semibold text-slate-800">Office Chairs (x5)</span>
-                    <span class="text-[10px] text-slate-400">Operations - Floor 4</span>
-                  </div>
-                </td>
-                <td class="font-extrabold text-slate-900">$1,850.00</td>
-                <td class="text-xs text-slate-500">Yesterday</td>
-                <td class="text-center">
-                  <button class="text-slate-400 hover:text-primary">
-                    <span class="material-symbols-outlined text-lg">visibility</span>
-                  </button>
-                </td>
-                <td class="text-right px-6">
-                  <div class="flex items-center justify-end gap-2">
-                    <button
-                      class="btn-action bg-rose-50 border-rose-100 text-rose-600 hover:bg-rose-600 hover:text-white"
-                      title="Reject">
-                      <span class="material-symbols-outlined text-sm">close</span>
-                    </button>
-                    <button
-                      class="btn-action bg-emerald-50 border-emerald-100 text-emerald-600 hover:bg-emerald-600 hover:text-white"
-                      title="Approve">
-                      <span class="material-symbols-outlined text-sm font-bold">check</span>
-                    </button>
-                  </div>
-                </td>
-              </tr>
-              <tr class="hover:bg-slate-50/50 transition-colors">
-                <td class="font-bold text-slate-900">#PR-8991</td>
-                <td>
-                  <div class="flex items-center gap-2">
-                    <div class="size-6 rounded-full bg-slate-100 overflow-hidden">
-                      <img alt="User"
-                        src="https://lh3.googleusercontent.com/aida-public/AB6AXuBhVoCGAlqhWNzZyyZYaKUK_CBgeZI6rxr7hhfgtT2kZ-_jX1X9YmEGUvS4ejk-Kl3oMFZkUq5vGMQc3TYZ3MAHiz3mT1r_TK0-E-aSim8RKFRoAmnfJEb6MEqfNb7yJLMHoNWPaG9D_YUVjfoIDM9wCkpXpBz9zIFSOCHBS1EdRYGe7_7sTzKT4tY_w76C_WjUZpAmagrhDvsfqKKhVuI9CnmiImqD4e1vDqkYbER6qThneoq2L1LbMPa5iLqh4XVD9J1NJ7MnVmA" />
-                    </div>
-                    <span class="font-semibold text-slate-700">Anna Kim</span>
-                  </div>
-                </td>
-                <td>
-                  <div class="flex flex-col">
-                    <span class="font-semibold text-slate-800">Marketing Assets Bundle</span>
-                    <span class="text-[10px] text-slate-400">Creative Services - Campaign Q4</span>
-                  </div>
-                </td>
-                <td class="font-extrabold text-slate-900">$820.00</td>
-                <td class="text-xs text-slate-500">Oct 26, 2024</td>
-                <td class="text-center">
-                  <button class="text-slate-400 hover:text-primary">
-                    <span class="material-symbols-outlined text-lg">visibility</span>
-                  </button>
-                </td>
-                <td class="text-right px-6">
-                  <div class="flex items-center justify-end gap-2">
-                    <button
-                      class="btn-action bg-rose-50 border-rose-100 text-rose-600 hover:bg-rose-600 hover:text-white"
-                      title="Reject">
-                      <span class="material-symbols-outlined text-sm">close</span>
-                    </button>
-                    <button
-                      class="btn-action bg-emerald-50 border-emerald-100 text-emerald-600 hover:bg-emerald-600 hover:text-white"
-                      title="Approve">
-                      <span class="material-symbols-outlined text-sm font-bold">check</span>
-                    </button>
-                  </div>
-                </td>
+              <tr th:each="product : ${products}" class="hover:bg-slate-50/50 transition-colors">
+                <td class="font-bold text-slate-900" th:text="'#' + ${product.id}">#1</td>
               </tr>
             </tbody>
           </table>
         </div>
+
+        <!-- Sección de Productos -->
+      <!-- <div class="bg-white rounded-lg border border-slate-200 shadow-sm overflow-hidden">
+        <div class="px-4 py-3 border-b border-slate-100 flex items-center justify-between bg-slate-50/30">
+          <div class="flex items-center gap-2">
+            <span class="material-symbols-outlined text-slate-400 text-lg">inventory_2</span>
+            <h3 class="text-xs font-extrabold text-slate-900 uppercase tracking-tight">
+              Catálogo de Productos
+            </h3>
+          </div>
+          <span class="text-[10px] font-bold text-slate-500 uppercase tracking-wider" 
+                th:text="${products.size()} + ' productos disponibles'">
+            0 productos disponibles
+          </span>
+        </div>
+        <div class="overflow-x-auto">
+          <table class="w-full border-collapse">
+            <thead>
+              <tr class="bg-slate-50/50">
+                <th>ID</th>
+                <th>Nombre del Producto</th>
+                <th class="text-right px-6">Precio</th>
+              </tr>
+            </thead>
+            <tbody class="divide-y divide-slate-50">
+              <tr th:if="${products.isEmpty()}" class="hover:bg-slate-50/50 transition-colors">
+                <td colspan="3" class="text-center py-8">
+                  <div class="flex flex-col items-center gap-2">
+                    <span class="material-symbols-outlined text-slate-300 text-4xl">inventory_2</span>
+                    <p class="text-sm text-slate-400 font-semibold">No hay productos disponibles</p>
+                  </div>
+                </td>
+              </tr>
+              <tr th:each="product : ${products}" class="hover:bg-slate-50/50 transition-colors">
+                <td class="font-bold text-slate-900" th:text="'#' + ${product.id}">#1</td>
+                <td>
+                  <div class="flex items-center gap-2">
+                    <div class="size-8 rounded-lg bg-primary/10 text-primary flex items-center justify-center">
+                      <span class="material-symbols-outlined text-lg">shopping_bag</span>
+                    </div>
+                    <span class="font-semibold text-slate-700" th:text="${product.name}">Producto</span>
+                  </div>
+                </td>
+                <td class="text-right px-6 font-extrabold text-slate-900" 
+                    th:text="'$' + ${#numbers.formatDecimal(product.price, 1, 2)}">$0.00</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+        <div class="px-4 py-2 bg-slate-50 border-t border-slate-100 flex items-center justify-center text-[10px] font-bold text-slate-400 uppercase tracking-widest">
+          <span th:text="'Total de productos: ' + ${products.size()}">Total de productos: 0</span>
+        </div>
+      </div> -->
+
         <div
           class="px-4 py-2 bg-slate-50 border-t border-slate-100 flex items-center justify-between text-[10px] font-bold text-slate-400 uppercase tracking-widest">
             <span>8 solicitudes a la espera de tu revisión</span>
