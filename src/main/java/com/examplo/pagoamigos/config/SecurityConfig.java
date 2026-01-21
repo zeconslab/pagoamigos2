@@ -1,28 +1,16 @@
 package com.examplo.pagoamigos.config;
 
-import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
-import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.SimpleUrlAuthenticationFailureHandler;
-import org.springframework.security.web.authentication.logout.LogoutSuccessHandler;
 import org.springframework.security.web.csrf.CookieCsrfTokenRepository;
-import org.springframework.security.web.csrf.CsrfToken;
-import org.springframework.security.web.csrf.CsrfTokenRepository;
-import org.springframework.security.web.csrf.CsrfTokenRequestAttributeHandler;
-import org.springframework.security.web.csrf.DefaultCsrfToken;
-
-import java.io.IOException;
-import java.util.UUID;
 
 @Configuration
 @EnableWebSecurity
@@ -54,7 +42,7 @@ public class SecurityConfig {
             // Configuración de logout seguro
             .logout(logout -> logout 
                 .logoutUrl("/logout")
-                .logoutSuccessHandler(customLogoutSuccessHandler())
+                .logoutSuccessUrl("/login?logout")
                 .invalidateHttpSession(true)
                 .deleteCookies("JSESSIONID")
                 .clearAuthentication(true)
@@ -72,13 +60,10 @@ public class SecurityConfig {
                     cookie.secure(true);  // Requerido para HTTPS en producción
                     cookie.sameSite("Lax");  // Permite cookies en POST forms
                     cookie.path("/");
+                    cookie.maxAge(3600); // 1 hora
                 });
                 
-                CsrfTokenRequestAttributeHandler requestHandler = new CsrfTokenRequestAttributeHandler();
-                requestHandler.setCsrfRequestAttributeName("_csrf");
-                
-                csrf.csrfTokenRepository(tokenRepository)
-                    .csrfTokenRequestHandler(requestHandler);
+                csrf.csrfTokenRepository(tokenRepository);
             })
             // Headers de seguridad
             .headers(headers -> headers
@@ -89,8 +74,7 @@ public class SecurityConfig {
                         "font-src 'self' https://fonts.gstatic.com; " +
                         "img-src 'self' data: https://lh3.googleusercontent.com https://grainy-gradients.vercel.app; " +
                         "frame-ancestors 'none'; " +
-                        "base-uri 'self'; " +
-                        "form-action 'self';")
+                        "base-uri 'self';")
                 )
                 .frameOptions(frame -> frame.deny())
                 .xssProtection(xss -> xss.disable()) // XSS Protection obsoleto en navegadores modernos con CSP
@@ -116,29 +100,6 @@ public class SecurityConfig {
         SimpleUrlAuthenticationFailureHandler handler = new SimpleUrlAuthenticationFailureHandler();
         handler.setDefaultFailureUrl("/login?error=true");
         return handler;
-    }
-
-    @Bean    
-    public LogoutSuccessHandler customLogoutSuccessHandler() {
-        return new LogoutSuccessHandler() {
-            @Override
-            public void onLogoutSuccess(HttpServletRequest request, HttpServletResponse response,
-                                       Authentication authentication) throws IOException {
-                // Generar nuevo token CSRF después del logout
-                CookieCsrfTokenRepository tokenRepository = CookieCsrfTokenRepository.withHttpOnlyFalse();
-                tokenRepository.setCookieCustomizer(cookie -> {
-                    cookie.secure(true);
-                    cookie.sameSite("Lax");
-                    cookie.path("/");
-                });
-                
-                CsrfToken newToken = new DefaultCsrfToken("X-CSRF-TOKEN", "_csrf", UUID.randomUUID().toString());
-                tokenRepository.saveToken(newToken, request, response);
-                
-                // Redirigir al login
-                response.sendRedirect("/login?logout");
-            }
-        };
     }
 
     @Bean    
