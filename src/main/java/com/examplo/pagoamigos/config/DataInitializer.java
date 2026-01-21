@@ -14,7 +14,6 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 
 import com.examplo.pagoamigos.model.Product;
 import com.examplo.pagoamigos.repository.ProductRepository;
-import com.examplo.pagoamigos.service.ProductIdGeneratorService;
 
 import com.examplo.pagoamigos.model.Rol;
 import com.examplo.pagoamigos.model.User;
@@ -30,8 +29,7 @@ public class DataInitializer {
     CommandLineRunner initDatabase(UserRepository userRepository, 
                                    RolRepository rolRepository, 
                                    PasswordEncoder passwordEncoder,
-                                   ProductRepository productRepository,
-                                   ProductIdGeneratorService productIdGeneratorService) {
+                                   ProductRepository productRepository) {
         return args -> {
             logger.info("Iniciando carga de datos de prueba...");
 
@@ -101,7 +99,6 @@ public class DataInitializer {
 
                 for (int i = 0; i < names.length; i++) {
                     Product p = new Product();
-                    p.setId(productIdGeneratorService.generateId());
                     p.setName(names[i]);
                     p.setPrice(prices[i]);
                     products.add(productRepository.save(p));
