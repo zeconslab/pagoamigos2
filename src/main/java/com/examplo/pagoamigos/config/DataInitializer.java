@@ -1,6 +1,9 @@
 package com.examplo.pagoamigos.config;
 
 import java.util.Set;
+import java.util.List;
+import java.util.ArrayList;
+import java.util.HashSet;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -8,6 +11,10 @@ import org.springframework.boot.CommandLineRunner;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.crypto.password.PasswordEncoder;
+
+import com.examplo.pagoamigos.model.Product;
+import com.examplo.pagoamigos.repository.ProductRepository;
+import com.examplo.pagoamigos.service.ProductIdGeneratorService;
 
 import com.examplo.pagoamigos.model.Rol;
 import com.examplo.pagoamigos.model.User;
@@ -22,7 +29,9 @@ public class DataInitializer {
     @Bean
     CommandLineRunner initDatabase(UserRepository userRepository, 
                                    RolRepository rolRepository, 
-                                   PasswordEncoder passwordEncoder) {
+                                   PasswordEncoder passwordEncoder,
+                                   ProductRepository productRepository,
+                                   ProductIdGeneratorService productIdGeneratorService) {
         return args -> {
             logger.info("Iniciando carga de datos de prueba...");
 
@@ -71,6 +80,44 @@ public class DataInitializer {
                 solicitante.setRoles(Set.of(rolSolicitante));
                 userRepository.save(solicitante);
                 logger.info("Usuario solicitante creado: solicitante@pagoamigos.com / Solicitante123!");
+            }
+
+            // Crear productos de ejemplo y asociarlos a usuarios (si no existen)
+            if (productRepository.count() == 0) {
+                List<Product> products = new ArrayList<>();
+                String[] names = new String[] {
+                        "Laptop Pro M3",
+                        "Monitor 27\" 4K",
+                        "Teclado Mecánico",
+                        "Mouse Inalámbrico",
+                        "Silla Ergonómica",
+                        "Auriculares ANC",
+                        "Suscripción SaaS - 1 año",
+                        "Disco SSD 1TB",
+                        "Cámara Web 1080p",
+                        "Licencia Office 365"
+                };
+                Double[] prices = new Double[] {3499.00, 599.00, 129.00, 59.00, 349.00, 199.00, 499.00, 149.00, 89.00, 129.00};
+
+                for (int i = 0; i < names.length; i++) {
+                    Product p = new Product();
+                    p.setId(productIdGeneratorService.generateId());
+                    p.setName(names[i]);
+                    p.setPrice(prices[i]);
+                    products.add(productRepository.save(p));
+                }
+                logger.info("Productos creados: {}", products.size());
+
+                // Asociar algunos productos a los usuarios creados
+                userRepository.findByEmail("solicitante@pagoamigos.com").ifPresent(u -> {
+                    u.setProducts(new HashSet<>(products.subList(0, 3)));
+                    userRepository.save(u);
+                });
+
+                userRepository.findByEmail("validator@pagoamigos.com").ifPresent(u -> {
+                    u.setProducts(new HashSet<>(products.subList(3, 6)));
+                    userRepository.save(u);
+                });
             }
 
             logger.info("Carga de datos de prueba completada.");
