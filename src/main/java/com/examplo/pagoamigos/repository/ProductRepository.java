@@ -10,4 +10,7 @@ import java.util.List;
 public interface ProductRepository extends JpaRepository<Product, Long> {
 	List<Product> findByStatus(int status);
 	List<Product> findByUsers_IdAndStatus(Long userId, int status);
+
+	// Obtener todos los productos asociados a un usuario (independiente de estatus)
+	List<Product> findByUsers_Id(Long userId);
 }
