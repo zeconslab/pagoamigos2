@@ -113,6 +113,19 @@
       .stagger-5 {
         animation-delay: 0.5s;
       }
+      /* Prevent entrance flicker: ensure animated elements start hidden
+         and use will-change to optimize rendering. Tailwind animations
+         (fadeInUp, popIn) already animate to opacity:1; this prevents
+         a brief flash before the animation starts.
+      */
+      .animate-fade-in-up,
+      .animate-pop-in {
+        opacity: 0;
+        will-change: opacity, transform;
+      }
+      .animate-pop-in {
+        transform: scale(0.95);
+      }
     </style>
   </head>
   <body
@@ -199,7 +212,7 @@
               <h1
                 class="text-6xl xl:text-7xl font-black leading-[1.1] tracking-tighter text-slate-deep"
               >
-                Compra con un amigo <br />
+                Amigo <br />
                 <span
                   class="text-transparent bg-clip-text bg-gradient-to-r from-corporate-orange to-premium-gold"
                   >rápido y colaborativo.</span
@@ -257,7 +270,7 @@
             >
               <div class="mb-10 text-center animate-fade-in-up stagger-1">
                 <h2 class="text-3xl font-black text-slate-deep mb-2">
-                  Accede para comprar con un amigo
+                  Acceder
                 </h2>
                 <p class="text-charcoal-grey/60 text-sm font-medium">
                   Inicia sesión para coordinar una compra conjunta con tu amigo
