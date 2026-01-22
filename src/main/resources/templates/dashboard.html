@@ -910,7 +910,12 @@
           } else {
             // small screens: allow page scroll; ensure overlay doesn't block touch
             document.body.style.overflow = '';
-            modal.style.pointerEvents = 'none';
+            // position overlay absolute at current scroll so it moves with the page
+            modal.style.position = 'absolute';
+            modal.style.top = window.scrollY + 'px';
+            modal.style.left = '0';
+            modal.style.width = '100%';
+            modal.style.pointerEvents = 'auto';
             if (modalContent) {
               modalContent.style.maxHeight = '';
               modalContent.style.overflow = '';
@@ -927,6 +932,11 @@
           modal.classList.add('hidden');
           // restore body scroll and cleanup inline styles
           document.body.style.overflow = '';
+          // reset any small-screen absolute positioning
+          modal.style.position = '';
+          modal.style.top = '';
+          modal.style.left = '';
+          modal.style.width = '';
           modal.style.pointerEvents = '';
           if (modalContent) {
             modalContent.style.maxHeight = '';
