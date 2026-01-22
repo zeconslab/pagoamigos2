@@ -880,33 +880,31 @@
 
         if (!openBtn || !modal) return;
         let _savedScrollY = 0;
+        let _wasSmallScreen = false;
 
-        function openModal() {
-          modal.classList.remove('hidden');
-          modal.style.display = 'flex';
-          // trigger overlay and content animations
-          modal.classList.remove('animate-overlay');
-          void modal.offsetWidth;
-          modal.classList.add('animate-overlay');
-
-          if (modalContent) {
-            modalContent.classList.remove('animate-pop-in');
-            void modalContent.offsetWidth;
-            modalContent.classList.add('animate-pop-in');
-          }
-
-          // Responsive behavior:
-          // - On medium/large screens: lock body scroll, modal fixed with internal scroll
-          // - On small screens: allow page scroll, modal flows in document
+        function applyModalLayout() {
           const isSmall = window.innerWidth < 640;
+          
           if (!isSmall) {
             // Large screens: prevent background scroll and make modal content scroll internally
-            _savedScrollY = window.scrollY || window.pageYOffset || 0;
-            document.body.style.position = 'fixed';
-            document.body.style.top = -_savedScrollY + 'px';
-            document.body.style.left = '0';
-            document.body.style.right = '0';
-            document.body.style.overflow = 'hidden';
+            if (_wasSmallScreen) {
+              // Transitioning from small to large: clean up small screen styles
+              modal.style.position = '';
+              modal.style.top = '';
+              modal.style.left = '';
+              modal.style.width = '';
+              modal.style.height = '';
+            }
+            
+            if (document.body.style.position !== 'fixed') {
+              _savedScrollY = window.scrollY || window.pageYOffset || 0;
+              document.body.style.position = 'fixed';
+              document.body.style.top = -_savedScrollY + 'px';
+              document.body.style.left = '0';
+              document.body.style.right = '0';
+              document.body.style.overflow = 'hidden';
+            }
+            
             modal.style.pointerEvents = 'auto';
             if (modalContent) {
               modalContent.style.maxHeight = 'calc(100vh - 4rem)';
@@ -915,7 +913,18 @@
             }
           } else {
             // Small screens: position modal absolute at current scroll, allow page to scroll
-            _savedScrollY = window.scrollY || window.pageYOffset || 0;
+            if (!_wasSmallScreen) {
+              // Transitioning from large to small: restore body scroll
+              document.body.style.overflow = '';
+              document.body.style.position = '';
+              document.body.style.top = '';
+              document.body.style.left = '';
+              document.body.style.right = '';
+              if (_savedScrollY) {
+                window.scrollTo(0, _savedScrollY);
+              }
+            }
+            
             modal.style.position = 'absolute';
             modal.style.top = '0';
             modal.style.left = '0';
@@ -936,6 +945,27 @@
               modalContent.style.pointerEvents = 'auto';
             }
           }
+          
+          _wasSmallScreen = isSmall;
+        }
+
+        function openModal() {
+          modal.classList.remove('hidden');
+          modal.style.display = 'flex';
+          // trigger overlay and content animations
+          modal.classList.remove('animate-overlay');
+          void modal.offsetWidth;
+          modal.classList.add('animate-overlay');
+
+          if (modalContent) {
+            modalContent.classList.remove('animate-pop-in');
+            void modalContent.offsetWidth;
+            modalContent.classList.add('animate-pop-in');
+          }
+
+          _savedScrollY = window.scrollY || window.pageYOffset || 0;
+          _wasSmallScreen = window.innerWidth < 640;
+          applyModalLayout();
         }
 
         function closeModal() {
@@ -950,12 +980,12 @@
           document.body.style.top = '';
           document.body.style.left = '';
           document.body.style.right = '';
-          // restore page scroll position saved when opening (only for large screens)
-          const wasLargeScreen = modal.style.position === '' || modal.style.position === 'fixed';
-          if (_savedScrollY && wasLargeScreen) {
+          // restore page scroll position
+          if (_savedScrollY) {
             window.scrollTo(0, _savedScrollY);
           }
           _savedScrollY = 0;
+          _wasSmallScreen = false;
           // reset any positioning
           modal.style.position = '';
           modal.style.top = '';
@@ -987,6 +1017,13 @@
         // Close on ESC
         document.addEventListener('keydown', function (e) {
           if (e.key === 'Escape' && !modal.classList.contains('hidden')) closeModal();
+        });
+
+        // Handle window resize while modal is open
+        window.addEventListener('resize', function () {
+          if (!modal.classList.contains('hidden')) {
+            applyModalLayout();
+          }
         });
       })();
     </script>
