@@ -11,6 +11,10 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.util.List;
 import java.util.ArrayList;
@@ -60,9 +64,35 @@ public class DashboardController {
         }
         model.addAttribute("products", products);
 
+        // Exponer un objeto vacío para el formulario de creación
+        model.addAttribute("product", new Product());
+
         // Conteo: usar el tamaño de la lista filtrada
         model.addAttribute("pendingCount", products == null ? 0 : products.size());
 
         return "dashboard";
+    }
+
+    @PostMapping("/product/save")
+    public String saveProduct(@ModelAttribute Product product,
+                              @RequestParam(name = "validatorId", required = false) Long validatorId,
+                              Authentication authentication,
+                              RedirectAttributes redirectAttributes) {
+
+        // Asociar creador si está autenticado
+        if (authentication != null) {
+            String email = authentication.getName();
+            userRepository.findByEmail(email).ifPresent(user -> product.setCreator(user));
+        }
+
+        // Asociar validador seleccionado (opcional)
+        if (validatorId != null) {
+            userRepository.findById(validatorId).ifPresent(product::setValidator);
+        }
+
+        product.setStatus(Estatus_Products.PENDIENTE.getCode());
+        productRepository.save(product);
+        redirectAttributes.addFlashAttribute("successMessage", "Producto guardado correctamente");
+        return "redirect:/dashboard";
     }
 }
