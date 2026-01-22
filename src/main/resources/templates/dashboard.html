@@ -338,9 +338,26 @@
                 </div>
                 <div class="text-xs text-slate-500 uppercase font-bold mt-1">
                   <span sec:authorize="hasRole('VALIDATOR')">Validador</span>
-                  <span sec:authorize="hasRole('SOLICITANTE')">Solicitante</span>
-                  <span sec:authorize="!hasAnyRole('VALIDATOR','SOLICITANTE')">Usuario</span>
-                </div>
+                  <span sec:authorize="hasRole('SOLICITANTE')"
+                    >Solicitante</span
+                    <div class="p-6 space-y-5">
+                  <span sec:authorize="!hasAnyRole('VALIDATOR','SOLICITANTE')"
+                    >Usuario</span
+                  >
+                        <input
+                          class="form-input"
+                          placeholder="p. ej. Monitor Dell UltraSharp 27 pulgadas"
+                          type="text"
+                          name="name"
+                          />
+                aria-orientation="vertical"
+                aria-labelledby="userMenuButton"
+              >
+                        <select class="form-input" id="validatorSelect" name="validator.id">
+                          <option value="" disabled selected>Seleccionar validador</option>
+                          <option th:each="friend : ${friends}" th:value="${friend.id}" th:text="${friend.name + ' ' + friend.paternalLastName}">Amigo</option>
+                        </select>
+                >
                   <span class="material-symbols-outlined text-lg">person</span>
                   <span>Perfil</span>
                 </a>
