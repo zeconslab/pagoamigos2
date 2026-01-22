@@ -150,7 +150,7 @@
           box-shadow: 0 10px 30px rgba(2,6,23,0.2);
           pointer-events: auto; /* allow interaction with modal content */
           position: relative;
-          z-index: 1; /* ensure it's above the overlay dim */
+          z-index: 50; /* ensure it's above the overlay dim */
         }
         .modal-overlay::before {
           content: '';
@@ -159,7 +159,7 @@
           background: rgba(0,0,0,0.45);
           backdrop-filter: blur(6px);
           pointer-events: none; /* do not block touch events */
-          z-index: 0;
+          z-index: 49; /* place dim above page but below modal content */
         }
       }
     </style>
@@ -915,6 +915,8 @@
             modal.style.top = window.scrollY + 'px';
             modal.style.left = '0';
             modal.style.width = '100%';
+            // ensure overlay covers the viewport at the current position
+            modal.style.height = window.innerHeight + 'px';
             modal.style.pointerEvents = 'auto';
             if (modalContent) {
               modalContent.style.maxHeight = '';
@@ -937,6 +939,7 @@
           modal.style.top = '';
           modal.style.left = '';
           modal.style.width = '';
+          modal.style.height = '';
           modal.style.pointerEvents = '';
           if (modalContent) {
             modalContent.style.maxHeight = '';
