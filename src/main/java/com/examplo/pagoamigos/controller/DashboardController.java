@@ -53,21 +53,8 @@ public class DashboardController {
                         // Solicitante: ver productos donde es creador con estatus PENDIENTE (1)
                         products.addAll(productRepository.findByCreator_IdAndStatusWithCreator(u.getId(), Estatus_Products.PENDIENTE.getCode()));
                     }
-                    
-                    // Opcional: también cargar productos donde el usuario participa con sus amigos
-                    // (productos donde creator o validator es alguno de sus amigos)
-                    // Descomenta si quieres ver productos de amigos:
-                    /*
-                    if (u.getFriends() != null) {
-                        for (User friend : u.getFriends()) {
-                            if (isValidator) {
-                                products.addAll(productRepository.findByCreator_IdAndStatus(friend.getId(), Estatus_Products.PENDIENTE.getCode()));
-                            } else {
-                                products.addAll(productRepository.findByValidator_IdAndStatus(friend.getId(), Estatus_Products.PENDIENTE.getCode()));
-                            }
-                        }
-                    }
-                    */
+                    // Agregar lista de amigos para el modal
+                    model.addAttribute("friends", u.getFriends());
                 }
             });
         }
