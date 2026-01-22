@@ -132,11 +132,11 @@
       /* Mobile: allow modal content to scroll when it exceeds viewport height */
       @media (max-width: 640px) {
         .modal-overlay {
-          align-items: flex-start; /* allow content to start from top so page can scroll */
+          align-items: flex-start;
           padding-top: 1rem;
           padding-bottom: 1rem;
-          /* Let touch/scroll events pass through the overlay so the page can scroll */
-          pointer-events: none;
+          /* On small screens treat overlay as interactive and fixed to viewport */
+          pointer-events: auto;
           background: transparent; /* visual dim supplied by pseudo-element */
         }
         /* Keep modal content natural height and allow the page to scroll instead */
@@ -158,8 +158,8 @@
           inset: 0;
           background: rgba(0,0,0,0.45);
           backdrop-filter: blur(6px);
-          pointer-events: none; /* do not block touch events */
-          z-index: 49; /* place dim above page but below modal content */
+          pointer-events: auto;
+          z-index: 48; /* place dim above page but below modal content */
         }
       }
     </style>
@@ -879,6 +879,7 @@
         const cancelBtn = document.getElementById('cancelCreateProduct');
 
         if (!openBtn || !modal) return;
+        let _savedScrollY = 0;
 
         function openModal() {
           modal.classList.remove('hidden');
@@ -894,6 +895,14 @@
             modalContent.classList.add('animate-pop-in');
           }
 
+          // Save current scroll and lock background to prevent page scroll while modal is open
+          _savedScrollY = window.scrollY || window.pageYOffset || 0;
+          document.body.style.position = 'fixed';
+          document.body.style.top = -_savedScrollY + 'px';
+          document.body.style.left = '0';
+          document.body.style.right = '0';
+          document.body.style.overflow = 'hidden';
+
           // Responsive behavior:
           // - On medium/large screens lock body scroll and make modal content scrollable.
           // - On small screens allow page scroll (do not lock body) and let the page show full modal.
@@ -908,19 +917,17 @@
               modalContent.style.webkitOverflowScrolling = 'touch';
             }
           } else {
-            // small screens: allow page scroll; ensure overlay doesn't block touch
-            document.body.style.overflow = '';
-            // position overlay absolute at current scroll so it moves with the page
-            modal.style.position = 'absolute';
-            modal.style.top = window.scrollY + 'px';
+            // small screens: fix overlay to viewport and allow internal modal scroll
+            modal.style.position = 'fixed';
+            modal.style.top = '0';
             modal.style.left = '0';
             modal.style.width = '100%';
-            // ensure overlay covers the viewport at the current position
-            modal.style.height = window.innerHeight + 'px';
+            modal.style.height = '100vh';
             modal.style.pointerEvents = 'auto';
             if (modalContent) {
-              modalContent.style.maxHeight = '';
-              modalContent.style.overflow = '';
+              modalContent.style.maxHeight = 'calc(100vh - 4rem)';
+              modalContent.style.overflowY = 'auto';
+              modalContent.style.webkitOverflowScrolling = 'touch';
               modalContent.style.pointerEvents = 'auto';
             }
           }
@@ -934,7 +941,16 @@
           modal.classList.add('hidden');
           // restore body scroll and cleanup inline styles
           document.body.style.overflow = '';
-          // reset any small-screen absolute positioning
+          document.body.style.position = '';
+          document.body.style.top = '';
+          document.body.style.left = '';
+          document.body.style.right = '';
+          // restore page scroll position saved when opening
+          if (_savedScrollY) {
+            window.scrollTo(0, _savedScrollY);
+            _savedScrollY = 0;
+          }
+          // reset any small-screen positioning
           modal.style.position = '';
           modal.style.top = '';
           modal.style.left = '';
