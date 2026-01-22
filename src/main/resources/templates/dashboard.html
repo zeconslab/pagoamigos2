@@ -1,47 +1,52 @@
 <!doctype html>
-<html class="light" lang="en" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
-
-<head>
-  <meta charset="utf-8" />
-  <meta content="width=device-width, initial-scale=1.0" name="viewport" />
-  <title>Panel de Aprobación - Compra Amigos</title>
-  <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
-  <link
-    href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&amp;family=Noto+Sans:wght@400;500&amp;display=swap"
-    rel="stylesheet" />
-  <link
-    href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap"
-    rel="stylesheet" />
-  <link rel="icon" href="/favicon.svg" type="image/svg+xml">
-  <script id="tailwind-config">
-    tailwind.config = {
-      darkMode: "class",
-      theme: {
-        extend: {
-          colors: {
-            primary: "#e67e22",
-            secondary: "#2c3e50",
-            "background-light": "#f8fafc",
-            "background-dark": "#0f172a",
-            "border-muted": "#e2e8f0",
-          },
-          fontFamily: {
-            display: ["Plus Jakarta Sans", "sans-serif"],
-            sans: ["Plus Jakarta Sans", "sans-serif"],
-          },
-          borderRadius: {
-            DEFAULT: "0.375rem",
-            lg: "0.5rem",
-            xl: "0.75rem",
-            "2xl": "1rem",
-            full: "9999px",
+<html
+  class="light"
+  lang="en"
+  xmlns:sec="http://www.thymeleaf.org/extras/spring-security"
+>
+  <head>
+    <meta charset="utf-8" />
+    <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+    <title>Panel de Aprobación - Compra Amigos</title>
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <link
+      href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&amp;family=Noto+Sans:wght@400;500&amp;display=swap"
+      rel="stylesheet"
+    />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap"
+      rel="stylesheet"
+    />
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            colors: {
+              primary: "#e67e22",
+              secondary: "#2c3e50",
+              "background-light": "#f8fafc",
+              "background-dark": "#0f172a",
+              "border-muted": "#e2e8f0",
+            },
+            fontFamily: {
+              display: ["Plus Jakarta Sans", "sans-serif"],
+              sans: ["Plus Jakarta Sans", "sans-serif"],
+            },
+            borderRadius: {
+              DEFAULT: "0.375rem",
+              lg: "0.5rem",
+              xl: "0.75rem",
+              "2xl": "1rem",
+              full: "9999px",
+            },
           },
         },
-      },
-    };
-  </script>
-  <style type="text/tailwindcss">
-    :root {
+      };
+    </script>
+    <style type="text/tailwindcss">
+      :root {
         --primary-color: #e67e22;
       }
       .status-pill {
@@ -66,10 +71,10 @@
         @apply flex items-center justify-center size-8 rounded-lg transition-all border;
       }
       .active {
-          @apply text-primary border-b-2 border-primary;
+        @apply text-primary border-b-2 border-primary;
       }
       .no-active {
-          @apply text-slate-500 hover:text-primary transition-colors;
+        @apply text-slate-500 hover:text-primary transition-colors;
       }
       @keyframes dropdown-enter {
         from {
@@ -85,217 +90,412 @@
         animation: dropdown-enter 0.2s ease-out forwards;
       }
       .spinner-gradient {
-          background: conic-gradient(from 0deg, transparent 0%, var(--primary-color) 100%);
-          -webkit-mask: radial-gradient(farthest-side, transparent calc(100% - 6px), #000 0);
-          mask: radial-gradient(farthest-side, transparent calc(100% - 6px), #000 0);
+        background: conic-gradient(
+          from 0deg,
+          transparent 0%,
+          var(--primary-color) 100%
+        );
+        -webkit-mask: radial-gradient(
+          farthest-side,
+          transparent calc(100% - 6px),
+          #000 0
+        );
+        mask: radial-gradient(
+          farthest-side,
+          transparent calc(100% - 6px),
+          #000 0
+        );
       }
       .glass-card {
-          background: rgba(255, 255, 255, 0.9);
-          backdrop-filter: blur(12px);
-          -webkit-backdrop-filter: blur(12px);
-          border: 1px solid rgba(255, 255, 255, 0.3);
+        background: rgba(255, 255, 255, 0.9);
+        backdrop-filter: blur(12px);
+        -webkit-backdrop-filter: blur(12px);
+        border: 1px solid rgba(255, 255, 255, 0.3);
       }
     </style>
-</head>
+  </head>
 
-<body class="bg-background-light dark:bg-background-dark font-sans text-slate-900 dark:text-[#f8f7f5] antialiased">
-  <div class="min-h-screen flex flex-col">
-    <header
-      class="flex items-center justify-between px-4 py-2 border-b border-slate-200 bg-white sticky top-0 z-50 shadow-sm">
-      <div class="flex items-center gap-6">
-        <div class="flex items-center gap-2">
-          <div class="size-7 bg-primary rounded flex items-center justify-center text-white">
-            <span class="material-symbols-outlined text-lg font-bold">handshake</span>
-          </div>
-          <div class="flex flex-col">
-            <h2 class="text-slate-900 text-sm font-extrabold leading-none">
-              Compra Amigos
-            </h2>
-            <span class="text-[8px] uppercase tracking-widest font-bold text-primary/80">Empresa</span>
-          </div>
-        </div>
-        <nav class="flex items-center gap-4">
-          <a sec:authorize="hasAnyRole('SOLICITANTE','VALIDATOR')"
-            class="nav-link text-[11px] font-bold uppercase tracking-wider pb-2 mt-2" href="/dashboard"
-            data-path="/dashboard">Tablero</a>
-          <a sec:authorize="hasRole('SOLICITANTE')"
-            class="nav-link text-[11px] font-bold uppercase tracking-wider pb-2 mt-2" href="/history"
-            data-path="/history">Historial de Aprobación</a>
-        </nav>
-      </div>
-      <div class="flex items-center gap-4">
-        <div class="relative flex items-center gap-2 px-2 py-1 bg-slate-50 rounded border border-slate-100">
-          <div class="size-6 rounded-full bg-slate-200 overflow-hidden">
-            <img alt="User profile" class="w-full h-full object-cover"
-              src="https://lh3.googleusercontent.com/aida-public/AB6AXuA9282gWLnaqGN2n8QXABgTX7mDU9xyzviH4TS4l10d6rXvrgdr7XaG-blt7J_QZI3K_nTHgqD4XtjtGt2UPEfk2QHZqevj-OdoREZM8XBf-7vl0Rvp473NhY6iw8Z2fCn5_KLrE__j0icsuzo40Sdpr48rTc0DdBDmy2weNnVUgJT2b7-QlEmyfY1SDjHnxc_mmxl-UkDkndVg0mODQQvLZ3vUEywepX0tcK1jxNRttD1AmYR4dzoy3yeZpfYU_OkKCmC78VgxwFo" />
-          </div>
-          <div id="userMenuToggle" class="flex flex-col cursor-pointer" role="button" tabindex="0">
-            <span class="text-[10px] font-bold text-slate-700 leading-none"
-              sec:authentication="principal.fullName">Usuario</span>
-            <span class="text-[8px] text-slate-400 font-bold uppercase">
-              <span sec:authorize="hasRole('VALIDATOR')">Validador</span>
-              <span sec:authorize="hasRole('SOLICITANTE')">Solicitante</span>
-              <span sec:authorize="!hasAnyRole('VALIDATOR','SOLICITANTE')">Usuario</span>
-            </span>
-          </div>
-          <button id="userMenuButton" aria-haspopup="true" aria-expanded="false"
-            class="flex items-center text-slate-400 hover:text-slate-600 focus:outline-none">
-            <span class="material-symbols-outlined text-slate-400 text-sm">expand_more</span>
-          </button>
-
-          <div id="userMenu"
-            class="hidden absolute top-full right-0 mt-2 w-48 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5 focus:outline-none z-50">
-            <div class="py-1" role="menu" aria-orientation="vertical" aria-labelledby="userMenuButton">
-              <a href="/profile" class="block px-4 py-2 text-sm text-slate-700 hover:bg-slate-100"
-                role="menuitem">Perfil</a>
-              <a href="/settings" class="block px-4 py-2 text-sm text-slate-700 hover:bg-slate-100"
-                role="menuitem">Configuración</a>
-              <div class="border-t border-slate-100 my-1"></div>
-              <form th:action="@{/logout}" method="post" class="m-0">
-                <input th:if="${_csrfParameterName != null}" type="hidden" th:name="${_csrfParameterName}"
-                  th:value="${_csrfToken}" />
-                <button type="submit" class="w-full text-left px-4 py-2 text-sm text-rose-600 hover:bg-rose-50"
-                  role="menuitem">Cerrar sesión</button>
-              </form>
+  <body
+    class="bg-background-light dark:bg-background-dark font-sans text-slate-900 dark:text-[#f8f7f5] antialiased"
+  >
+    <div class="min-h-screen flex flex-col">
+      <header
+        class="flex items-center justify-between px-4 py-2 border-b border-slate-200 bg-white sticky top-0 z-50 shadow-sm"
+      >
+        <div class="flex items-center gap-6">
+          <div class="flex items-center gap-2">
+            <div
+              class="size-7 bg-primary rounded flex items-center justify-center text-white"
+            >
+              <span class="material-symbols-outlined text-lg font-bold"
+                >handshake</span
+              >
+            </div>
+            <div class="flex flex-col">
+              <h2 class="text-slate-900 text-sm font-extrabold leading-none">
+                Compra Amigos
+              </h2>
+              <span
+                class="text-[8px] uppercase tracking-widest font-bold text-primary/80"
+                >Empresa</span
+              >
             </div>
           </div>
+          <nav class="flex items-center gap-4">
+            <a
+              sec:authorize="hasAnyRole('SOLICITANTE','VALIDATOR')"
+              class="nav-link text-[11px] font-bold uppercase tracking-wider pb-2 mt-2"
+              href="/dashboard"
+              data-path="/dashboard"
+              >Tablero</a
+            >
+            <a
+              sec:authorize="hasRole('SOLICITANTE')"
+              class="nav-link text-[11px] font-bold uppercase tracking-wider pb-2 mt-2"
+              href="/history"
+              data-path="/history"
+              >Historial de Aprobación</a
+            >
+          </nav>
         </div>
-      </div>
-    </header>
-    <main class="flex-1 p-4 max-w-7xl mx-auto w-full space-y-4">
-      <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-        <div class="bg-white p-4 rounded-lg border border-slate-200 flex items-center gap-4 shadow-sm">
-          <div class="size-10 rounded-lg bg-amber-50 text-amber-600 flex items-center justify-center">
-            <span class="material-symbols-outlined text-2xl">pending_actions</span>
-          </div>
-          <div>
-            <p class="text-[10px] font-bold text-slate-500 uppercase tracking-wider">
-              Pendientes para mi aprobación
-            </p>
-            <p class="text-2xl font-extrabold text-slate-900 leading-none" th:text="${pendingCount}">
-              0
-            </p>
-          </div>
-        </div>
-        <div class="bg-white p-4 rounded-lg border border-slate-200 flex items-center gap-4 shadow-sm">
-          <div class="size-10 rounded-lg bg-emerald-50 text-emerald-600 flex items-center justify-center">
-            <span class="material-symbols-outlined text-2xl">verified</span>
-          </div>
-          <div>
-            <p class="text-[10px] font-bold text-slate-500 uppercase tracking-wider">
-              Recientemente aprobadas
-            </p>
-            <p class="text-2xl font-extrabold text-slate-900 leading-none">
-              124
-            </p>
-          </div>
-        </div>
-        <div class="bg-white p-4 rounded-lg border border-slate-200 flex items-center gap-4 shadow-sm">
-          <div class="size-10 rounded-lg bg-primary/10 text-primary flex items-center justify-center">
-            <span class="material-symbols-outlined text-2xl">account_balance_wallet</span>
-          </div>
-          <div>
-            <p class="text-[10px] font-bold text-slate-500 uppercase tracking-wider">
-              Presupuesto total gestionado
-            </p>
-            <p class="text-2xl font-extrabold text-slate-900 leading-none">
-              $285.5k
-            </p>
-          </div>
-        </div>
-      </div>
-      <div class="bg-white rounded-lg border border-slate-200 shadow-sm overflow-hidden">
-        <div class="px-4 py-3 border-b border-slate-100 flex items-center justify-between bg-slate-50/30">
-          <div class="flex items-center gap-2">
-            <span class="material-symbols-outlined text-slate-400 text-lg">list_alt</span>
-            <h3 class="text-xs font-extrabold text-slate-900 uppercase tracking-tight">
-              Cola de aprobaciones pendientes
-            </h3>
-          </div>
-          <div class="flex items-center gap-2">
-            <div class="relative">
+        <div class="flex items-center gap-4">
+          <div
+            class="relative flex items-center gap-2 px-2 py-1 bg-slate-50 rounded border border-slate-100"
+          >
+            <div class="size-6 rounded-full bg-slate-200 overflow-hidden">
+              <img
+                alt="User profile"
+                class="w-full h-full object-cover"
+                src="https://lh3.googleusercontent.com/aida-public/AB6AXuA9282gWLnaqGN2n8QXABgTX7mDU9xyzviH4TS4l10d6rXvrgdr7XaG-blt7J_QZI3K_nTHgqD4XtjtGt2UPEfk2QHZqevj-OdoREZM8XBf-7vl0Rvp473NhY6iw8Z2fCn5_KLrE__j0icsuzo40Sdpr48rTc0DdBDmy2weNnVUgJT2b7-QlEmyfY1SDjHnxc_mmxl-UkDkndVg0mODQQvLZ3vUEywepX0tcK1jxNRttD1AmYR4dzoy3yeZpfYU_OkKCmC78VgxwFo"
+              />
+            </div>
+            <div
+              id="userMenuToggle"
+              class="flex flex-col cursor-pointer"
+              role="button"
+              tabindex="0"
+            >
               <span
-                class="material-symbols-outlined absolute left-2 top-1/2 -translate-y-1/2 text-slate-400 text-sm">search</span>
-              <input
-                class="text-[11px] pl-7 pr-3 py-1 bg-white border-slate-200 rounded w-64 focus:ring-1 focus:ring-primary/20 focus:border-primary outline-none"
-                placeholder="Buscar por solicitante o ID..." type="text" />
+                class="text-[10px] font-bold text-slate-700 leading-none"
+                sec:authentication="principal.fullName"
+                >Usuario</span
+              >
+              <span class="text-[8px] text-slate-400 font-bold uppercase">
+                <span sec:authorize="hasRole('VALIDATOR')">Validador</span>
+                <span sec:authorize="hasRole('SOLICITANTE')">Solicitante</span>
+                <span sec:authorize="!hasAnyRole('VALIDATOR','SOLICITANTE')"
+                  >Usuario</span
+                >
+              </span>
             </div>
             <button
-              class="flex items-center gap-1 text-[11px] font-bold text-slate-500 hover:text-slate-700 bg-white border border-slate-200 px-2 py-1 rounded">
-              <span class="material-symbols-outlined text-sm">sort</span>
-              Priority
+              id="userMenuButton"
+              aria-haspopup="true"
+              aria-expanded="false"
+              class="flex items-center text-slate-400 hover:text-slate-600 focus:outline-none"
+            >
+              <span class="material-symbols-outlined text-slate-400 text-sm"
+                >expand_more</span
+              >
             </button>
+
+            <div
+              id="userMenu"
+              class="hidden absolute top-full right-0 mt-2 w-48 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5 focus:outline-none z-50"
+            >
+              <div
+                class="py-1"
+                role="menu"
+                aria-orientation="vertical"
+                aria-labelledby="userMenuButton"
+              >
+                <a
+                  href="/profile"
+                  class="block px-4 py-2 text-sm text-slate-700 hover:bg-slate-100"
+                  role="menuitem"
+                  >Perfil</a
+                >
+                <a
+                  href="/settings"
+                  class="block px-4 py-2 text-sm text-slate-700 hover:bg-slate-100"
+                  role="menuitem"
+                  >Configuración</a
+                >
+                <div class="border-t border-slate-100 my-1"></div>
+                <form th:action="@{/logout}" method="post" class="m-0">
+                  <input
+                    th:if="${_csrfParameterName != null}"
+                    type="hidden"
+                    th:name="${_csrfParameterName}"
+                    th:value="${_csrfToken}"
+                  />
+                  <button
+                    type="submit"
+                    class="w-full text-left px-4 py-2 text-sm text-rose-600 hover:bg-rose-50"
+                    role="menuitem"
+                  >
+                    Cerrar sesión
+                  </button>
+                </form>
+              </div>
+            </div>
           </div>
         </div>
-        <div class="overflow-x-auto">
-          <table class="w-full border-collapse">
-            <thead>
-              <tr class="bg-slate-50/50">
-                <th sec:authorize="hasRole('VALIDATOR')">ID de solicitud</th>
-                <th sec:authorize="hasRole('SOLICITANTE')">ID</th>
-                <th sec:authorize="hasRole('VALIDATOR')">Solicitante</th>
-                <th sec:authorize="hasRole('SOLICITANTE')">Validador</th>
-                <th>Monto</th>
-                <th>Estatus</th>
-
-                <!-- <th>Solicitante</th>
-                <th>Artículo y descripción</th>
-                <th>Monto</th>
-                <th>Fecha de solicitud</th>
-                <th class="text-center">Detalles</th>
-                <th class="text-right px-6">Acción</th> -->
-              </tr>
-            </thead>
-            <tbody class="divide-y divide-slate-50">
-              <tr th:if="${products.isEmpty()}" class="hover:bg-slate-50/50 transition-colors">
-                <td colspan="3" class="text-center py-8">
-                  <div class="flex flex-col items-center gap-2">
-                    <span class="material-symbols-outlined text-slate-300 text-4xl">inventory_2</span>
-                    <p class="text-sm text-slate-400 font-semibold">No hay productos disponibles</p>
-                  </div>
-                </td>
-              </tr>
-              <tr th:each="product : ${products}" class="hover:bg-slate-50/50 transition-colors">
-                <td sec:authorize="hasRole('VALIDATOR')" class="font-bold text-slate-900"
-                  th:text="'#SL-' + ${product.id}">#1</td>
-                <td sec:authorize="hasRole('SOLICITANTE')" class="font-bold text-slate-900"
-                  th:text="'#-' + ${product.id}">#1</td>
-                
-                  <td sec:authorize="hasRole('SOLICITANTE')" th:text="${product.validator != null ? product.validator.name : ''}">
-                  <div class="flex items-center gap-2">
-                    <div class="size-6 rounded-full bg-slate-100 overflow-hidden">
-                      <img alt="User"
-                        src="https://lh3.googleusercontent.com/aida-public/AB6AXuDDpw55y6IInmLG61U0JZ1qfgn6vaj0W6kKt_71VEbZOiK_AT868Dvsjm4_VscETn_Lx4Z8l7D4lWUSh5vwkdhRGgZtjmF6TAAUSE3XrephQIohew0QPWzQ5ezJlM4P3-iuY-3XgUF7dhYShVIc1fbISvc4ZPb32k7A7sxUO_MM2xy3vfcoEHtopd7-Eo4vYO3SZRC-Z3oILrHZWqfCtn2DrbqsgVso5OjwGAajPjyZaaikZtt7477sVYXB2oyfrnneqp2peuzkfaQ" />
-                    </div>
-                    <span class="font-semibold text-slate-700">Validador</span>
-                  </div>
-                </td>
-                
-                <td sec:authorize="hasRole('VALIDATOR')" th:text="${product.creator != null ? product.creator.name : ''}">
-                  <div class="flex items-center gap-2">
-                    <div class="size-6 rounded-full bg-slate-100 overflow-hidden">
-                      <img alt="User"
-                        src="https://lh3.googleusercontent.com/aida-public/AB6AXuDDpw55y6IInmLG61U0JZ1qfgn6vaj0W6kKt_71VEbZOiK_AT868Dvsjm4_VscETn_Lx4Z8l7D4lWUSh5vwkdhRGgZtjmF6TAAUSE3XrephQIohew0QPWzQ5ezJlM4P3-iuY-3XgUF7dhYShVIc1fbISvc4ZPb32k7A7sxUO_MM2xy3vfcoEHtopd7-Eo4vYO3SZRC-Z3oILrHZWqfCtn2DrbqsgVso5OjwGAajPjyZaaikZtt7477sVYXB2oyfrnneqp2peuzkfaQ" />
-                    </div>
-                    <span class="font-semibold text-slate-700">Solicitante</span>
-                  </div>
-                </td>
-
-                <td class="font-extrabold text-slate-900" th:text="${product.price}">price</td>
-                <td class="font-extrabold text-slate-900">
-                  <span th:switch="${product.status}">
-                    <span th:case="1" class="status-pill status-pending" th:text="'Pendiente'">Pendiente</span>
-                    <span th:case="2" class="status-pill status-approved" th:text="'Aprobado'">Aprobado</span>
-                    <span th:case="*" class="status-pill status-rejected" th:text="${product.status}">Desconocido</span>
-                  </span>
-                </td>
-              </tr>
-            </tbody>
-          </table>
+      </header>
+      <main class="flex-1 p-4 max-w-7xl mx-auto w-full space-y-4">
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+          <div
+            class="bg-white p-4 rounded-lg border border-slate-200 flex items-center gap-4 shadow-sm"
+          >
+            <div
+              class="size-10 rounded-lg bg-amber-50 text-amber-600 flex items-center justify-center"
+            >
+              <span class="material-symbols-outlined text-2xl"
+                >pending_actions</span
+              >
+            </div>
+            <div>
+              <p
+                class="text-[10px] font-bold text-slate-500 uppercase tracking-wider"
+              >
+                Pendientes para mi aprobación
+              </p>
+              <p
+                class="text-2xl font-extrabold text-slate-900 leading-none"
+                th:text="${pendingCount}"
+              >
+                0
+              </p>
+            </div>
+          </div>
+          <div
+            class="bg-white p-4 rounded-lg border border-slate-200 flex items-center gap-4 shadow-sm"
+          >
+            <div
+              class="size-10 rounded-lg bg-emerald-50 text-emerald-600 flex items-center justify-center"
+            >
+              <span class="material-symbols-outlined text-2xl">verified</span>
+            </div>
+            <div>
+              <p
+                class="text-[10px] font-bold text-slate-500 uppercase tracking-wider"
+              >
+                Recientemente aprobadas
+              </p>
+              <p class="text-2xl font-extrabold text-slate-900 leading-none">
+                124
+              </p>
+            </div>
+          </div>
+          <div
+            class="bg-white p-4 rounded-lg border border-slate-200 flex items-center gap-4 shadow-sm"
+          >
+            <div
+              class="size-10 rounded-lg bg-primary/10 text-primary flex items-center justify-center"
+            >
+              <span class="material-symbols-outlined text-2xl"
+                >account_balance_wallet</span
+              >
+            </div>
+            <div>
+              <p
+                class="text-[10px] font-bold text-slate-500 uppercase tracking-wider"
+              >
+                Presupuesto total gestionado
+              </p>
+              <p class="text-2xl font-extrabold text-slate-900 leading-none">
+                $285.5k
+              </p>
+            </div>
+          </div>
         </div>
+        <div
+          class="bg-white rounded-lg border border-slate-200 shadow-sm overflow-hidden"
+        >
+          <div
+            class="px-4 py-3 border-b border-slate-100 flex items-center justify-between bg-slate-50/30"
+          >
+            <div class="flex items-center gap-2">
+              <span class="material-symbols-outlined text-slate-400 text-lg"
+                >list_alt</span
+              >
+              <h3
+                class="text-xs font-extrabold text-slate-900 uppercase tracking-tight"
+              >
+                Cola de aprobaciones pendientes
+              </h3>
+            </div>
+            <div class="flex items-center gap-2">
+              <div class="relative">
+                <span
+                  class="material-symbols-outlined absolute left-2 top-1/2 -translate-y-1/2 text-slate-400 text-sm"
+                  >search</span
+                >
+                <input
+                  class="text-[11px] pl-7 pr-3 py-1 bg-white border-slate-200 rounded w-64 focus:ring-1 focus:ring-primary/20 focus:border-primary outline-none"
+                  placeholder="Buscar por solicitante o ID..."
+                  type="text"
+                />
+              </div>
+              <button
+                class="flex items-center gap-1 text-[11px] font-bold text-slate-500 hover:text-slate-700 bg-white border border-slate-200 px-2 py-1 rounded"
+              >
+                <span class="material-symbols-outlined text-sm">sort</span>
+                Priority
+              </button>
+            </div>
+          </div>
+          <div class="overflow-x-auto">
+            <table class="w-full border-collapse">
+              <thead>
+                <tr class="bg-slate-50/50">
+                  <th sec:authorize="hasRole('VALIDATOR')">ID de solicitud</th>
+                  <th sec:authorize="hasRole('SOLICITANTE')">ID</th>
+                  <th sec:authorize="hasRole('VALIDATOR')">Solicitante</th>
+                  <th sec:authorize="hasRole('SOLICITANTE')">Validador</th>
+                  <th>Monto</th>
+                  <th>Estatus</th>
+                  <th class="text-center">Detalles</th>
+                  <th class="text-right px-6">Acción</th>
+                </tr>
+              </thead>
+              <tbody class="divide-y divide-slate-50">
+                <tr
+                  th:if="${products.isEmpty()}"
+                  class="hover:bg-slate-50/50 transition-colors"
+                >
+                  <td colspan="3" class="text-center py-8">
+                    <div class="flex flex-col items-center gap-2">
+                      <span
+                        class="material-symbols-outlined text-slate-300 text-4xl"
+                        >inventory_2</span
+                      >
+                      <p class="text-sm text-slate-400 font-semibold">
+                        No hay productos disponibles
+                      </p>
+                    </div>
+                  </td>
+                </tr>
+                <tr
+                  th:each="product : ${products}"
+                  class="hover:bg-slate-50/50 transition-colors"
+                >
+                  <td
+                    sec:authorize="hasRole('VALIDATOR')"
+                    class="font-bold text-slate-900"
+                    th:text="'#SL-' + ${product.id}"
+                  >
+                    #1
+                  </td>
+                  <td
+                    sec:authorize="hasRole('SOLICITANTE')"
+                    class="font-bold text-slate-900"
+                    th:text="'#-' + ${product.id}"
+                  >
+                    #1
+                  </td>
 
-        <!-- Sección de Productos -->
-        <!-- <div class="bg-white rounded-lg border border-slate-200 shadow-sm overflow-hidden">
+                  <td
+                    sec:authorize="hasRole('SOLICITANTE')"
+                    th:text="${product.validator != null ? product.validator.name : ''}"
+                  >
+                    <div class="flex items-center gap-2">
+                      <div
+                        class="size-6 rounded-full bg-slate-100 overflow-hidden"
+                      >
+                        <img
+                          alt="User"
+                          src="https://lh3.googleusercontent.com/aida-public/AB6AXuDDpw55y6IInmLG61U0JZ1qfgn6vaj0W6kKt_71VEbZOiK_AT868Dvsjm4_VscETn_Lx4Z8l7D4lWUSh5vwkdhRGgZtjmF6TAAUSE3XrephQIohew0QPWzQ5ezJlM4P3-iuY-3XgUF7dhYShVIc1fbISvc4ZPb32k7A7sxUO_MM2xy3vfcoEHtopd7-Eo4vYO3SZRC-Z3oILrHZWqfCtn2DrbqsgVso5OjwGAajPjyZaaikZtt7477sVYXB2oyfrnneqp2peuzkfaQ"
+                        />
+                      </div>
+                      <span class="font-semibold text-slate-700"
+                        >Validador</span
+                      >
+                    </div>
+                  </td>
+
+                  <td
+                    sec:authorize="hasRole('VALIDATOR')"
+                    th:text="${product.creator != null ? product.creator.name : ''}"
+                  >
+                    <div class="flex items-center gap-2">
+                      <div
+                        class="size-6 rounded-full bg-slate-100 overflow-hidden"
+                      >
+                        <img
+                          alt="User"
+                          src="https://lh3.googleusercontent.com/aida-public/AB6AXuDDpw55y6IInmLG61U0JZ1qfgn6vaj0W6kKt_71VEbZOiK_AT868Dvsjm4_VscETn_Lx4Z8l7D4lWUSh5vwkdhRGgZtjmF6TAAUSE3XrephQIohew0QPWzQ5ezJlM4P3-iuY-3XgUF7dhYShVIc1fbISvc4ZPb32k7A7sxUO_MM2xy3vfcoEHtopd7-Eo4vYO3SZRC-Z3oILrHZWqfCtn2DrbqsgVso5OjwGAajPjyZaaikZtt7477sVYXB2oyfrnneqp2peuzkfaQ"
+                        />
+                      </div>
+                      <span class="font-semibold text-slate-700"
+                        >Solicitante</span
+                      >
+                    </div>
+                  </td>
+
+                  <td
+                    class="font-extrabold text-slate-900"
+                    th:text="${product.price}"
+                  >
+                    price
+                  </td>
+                  <td class="font-extrabold text-slate-900">
+                    <span th:switch="${product.status}">
+                      <span
+                        th:case="1"
+                        class="status-pill status-pending"
+                        th:text="'Pendiente'"
+                        >Pendiente</span
+                      >
+                      <span
+                        th:case="2"
+                        class="status-pill status-approved"
+                        th:text="'Aprobado'"
+                        >Aprobado</span
+                      >
+                      <span
+                        th:case="*"
+                        class="status-pill status-rejected"
+                        th:text="${product.status}"
+                        >Desconocido</span
+                      >
+                    </span>
+                  </td>
+                  <td class="text-center">
+                    <button class="text-slate-400 hover:text-primary">
+                      <span class="material-symbols-outlined text-lg"
+                        >visibility</span
+                      >
+                    </button>
+                  </td>
+                  <td class="text-right px-6">
+                    <div class="flex items-center justify-end gap-2">
+                      <button
+                        class="btn-action bg-rose-50 border-rose-100 text-rose-600 hover:bg-rose-600 hover:text-white group"
+                        title="Reject"
+                      >
+                        <span class="material-symbols-outlined text-sm"
+                          >close</span
+                        >
+                      </button>
+                      <button
+                        class="btn-action bg-emerald-50 border-emerald-100 text-emerald-600 hover:bg-emerald-600 hover:text-white"
+                        title="Approve"
+                      >
+                        <span
+                          class="material-symbols-outlined text-sm font-bold"
+                          >check</span
+                        >
+                      </button>
+                    </div>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+
+          <!-- Sección de Productos -->
+          <!-- <div class="bg-white rounded-lg border border-slate-200 shadow-sm overflow-hidden">
         <div class="px-4 py-3 border-b border-slate-100 flex items-center justify-between bg-slate-50/30">
           <div class="flex items-center gap-2">
             <span class="material-symbols-outlined text-slate-400 text-lg">inventory_2</span>
@@ -347,183 +547,242 @@
         </div>
       </div> -->
 
-        <div
-          class="px-4 py-2 bg-slate-50 border-t border-slate-100 flex items-center justify-between text-[10px] font-bold text-slate-400 uppercase tracking-widest">
-          <span sec:authorize="hasRole('VALIDATOR')"
-            th:text="${pendingCount} + ' solicitudes a la espera de tu revisión'">0 solicitudes a la espera de tu revisión</span>
-          <span sec:authorize="hasRole('SOLICITANTE')"
-            th:text="${pendingCount} + ' solicitudes pendientes'">0 solicitudes pendientes</span>
+          <div
+            class="px-4 py-2 bg-slate-50 border-t border-slate-100 flex items-center justify-between text-[10px] font-bold text-slate-400 uppercase tracking-widest"
+          >
+            <span
+              sec:authorize="hasRole('VALIDATOR')"
+              th:text="${pendingCount} + ' solicitudes a la espera de tu revisión'"
+              >0 solicitudes a la espera de tu revisión</span
+            >
+            <span
+              sec:authorize="hasRole('SOLICITANTE')"
+              th:text="${pendingCount} + ' solicitudes pendientes'"
+              >0 solicitudes pendientes</span
+            >
 
-          <div class="flex items-center gap-4">
-            <button class="hover:text-primary disabled:opacity-30" disabled="">
-              Anterior
+            <div class="flex items-center gap-4">
+              <button
+                class="hover:text-primary disabled:opacity-30"
+                disabled=""
+              >
+                Anterior
+              </button>
+              <button class="hover:text-primary">Siguiente</button>
+            </div>
+          </div>
+        </div>
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-4">
+          <div
+            class="lg:col-span-2 bg-white rounded-lg border border-slate-200 p-4 shadow-sm"
+          >
+            <h4
+              class="text-xs font-extrabold text-slate-900 uppercase tracking-tight mb-4 flex items-center gap-2"
+            >
+              <span class="material-symbols-outlined text-emerald-500 text-lg"
+                >history</span
+              >
+              Historial de actividad reciente
+            </h4>
+            <div class="space-y-3">
+              <div
+                class="flex items-center justify-between py-2 border-b border-slate-50"
+              >
+                <div class="flex items-center gap-3">
+                  <div
+                    class="size-8 rounded-full bg-emerald-100 text-emerald-600 flex items-center justify-center"
+                  >
+                    <span class="material-symbols-outlined text-sm"
+                      >done_all</span
+                    >
+                  </div>
+                  <div>
+                    <p class="text-[11px] font-bold text-slate-800">
+                      Aprobado #PR-8821 Expansión de servidores en la nube
+                    </p>
+                    <p class="text-[9px] text-slate-400 uppercase font-bold">
+                      Oct 24, 2024 • Solicitante: John Doe
+                    </p>
+                  </div>
+                </div>
+                <span class="text-xs font-bold text-slate-900">$1,250.00</span>
+              </div>
+              <div
+                class="flex items-center justify-between py-2 border-b border-slate-50"
+              >
+                <div class="flex items-center gap-3">
+                  <div
+                    class="size-8 rounded-full bg-rose-100 text-rose-600 flex items-center justify-center"
+                  >
+                    <span class="material-symbols-outlined text-sm">close</span>
+                  </div>
+                  <div>
+                    <p class="text-[11px] font-bold text-slate-800">
+                      Rejected #PR-8815 Software Upgrade
+                    </p>
+                    <p class="text-[9px] text-slate-400 uppercase font-bold">
+                      Oct 23, 2024 • Requester: Sam Lee
+                    </p>
+                  </div>
+                </div>
+                <span class="text-xs font-bold text-slate-900">$4,500.00</span>
+              </div>
+            </div>
+            <button
+              class="w-full mt-4 py-2 text-[10px] font-bold text-slate-500 hover:text-primary border-t border-slate-50 uppercase tracking-widest transition-colors"
+            >
+              Ver registros completos de aprobaciones
             </button>
-            <button class="hover:text-primary">Siguiente</button>
           </div>
-        </div>
-      </div>
-      <div class="grid grid-cols-1 lg:grid-cols-3 gap-4">
-        <div class="lg:col-span-2 bg-white rounded-lg border border-slate-200 p-4 shadow-sm">
-          <h4 class="text-xs font-extrabold text-slate-900 uppercase tracking-tight mb-4 flex items-center gap-2">
-            <span class="material-symbols-outlined text-emerald-500 text-lg">history</span>
-            Historial de actividad reciente
-          </h4>
-          <div class="space-y-3">
-            <div class="flex items-center justify-between py-2 border-b border-slate-50">
-              <div class="flex items-center gap-3">
-                <div class="size-8 rounded-full bg-emerald-100 text-emerald-600 flex items-center justify-center">
-                  <span class="material-symbols-outlined text-sm">done_all</span>
+          <div
+            class="bg-white rounded-lg border border-slate-200 p-4 shadow-sm"
+          >
+            <h4
+              class="text-xs font-extrabold text-slate-900 uppercase tracking-tight mb-4 flex items-center gap-2"
+            >
+              <span class="material-symbols-outlined text-primary text-lg"
+                >pie_chart</span
+              >
+              Utilización del presupuesto
+            </h4>
+            <div class="space-y-4">
+              <div>
+                <div
+                  class="flex justify-between text-[10px] font-bold uppercase mb-1"
+                >
+                  <span class="text-slate-500">IT Infrastructure</span>
+                  <span class="text-slate-900">75%</span>
                 </div>
-                <div>
-                  <p class="text-[11px] font-bold text-slate-800">
-                    Aprobado #PR-8821 Expansión de servidores en la nube
-                  </p>
-                  <p class="text-[9px] text-slate-400 uppercase font-bold">
-                    Oct 24, 2024 • Solicitante: John Doe
-                  </p>
-                </div>
-              </div>
-              <span class="text-xs font-bold text-slate-900">$1,250.00</span>
-            </div>
-            <div class="flex items-center justify-between py-2 border-b border-slate-50">
-              <div class="flex items-center gap-3">
-                <div class="size-8 rounded-full bg-rose-100 text-rose-600 flex items-center justify-center">
-                  <span class="material-symbols-outlined text-sm">close</span>
-                </div>
-                <div>
-                  <p class="text-[11px] font-bold text-slate-800">
-                    Rejected #PR-8815 Software Upgrade
-                  </p>
-                  <p class="text-[9px] text-slate-400 uppercase font-bold">
-                    Oct 23, 2024 • Requester: Sam Lee
-                  </p>
+                <div
+                  class="w-full h-1.5 bg-slate-100 rounded-full overflow-hidden"
+                >
+                  <div class="h-full bg-primary w-3/4"></div>
                 </div>
               </div>
-              <span class="text-xs font-bold text-slate-900">$4,500.00</span>
-            </div>
-          </div>
-          <button
-            class="w-full mt-4 py-2 text-[10px] font-bold text-slate-500 hover:text-primary border-t border-slate-50 uppercase tracking-widest transition-colors">
-            Ver registros completos de aprobaciones
-          </button>
-        </div>
-        <div class="bg-white rounded-lg border border-slate-200 p-4 shadow-sm">
-          <h4 class="text-xs font-extrabold text-slate-900 uppercase tracking-tight mb-4 flex items-center gap-2">
-            <span class="material-symbols-outlined text-primary text-lg">pie_chart</span>
-            Utilización del presupuesto
-          </h4>
-          <div class="space-y-4">
-            <div>
-              <div class="flex justify-between text-[10px] font-bold uppercase mb-1">
-                <span class="text-slate-500">IT Infrastructure</span>
-                <span class="text-slate-900">75%</span>
+              <div>
+                <div
+                  class="flex justify-between text-[10px] font-bold uppercase mb-1"
+                >
+                  <span class="text-slate-500">Marketing</span>
+                  <span class="text-slate-900">42%</span>
+                </div>
+                <div
+                  class="w-full h-1.5 bg-slate-100 rounded-full overflow-hidden"
+                >
+                  <div class="h-full bg-secondary w-[42%]"></div>
+                </div>
               </div>
-              <div class="w-full h-1.5 bg-slate-100 rounded-full overflow-hidden">
-                <div class="h-full bg-primary w-3/4"></div>
-              </div>
-            </div>
-            <div>
-              <div class="flex justify-between text-[10px] font-bold uppercase mb-1">
-                <span class="text-slate-500">Marketing</span>
-                <span class="text-slate-900">42%</span>
-              </div>
-              <div class="w-full h-1.5 bg-slate-100 rounded-full overflow-hidden">
-                <div class="h-full bg-secondary w-[42%]"></div>
-              </div>
-            </div>
-            <div>
-              <div class="flex justify-between text-[10px] font-bold uppercase mb-1">
-                <span class="text-slate-500">Operations</span>
-                <span class="text-slate-900">18%</span>
-              </div>
-              <div class="w-full h-1.5 bg-slate-100 rounded-full overflow-hidden">
-                <div class="h-full bg-emerald-500 w-[18%]"></div>
+              <div>
+                <div
+                  class="flex justify-between text-[10px] font-bold uppercase mb-1"
+                >
+                  <span class="text-slate-500">Operations</span>
+                  <span class="text-slate-900">18%</span>
+                </div>
+                <div
+                  class="w-full h-1.5 bg-slate-100 rounded-full overflow-hidden"
+                >
+                  <div class="h-full bg-emerald-500 w-[18%]"></div>
+                </div>
               </div>
             </div>
           </div>
         </div>
-      </div>
-    </main>
-    <footer
-      class="flex items-center justify-between px-6 py-3 text-[9px] font-bold uppercase tracking-widest text-slate-400 border-t border-slate-200 bg-white">
-      <div class="flex items-center gap-4">
-        <p th:text="'© ' + ${T(java.time.Year).now().getValue()} + ' Compra Amigos'"></p>
-        <span class="opacity-20">|</span>
-        <div class="flex items-center gap-1.5 text-green-600">
-          <span class="size-1 bg-green-500 rounded-full"></span>
-          Sistema operativo
+      </main>
+      <footer
+        class="flex items-center justify-between px-6 py-3 text-[9px] font-bold uppercase tracking-widest text-slate-400 border-t border-slate-200 bg-white"
+      >
+        <div class="flex items-center gap-4">
+          <p
+            th:text="'© ' + ${T(java.time.Year).now().getValue()} + ' Compra Amigos'"
+          ></p>
+          <span class="opacity-20">|</span>
+          <div class="flex items-center gap-1.5 text-green-600">
+            <span class="size-1 bg-green-500 rounded-full"></span>
+            Sistema operativo
+          </div>
         </div>
-      </div>
-      <div class="flex gap-4">
-        <a class="hover:text-primary transition-colors" href="#">Revisar políticas</a>
-        <a class="hover:text-primary transition-colors" href="#">Soporte</a>
-        <a class="hover:text-primary transition-colors" href="#">Términos de auditoría</a>
-      </div>
-    </footer>
-  </div>
-  <div th:replace="~{loading :: loading}"></div>
-  <script src="/js/loading.js"></script>
-  <script>
-    // Activate navigation link based on current path
-    (function () {
-      const currentPath = window.location.pathname;
-      const navLinks = document.querySelectorAll('.nav-link');
+        <div class="flex gap-4">
+          <a class="hover:text-primary transition-colors" href="#"
+            >Revisar políticas</a
+          >
+          <a class="hover:text-primary transition-colors" href="#">Soporte</a>
+          <a class="hover:text-primary transition-colors" href="#"
+            >Términos de auditoría</a
+          >
+        </div>
+      </footer>
+    </div>
+    <div th:replace="~{loading :: loading}"></div>
+    <script src="/js/loading.js"></script>
+    <script>
+      // Activate navigation link based on current path
+      (function () {
+        const currentPath = window.location.pathname;
+        const navLinks = document.querySelectorAll(".nav-link");
 
-      navLinks.forEach(link => {
-        const linkPath = link.getAttribute('data-path');
-        if (linkPath === currentPath) {
-          link.classList.add('active');
-          link.classList.remove('no-active');
-        } else {
-          link.classList.add('no-active');
-          link.classList.remove('active');
-        }
+        navLinks.forEach((link) => {
+          const linkPath = link.getAttribute("data-path");
+          if (linkPath === currentPath) {
+            link.classList.add("active");
+            link.classList.remove("no-active");
+          } else {
+            link.classList.add("no-active");
+            link.classList.remove("active");
+          }
+        });
+      })();
+    </script>
+  </body>
+  <script>
+    (function () {
+      const btn = document.getElementById("userMenuButton");
+      const menu = document.getElementById("userMenu");
+      const toggle = document.getElementById("userMenuToggle");
+      if (!btn || !menu) return;
+
+      function closeMenu() {
+        menu.classList.add("hidden");
+        menu.classList.remove("dropdown-enter");
+        btn.setAttribute("aria-expanded", "false");
+      }
+
+      function openMenu() {
+        menu.classList.remove("hidden");
+        // Forzar reflow para que la animación funcione
+        menu.offsetHeight;
+        menu.classList.add("dropdown-enter");
+        btn.setAttribute("aria-expanded", "true");
+      }
+
+      function toggleMenu(e) {
+        e.stopPropagation();
+        if (menu.classList.contains("hidden")) openMenu();
+        else closeMenu();
+      }
+
+      btn.addEventListener("click", toggleMenu);
+
+      // Make the name/role area toggle the menu as well
+      if (toggle) {
+        toggle.addEventListener("click", toggleMenu);
+        toggle.addEventListener("keydown", function (e) {
+          if (e.key === "Enter" || e.key === " ") {
+            e.preventDefault();
+            toggleMenu(e);
+          }
+        });
+      }
+
+      // Close on outside click
+      document.addEventListener("click", function () {
+        closeMenu();
+      });
+
+      // Close on ESC
+      document.addEventListener("keydown", function (e) {
+        if (e.key === "Escape") closeMenu();
       });
     })();
   </script>
-</body>
-<script>
-  (function () {
-    const btn = document.getElementById('userMenuButton');
-    const menu = document.getElementById('userMenu');
-    const toggle = document.getElementById('userMenuToggle');
-    if (!btn || !menu) return;
-
-    function closeMenu() {
-      menu.classList.add('hidden');
-      menu.classList.remove('dropdown-enter');
-      btn.setAttribute('aria-expanded', 'false');
-    }
-
-    function openMenu() {
-      menu.classList.remove('hidden');
-      // Forzar reflow para que la animación funcione
-      menu.offsetHeight;
-      menu.classList.add('dropdown-enter');
-      btn.setAttribute('aria-expanded', 'true');
-    }
-
-    function toggleMenu(e) {
-      e.stopPropagation();
-      if (menu.classList.contains('hidden')) openMenu(); else closeMenu();
-    }
-
-    btn.addEventListener('click', toggleMenu);
-
-    // Make the name/role area toggle the menu as well
-    if (toggle) {
-      toggle.addEventListener('click', toggleMenu);
-      toggle.addEventListener('keydown', function (e) {
-        if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); toggleMenu(e); }
-      });
-    }
-
-    // Close on outside click
-    document.addEventListener('click', function () { closeMenu(); });
-
-    // Close on ESC
-    document.addEventListener('keydown', function (e) { if (e.key === 'Escape') closeMenu(); });
-  })();
-</script>
-
 </html>

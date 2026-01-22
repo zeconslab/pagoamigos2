@@ -394,12 +394,17 @@
                   >
                 </div>
                 <button
+                  id="loginButton"
                   class="w-full h-16 premium-button text-white text-sm font-extrabold rounded-2xl hover:opacity-90 hover:-translate-y-0.5 transition-all flex items-center justify-center gap-3 group animate-fade-in-up stagger-5"
                   type="submit"
                 >
-                  <span class="text-white">Entrar y comprar con un amigo</span>
+                  <span class="btn-text text-white">Entrar</span>
                   <span
-                    class="material-symbols-outlined text-xl group-hover:translate-x-1 transition-transform"
+                    class="spinner material-symbols-outlined text-xl hidden animate-spin"
+                    aria-hidden="true"
+                  >autorenew</span>
+                  <span
+                    class="material-symbols-outlined text-xl group-hover:translate-x-1 transition-transform btn-icon"
                     >verified_user</span
                   >
                 </button>
@@ -466,6 +471,95 @@
           this.textContent =
             type === "password" ? "visibility_off" : "visibility";
         });
+      }
+    })();
+
+    // Disable login button and show spinner on submit
+    (function () {
+      const form = document.querySelector('form[action="/login"][method="post"]') || document.querySelector('form');
+      const loginButton = document.getElementById('loginButton');
+
+      if (!form || !loginButton) return;
+
+      form.addEventListener('submit', function (e) {
+        // Prevent double activation if already disabled
+        if (loginButton.disabled) return;
+
+        loginButton.disabled = true;
+        loginButton.setAttribute('aria-disabled', 'true');
+        loginButton.classList.add('opacity-70', 'cursor-not-allowed');
+
+        const spinner = loginButton.querySelector('.spinner');
+        const text = loginButton.querySelector('.btn-text');
+        const icon = loginButton.querySelector('.btn-icon');
+
+        if (spinner) spinner.classList.remove('hidden');
+        if (icon) icon.classList.add('hidden');
+        if (text) text.textContent = 'Procesando...';
+
+        // Mark processing in dataset in case other scripts want to check
+        loginButton.dataset.processing = 'true';
+      });
+
+      // If the app uses fetch/XHR for login, re-enable the button on failure
+      function restoreButton() {
+        if (!loginButton) return;
+        if (loginButton.dataset.processing !== 'true') return;
+
+        loginButton.disabled = false;
+        loginButton.removeAttribute('aria-disabled');
+        loginButton.classList.remove('opacity-70', 'cursor-not-allowed');
+
+        const spinner = loginButton.querySelector('.spinner');
+        const text = loginButton.querySelector('.btn-text');
+        const icon = loginButton.querySelector('.btn-icon');
+
+        if (spinner) spinner.classList.add('hidden');
+        if (icon) icon.classList.remove('hidden');
+        if (text) text.textContent = 'Entrar';
+
+        delete loginButton.dataset.processing;
+      }
+
+      // Wrap fetch to detect failures (network error or non-OK responses)
+      if (window.fetch) {
+        const _fetch = window.fetch.bind(window);
+        window.fetch = function (...args) {
+          return _fetch(...args).then((res) => {
+            if (!res || !res.ok) {
+              restoreButton();
+            }
+            return res;
+          }).catch((err) => {
+            restoreButton();
+            throw err;
+          });
+        };
+      }
+
+      // Wrap XHR send/open to detect failures
+      if (window.XMLHttpRequest) {
+        const XHR = window.XMLHttpRequest;
+        const origOpen = XHR.prototype.open;
+        const origSend = XHR.prototype.send;
+
+        XHR.prototype.open = function (method, url, async, user, password) {
+          this.__url = url;
+          return origOpen.apply(this, arguments);
+        };
+
+        XHR.prototype.send = function (body) {
+          this.addEventListener('error', function () { restoreButton(); });
+          this.addEventListener('abort', function () { restoreButton(); });
+          this.addEventListener('load', function () {
+            try {
+              if (this.status >= 400) restoreButton();
+            } catch (e) {
+              // ignore
+            }
+          });
+          return origSend.apply(this, arguments);
+        };
       }
     })();
   </script>
