@@ -306,14 +306,12 @@
               >
               <span class="text-[8px] text-slate-400 font-bold uppercase">
                 <span sec:authorize="hasRole('VALIDATOR')">Validador</span>
-                <div id="createProductModalContent"
-                  class="bg-white w-full max-w-2xl rounded-2xl shadow-2xl overflow-hidden"
+                <span sec:authorize="hasRole('SOLICITANTE')">Solicitante</span>
+                <span sec:authorize="!hasAnyRole('VALIDATOR','SOLICITANTE')"
+                  >Usuario</span
                 >
-                  <form id="createProductForm" th:action="@{/product/save}" method="post" class="w-full" th:object="${product}">
-                    <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
-                    <div
-                      class="px-6 py-4 border-b border-slate-100 flex items-center justify-between bg-slate-50/50"
-                    >
+              </span>
+            </div>
             <button
               id="userMenuButton"
               aria-haspopup="true"
@@ -324,7 +322,7 @@
                 >expand_more</span
               >
             </button>
-                          New Purchase Request
+
             <div
               id="userMenu"
               class="hidden absolute top-full right-0 mt-2 w-56 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5 focus:outline-none z-50"
@@ -340,23 +338,22 @@
                   <span sec:authorize="hasRole('VALIDATOR')">Validador</span>
                   <span sec:authorize="hasRole('SOLICITANTE')"
                     >Solicitante</span
-                    <div class="p-6 space-y-5">
+                  >
                   <span sec:authorize="!hasAnyRole('VALIDATOR','SOLICITANTE')"
                     >Usuario</span
                   >
-                        <input
-                          class="form-input"
-                          placeholder="p. ej. Monitor Dell UltraSharp 27 pulgadas"
-                          type="text"
-                          name="name"
-                          />
+                </div>
+              </div>
+              <div
+                class="py-1"
+                role="menu"
                 aria-orientation="vertical"
                 aria-labelledby="userMenuButton"
               >
-                        <select class="form-input" id="validatorSelect" name="validator.id">
-                          <option value="" disabled selected>Seleccionar validador</option>
-                          <option th:each="friend : ${friends}" th:value="${friend.id}" th:text="${friend.name + ' ' + friend.paternalLastName}">Amigo</option>
-                        </select>
+                <a
+                  href="/profile"
+                  class="flex items-center gap-3 px-4 py-2 text-sm text-slate-700 hover:bg-slate-100 transition-colors"
+                  role="menuitem"
                 >
                   <span class="material-symbols-outlined text-lg">person</span>
                   <span>Perfil</span>
@@ -365,54 +362,49 @@
                   href="/settings"
                   class="flex items-center gap-3 px-4 py-2 text-sm text-slate-700 hover:bg-slate-100 transition-colors"
                   role="menuitem"
-                          <input
-                            class="form-input pl-7 border-primary/30 bg-primary/5 font-extrabold text-primary"
-                            placeholder="0.00"
-                            type="number"
-                            step="0.01"
-                            name="price"
-                          />
+                >
+                  <span class="material-symbols-outlined text-lg">settings</span>
+                  <span>Configuración</span>
+                </a>
+                <div class="border-t border-slate-100 my-1"></div>
                 <form th:action="@{/logout}" method="post" class="m-0">
                   <input
                     th:if="${_csrfParameterName != null}"
                     type="hidden"
                     th:name="${_csrfParameterName}"
                     th:value="${_csrfToken}"
-                        <textarea
-                          class="form-input min-h-[80px]"
-                          placeholder="Explica brevemente por qué se necesita esta compra..."
-                          name="description"
-                        ></textarea>
+                  />
+                  <button
+                    type="submit"
+                    class="w-full flex items-center gap-3 text-left px-4 py-2 text-sm text-rose-600 hover:bg-rose-50 transition-colors"
                     role="menuitem"
                   >
                     <span class="material-symbols-outlined text-lg">close</span>
                     <span>Cerrar sesión</span>
                   </button>
                 </form>
-                          <label class="flex items-center gap-2 cursor-pointer group">
-                            <input
-                              checked
-                              class="w-4 h-4 text-primary focus:ring-primary border-slate-300"
-                              name="monthlyPaymentEnabled"
-                              type="radio"
-                              value="false"
-                            />
-                            <span class="text-sm font-semibold text-slate-700"
-                              >Pago único</span
-                            >
-                          </label>
+              </div>
+            </div>
+          </div>
+        </div>
+      </header>
+      <main class="flex-1 p-4 max-w-7xl mx-auto w-full space-y-4">
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+          <div
+            class="bg-white p-4 rounded-lg border border-slate-200 flex items-center gap-4 shadow-sm"
+          >
+            <div
               class="size-10 rounded-lg bg-amber-50 text-amber-600 flex items-center justify-center"
-                            <label class="flex items-center gap-2 cursor-pointer">
-                              <input
-                                class="w-4 h-4 text-primary focus:ring-primary border-slate-300"
-                                name="monthlyPaymentEnabled"
-                                type="radio"
-                                value="true"
-                              />
-                              <span class="text-sm font-semibold text-slate-700"
-                                >Pagos a plazos</span
-                              >
-                            </label>
+            >
+              <span class="material-symbols-outlined text-2xl"
+                >pending_actions</span
+              >
+            </div>
+            <div>
+              <p
+                class="text-[10px] font-bold text-slate-500 uppercase tracking-wider"
+              >
+                Pendientes para mi aprobación
               </p>
               <p
                 class="text-2xl font-extrabold text-slate-900 leading-none"
@@ -420,14 +412,13 @@
               >
                 0
               </p>
-                              <input
-                                class="w-12 p-0 border-none text-xs font-bold text-slate-700 focus:ring-0"
-                                max="24"
-                                min="1"
-                                type="number"
-                                value="1"
-                                name="installments"
-                              />
+            </div>
+          </div>
+          <div
+            class="bg-white p-4 rounded-lg border border-slate-200 flex items-center gap-4 shadow-sm"
+          >
+            <div
+              class="size-10 rounded-lg bg-emerald-50 text-emerald-600 flex items-center justify-center"
             >
               <span class="material-symbols-outlined text-2xl">verified</span>
             </div>
@@ -453,26 +444,23 @@
               >
             </div>
             <div>
-                    </div>
-                    <div
-                      class="px-6 py-4 bg-slate-50 border-t border-slate-100 flex items-center justify-end gap-3"
-                    >
-                      <button
-                        id="cancelCreateProduct"
-                        type="button"
-                        class="px-5 py-2 text-xs font-bold text-slate-500 hover:text-slate-700 uppercase tracking-widest transition-colors"
-                      >
-                        Cancelar
-                      </button>
-                      <button
-                        type="submit"
-                        class="bg-primary text-white px-6 py-2 rounded-lg text-xs font-bold hover:bg-primary/90 transition-all shadow-lg shadow-primary/20 flex items-center gap-2 uppercase tracking-widest"
-                      >
-                        <span>Enviar para aprobación</span>
-                        <span class="material-symbols-outlined text-sm">send</span>
-                      </button>
-                    </div>
-                  </form>
+              <p
+                class="text-[10px] font-bold text-slate-500 uppercase tracking-wider"
+              >
+                Presupuesto total gestionado
+              </p>
+              <p class="text-2xl font-extrabold text-slate-900 leading-none">
+                $285.5k
+              </p>
+            </div>
+          </div>
+        </div>
+        <div
+          class="bg-white rounded-lg border border-slate-200 shadow-sm overflow-hidden"
+        >
+          <div
+            class="px-4 py-3 border-b border-slate-100 flex items-center justify-between bg-slate-50/30"
+          >
             <div class="flex items-center gap-2">
               <span class="material-symbols-outlined text-slate-400 text-lg"
                 >list_alt</span
@@ -827,8 +815,6 @@
       </footer>
     </div>
     <div th:replace="~{loading :: loading}"></div>
-    <div th:if="${successMessage != null}" th:replace="~{fragments/alerts :: alert(type='success', message=${successMessage})}"></div>
-    <div th:if="${errorMessage != null}" th:replace="~{fragments/alerts :: alert(type='error', message=${errorMessage})}"></div>
     <!-- Create Product Modal (hidden by default) -->
     <div
       id="createProductModal"

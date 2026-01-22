@@ -75,7 +75,8 @@ public class DashboardController {
 
     // Guardar producto
     @PostMapping("/product/save")
-    public String saveProduct(Product product, Authentication authentication, org.springframework.web.servlet.mvc.support.RedirectAttributes redirectAttributes) {
+    @ResponseBody
+    public String saveProduct(Product product, Authentication authentication) {
         if (authentication != null) {
             String email = authentication.getName();
             User creator = userRepository.findByEmail(email).orElse(null);
@@ -102,12 +103,9 @@ public class DashboardController {
                     }
                     monthlyPaymentRepository.saveAll(payments);
                 }
-
-                redirectAttributes.addFlashAttribute("successMessage", "Producto guardado exitosamente.");
-                return "redirect:/dashboard";
+                return "Producto guardado exitosamente.";
             }
         }
-        redirectAttributes.addFlashAttribute("errorMessage", "Error al guardar el producto.");
-        return "redirect:/dashboard";
+        return "Error al guardar el producto.";
     }
 }
