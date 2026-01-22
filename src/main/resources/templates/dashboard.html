@@ -895,20 +895,17 @@
             modalContent.classList.add('animate-pop-in');
           }
 
-          // Save current scroll and lock background to prevent page scroll while modal is open
-          _savedScrollY = window.scrollY || window.pageYOffset || 0;
-          document.body.style.position = 'fixed';
-          document.body.style.top = -_savedScrollY + 'px';
-          document.body.style.left = '0';
-          document.body.style.right = '0';
-          document.body.style.overflow = 'hidden';
-
           // Responsive behavior:
-          // - On medium/large screens lock body scroll and make modal content scrollable.
-          // - On small screens allow page scroll (do not lock body) and let the page show full modal.
+          // - On medium/large screens: lock body scroll, modal fixed with internal scroll
+          // - On small screens: allow page scroll, modal flows in document
           const isSmall = window.innerWidth < 640;
           if (!isSmall) {
-            // medium+ screens: prevent background scroll and make modal content scroll internally
+            // Large screens: prevent background scroll and make modal content scroll internally
+            _savedScrollY = window.scrollY || window.pageYOffset || 0;
+            document.body.style.position = 'fixed';
+            document.body.style.top = -_savedScrollY + 'px';
+            document.body.style.left = '0';
+            document.body.style.right = '0';
             document.body.style.overflow = 'hidden';
             modal.style.pointerEvents = 'auto';
             if (modalContent) {
@@ -917,17 +914,25 @@
               modalContent.style.webkitOverflowScrolling = 'touch';
             }
           } else {
-            // small screens: fix overlay to viewport and allow internal modal scroll
-            modal.style.position = 'fixed';
+            // Small screens: position modal absolute at current scroll, allow page to scroll
+            _savedScrollY = window.scrollY || window.pageYOffset || 0;
+            modal.style.position = 'absolute';
             modal.style.top = '0';
             modal.style.left = '0';
             modal.style.width = '100%';
-            modal.style.height = '100vh';
+            // Ensure overlay covers the entire document height
+            const docHeight = Math.max(
+              document.body.scrollHeight,
+              document.documentElement.scrollHeight,
+              document.body.offsetHeight,
+              document.documentElement.offsetHeight
+            );
+            modal.style.height = docHeight + 'px';
             modal.style.pointerEvents = 'auto';
+            // Let modal content flow naturally without maxHeight/overflow restrictions
             if (modalContent) {
-              modalContent.style.maxHeight = 'calc(100vh - 4rem)';
-              modalContent.style.overflowY = 'auto';
-              modalContent.style.webkitOverflowScrolling = 'touch';
+              modalContent.style.maxHeight = 'none';
+              modalContent.style.overflow = 'visible';
               modalContent.style.pointerEvents = 'auto';
             }
           }
@@ -945,17 +950,19 @@
           document.body.style.top = '';
           document.body.style.left = '';
           document.body.style.right = '';
-          // restore page scroll position saved when opening
-          if (_savedScrollY) {
+          // restore page scroll position saved when opening (only for large screens)
+          const wasLargeScreen = modal.style.position === '' || modal.style.position === 'fixed';
+          if (_savedScrollY && wasLargeScreen) {
             window.scrollTo(0, _savedScrollY);
-            _savedScrollY = 0;
           }
-          // reset any small-screen positioning
+          _savedScrollY = 0;
+          // reset any positioning
           modal.style.position = '';
           modal.style.top = '';
           modal.style.left = '';
           modal.style.width = '';
           modal.style.height = '';
+          modal.style.minHeight = '';
           modal.style.pointerEvents = '';
           if (modalContent) {
             modalContent.style.maxHeight = '';
