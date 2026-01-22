@@ -5,15 +5,11 @@ import com.examplo.pagoamigos.model.Product;
 import com.examplo.pagoamigos.repository.ProductRepository;
 import com.examplo.pagoamigos.repository.UserRepository;
 import com.examplo.pagoamigos.model.User;
-import com.examplo.pagoamigos.model.MonthlyPayment;
-import com.examplo.pagoamigos.repository.MonthlyPaymentRepository;
-import java.time.LocalDate;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import java.util.List;
@@ -24,12 +20,10 @@ public class DashboardController {
 
     private final ProductRepository productRepository;
     private final UserRepository userRepository;
-    private final MonthlyPaymentRepository monthlyPaymentRepository;
 
-    public DashboardController(ProductRepository productRepository, UserRepository userRepository, MonthlyPaymentRepository monthlyPaymentRepository) {
+    public DashboardController(ProductRepository productRepository, UserRepository userRepository) {
         this.productRepository = productRepository;
         this.userRepository = userRepository;
-        this.monthlyPaymentRepository = monthlyPaymentRepository;
     }
 
     @GetMapping("/dashboard")
@@ -70,42 +64,5 @@ public class DashboardController {
         model.addAttribute("pendingCount", products == null ? 0 : products.size());
 
         return "dashboard";
-    }
-
-
-    // Guardar producto
-    @PostMapping("/product/save")
-    @ResponseBody
-    public String saveProduct(Product product, Authentication authentication) {
-        if (authentication != null) {
-            String email = authentication.getName();
-            User creator = userRepository.findByEmail(email).orElse(null);
-            if (creator != null) {
-                product.setCreator(creator);
-                product.setStatus(Estatus_Products.PENDIENTE.getCode());
-                Product saved = productRepository.save(product);
-
-                // Si el producto tiene mensualidades configuradas, generar las cuotas
-                if (Boolean.TRUE.equals(saved.getMonthlyPaymentEnabled())
-                        && saved.getInstallments() != null
-                        && saved.getInstallments() > 0) {
-                    List<MonthlyPayment> payments = new ArrayList<>();
-                    Double installmentAmount = saved.getMonthlyPaymentAmount();
-                    for (int i = 1; i <= saved.getInstallments(); i++) {
-                        MonthlyPayment mp = new MonthlyPayment();
-                        mp.setProduct(saved);
-                        mp.setPayer(creator);
-                        mp.setInstallmentNumber(i);
-                        mp.setAmount(installmentAmount == null && saved.getPrice() != null ? saved.getPrice() / saved.getInstallments() : installmentAmount);
-                        mp.setDueDate(LocalDate.now().plusMonths(i));
-                        mp.setPaid(false);
-                        payments.add(mp);
-                    }
-                    monthlyPaymentRepository.saveAll(payments);
-                }
-                return "Producto guardado exitosamente.";
-            }
-        }
-        return "Error al guardar el producto.";
     }
 }
