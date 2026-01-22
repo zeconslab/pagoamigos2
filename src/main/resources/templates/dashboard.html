@@ -135,12 +135,31 @@
           align-items: flex-start; /* allow content to start from top so page can scroll */
           padding-top: 1rem;
           padding-bottom: 1rem;
+          /* Let touch/scroll events pass through the overlay so the page can scroll */
+          pointer-events: none;
+          background: transparent; /* visual dim supplied by pseudo-element */
         }
         /* Keep modal content natural height and allow the page to scroll instead */
         #createProductModalContent {
           max-height: none;
           overflow: visible;
           -webkit-overflow-scrolling: auto;
+          /* make modal look better on small screens */
+          margin: 0.5rem;
+          border-radius: 0.75rem;
+          box-shadow: 0 10px 30px rgba(2,6,23,0.2);
+          pointer-events: auto; /* allow interaction with modal content */
+          position: relative;
+          z-index: 1; /* ensure it's above the overlay dim */
+        }
+        .modal-overlay::before {
+          content: '';
+          position: fixed;
+          inset: 0;
+          background: rgba(0,0,0,0.45);
+          backdrop-filter: blur(6px);
+          pointer-events: none; /* do not block touch events */
+          z-index: 0;
         }
       }
     </style>
