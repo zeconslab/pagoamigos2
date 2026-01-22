@@ -906,40 +906,32 @@
               <div class="flex flex-wrap items-center gap-6">
                 <label class="flex items-center gap-2 cursor-pointer group">
                   <input
-                    checked
                     class="w-4 h-4 text-primary focus:ring-primary border-slate-300"
-                    name="payment_plan"
-                    type="radio"
+                    name="hasInstallments"
+                    type="checkbox"
+                    value="true"
+                    id="hasInstallmentsCheckbox"
                   />
-                  <span class="text-sm font-semibold text-slate-700"
-                    >Pago único</span
-                  >
+                  <span class="text-sm font-semibold text-slate-700">Pagos a plazos</span>
                 </label>
-                <div class="flex items-center gap-3">
-                  <label class="flex items-center gap-2 cursor-pointer">
+                <div id="installmentsOptions" class="flex items-center gap-3 hidden">
+                  <div class="flex items-center bg-white border border-slate-200 rounded-md px-2 py-1">
+                    <span class="text-[10px] font-bold text-slate-400 uppercase mr-2">Cantidad:</span>
                     <input
-                      class="w-4 h-4 text-primary focus:ring-primary border-slate-300"
-                      name="payment_plan"
-                      type="radio"
-                    />
-                    <span class="text-sm font-semibold text-slate-700"
-                      >Pagos a plazos</span
-                    >
-                  </label>
-                  <div
-                    class="flex items-center bg-white border border-slate-200 rounded-md px-2 py-1"
-                  >
-                    <span
-                      class="text-[10px] font-bold text-slate-400 uppercase mr-2"
-                      >Cantidad:</span
-                    >
-                    <input
+                      name="installmentsCount"
                       class="w-12 p-0 border-none text-xs font-bold text-slate-700 focus:ring-0"
                       max="24"
-                      min="3"
+                      min="1"
                       type="number"
-                      value="1"
+                      value="3"
                     />
+                  </div>
+                  <div class="flex items-center bg-white border border-slate-200 rounded-md px-2 py-1">
+                    <span class="text-[10px] font-bold text-slate-400 uppercase mr-2">Frecuencia:</span>
+                    <select name="installmentFrequency" class="form-input">
+                      <option value="monthly">Mensual</option>
+                      <option value="biweekly">Quincenal</option>
+                    </select>
                   </div>
                 </div>
               </div>
@@ -1165,6 +1157,21 @@
             applyModalLayout();
           }
         });
+      })();
+    </script>
+    <script>
+      // Toggle installments options when checkbox changes
+      (function () {
+        const cb = document.getElementById('hasInstallmentsCheckbox');
+        const opts = document.getElementById('installmentsOptions');
+        if (!cb || !opts) return;
+        function update() {
+          if (cb.checked) opts.classList.remove('hidden');
+          else opts.classList.add('hidden');
+        }
+        cb.addEventListener('change', update);
+        // initial state
+        update();
       })();
     </script>
   </body>

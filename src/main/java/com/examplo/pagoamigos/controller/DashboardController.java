@@ -5,6 +5,9 @@ import com.examplo.pagoamigos.model.Product;
 import com.examplo.pagoamigos.repository.ProductRepository;
 import com.examplo.pagoamigos.repository.UserRepository;
 import com.examplo.pagoamigos.model.User;
+import com.examplo.pagoamigos.model.MonthlyPayment;
+import com.examplo.pagoamigos.repository.MonthlyPaymentRepository;
+import java.time.LocalDate;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -24,10 +27,12 @@ public class DashboardController {
 
     private final ProductRepository productRepository;
     private final UserRepository userRepository;
+    private final MonthlyPaymentRepository monthlyPaymentRepository;
 
-    public DashboardController(ProductRepository productRepository, UserRepository userRepository) {
+    public DashboardController(ProductRepository productRepository, UserRepository userRepository, MonthlyPaymentRepository monthlyPaymentRepository) {
         this.productRepository = productRepository;
         this.userRepository = userRepository;
+        this.monthlyPaymentRepository = monthlyPaymentRepository;
     }
 
     @GetMapping("/dashboard")
@@ -76,6 +81,9 @@ public class DashboardController {
     @PostMapping("/product/save")
     public String saveProduct(@ModelAttribute Product product,
                               @RequestParam(name = "validatorId", required = false) Long validatorId,
+                              @RequestParam(name = "hasInstallments", required = false) Boolean hasInstallments,
+                              @RequestParam(name = "installmentsCount", required = false) Integer installmentsCount,
+                              @RequestParam(name = "installmentFrequency", required = false) String installmentFrequency,
                               Authentication authentication,
                               RedirectAttributes redirectAttributes) {
 
@@ -91,7 +99,38 @@ public class DashboardController {
         }
 
         product.setStatus(Estatus_Products.PENDIENTE.getCode());
-        productRepository.save(product);
+        // Setear flag de cuotas según parámetro (checkbox)
+        product.setHasInstallments(Boolean.TRUE.equals(hasInstallments));
+        // Guardar configuración de cuotas en el producto
+        product.setInstallmentsCount(installmentsCount);
+        product.setInstallmentFrequency(installmentFrequency);
+
+        Product saved = productRepository.save(product);
+
+        // Crear cuotas automáticamente si corresponde
+        if (Boolean.TRUE.equals(saved.getHasInstallments())) {
+            int count = (installmentsCount == null || installmentsCount <= 0) ? 1 : installmentsCount;
+            String freq = (installmentFrequency == null) ? "monthly" : installmentFrequency;
+            java.util.List<MonthlyPayment> quotas = new java.util.ArrayList<>();
+            LocalDate start = LocalDate.now();
+            for (int i = 0; i < count; i++) {
+                MonthlyPayment mp = new MonthlyPayment();
+                mp.setProduct(saved);
+                if ("biweekly".equalsIgnoreCase(freq) || "quincenal".equalsIgnoreCase(freq)) {
+                    // cada 15 días
+                    mp.setDueDate(start.plusDays(15L * (i + 1)));
+                } else {
+                    // mensual por defecto: meses
+                    mp.setDueDate(start.plusMonths(i + 1));
+                }
+                double price = (saved.getPrice() == null) ? 0.0 : saved.getPrice();
+                mp.setAmount(Math.round((price / count) * 100.0) / 100.0);
+                mp.setPaid(false);
+                quotas.add(mp);
+            }
+            monthlyPaymentRepository.saveAll(quotas);
+        }
+
         redirectAttributes.addFlashAttribute("successMessage", "Producto guardado correctamente");
         return "redirect:/dashboard";
     }
