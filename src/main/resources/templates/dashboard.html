@@ -129,6 +129,20 @@
         100% { opacity: 1; }
       }
       .animate-overlay { animation: overlay-fade 0.18s ease-out forwards; }
+      /* Mobile: allow modal content to scroll when it exceeds viewport height */
+      @media (max-width: 640px) {
+        .modal-overlay {
+          align-items: flex-start; /* allow content to start from top so page can scroll */
+          padding-top: 1rem;
+          padding-bottom: 1rem;
+        }
+        /* Keep modal content natural height and allow the page to scroll instead */
+        #createProductModalContent {
+          max-height: none;
+          overflow: visible;
+          -webkit-overflow-scrolling: auto;
+        }
+      }
     </style>
   </head>
 
@@ -863,7 +877,7 @@
             modalContent.classList.add('animate-pop-in');
           }
 
-          document.body.style.overflow = 'hidden';
+          // Do not lock body scrolling — allow page scroll instead of modal internal scroll
         }
 
         function closeModal() {
@@ -872,7 +886,6 @@
           if (modalContent) modalContent.classList.remove('animate-pop-in');
           modal.style.display = 'none';
           modal.classList.add('hidden');
-          document.body.style.overflow = '';
         }
 
         openBtn.addEventListener('click', function (e) {
