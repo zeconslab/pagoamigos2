@@ -343,19 +343,18 @@
                 >list_alt</span
               >
               <h3
-                class="text-xs font-extrabold text-slate-900 uppercase tracking-tight"
-              >
+                class="text-xs font-extrabold text-slate-900 uppercase tracking-tight">
                 Cola de aprobaciones pendientes
               </h3>
             </div>
-            <div class="flex items-center gap-2">
+            <div class="flex items-center gap-2 flex-wrap">
               <div class="relative">
                 <span
                   class="material-symbols-outlined absolute left-2 top-1/2 -translate-y-1/2 text-slate-400 text-sm"
                   >search</span
                 >
                 <input
-                  class="text-[11px] pl-7 pr-3 py-1 bg-white border-slate-200 rounded w-64 focus:ring-1 focus:ring-primary/20 focus:border-primary outline-none"
+                  class="text-[11px] pl-7 pr-3 py-1 bg-white border-slate-200 rounded w-full sm:w-64 focus:ring-1 focus:ring-primary/20 focus:border-primary outline-none"
                   placeholder="Buscar por solicitante o ID..."
                   type="text"
                 />
@@ -365,6 +364,16 @@
               >
                 <span class="material-symbols-outlined text-sm">sort</span>
                 Priority
+              </button>
+              <button
+                id="openCreateProductModal"
+                class="ml-3 bg-primary text-white px-2 sm:px-3 py-1 rounded-lg font-semibold hover:opacity-90 transition-colors flex items-center gap-2"
+                aria-haspopup="dialog"
+                aria-controls="createProductModal"
+                type="button"
+              >
+                <span class="material-symbols-outlined">add</span>
+                <span class="hidden sm:inline">Nuevo producto</span>
               </button>
             </div>
           </div>
