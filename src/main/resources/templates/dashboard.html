@@ -64,26 +64,18 @@
         justify-content: center;
       }
       .status-pill {
-        @apply px-2 py-0.5 rounded text-[10px] font-bold uppercase tracking-wider;
+        @apply px-2 py-0.5 rounded text-[10px] font-bold uppercase tracking-wider border;
       }
-      .status-pending {
-        @apply bg-amber-100 text-amber-700 border border-amber-200;
-      }
-      .status-rejected {
-        @apply bg-rose-100 text-rose-700 border border-rose-200;
-      }
-      .status-approved {
-        @apply bg-emerald-100 text-emerald-700 border border-emerald-200;
-      }
-      th {
-        @apply text-left px-4 py-3 text-[10px] font-bold text-slate-500 uppercase tracking-wider border-b border-slate-100;
-      }
-      td {
-        @apply px-4 py-3 text-sm text-slate-600 border-b border-slate-50;
-      }
-      .btn-action {
-        @apply flex items-center justify-center size-8 rounded-lg transition-all border;
-      }
+      .status-pending { @apply bg-amber-50 text-amber-700 border-amber-200; }
+      .status-denied { @apply bg-rose-50 text-rose-700 border-rose-200; }
+      .status-approved { @apply bg-emerald-50 text-emerald-700 border-emerald-200; }
+      .status-draft { @apply bg-slate-100 text-slate-600 border-slate-200; }
+      th { @apply text-left px-4 py-3 text-[10px] font-bold text-slate-500 uppercase tracking-wider border-b border-slate-100; }
+      td { @apply px-4 py-3 text-sm text-slate-600 border-b border-slate-50; }
+      .btn-action { @apply flex items-center justify-center size-8 rounded-lg transition-all border; }
+      .modal-overlay { @apply fixed inset-0 z-[100] bg-slate-900/60 backdrop-blur-sm flex items-center justify-center p-4; }
+      .form-label { @apply block text-[10px] font-bold uppercase tracking-wider text-slate-500 mb-1.5; }
+      .form-input { @apply w-full text-sm border-slate-200 rounded-lg focus:ring-primary focus:border-primary transition-all; }
       .active {
         @apply text-primary border-b-2 border-primary;
       }
@@ -732,6 +724,88 @@
       </footer>
     </div>
     <div th:replace="~{loading :: loading}"></div>
+    <!-- Create Product Modal (hidden by default) -->
+    <div id="createProductModal" class="modal-overlay hidden fixed inset-0 z-50 flex items-center justify-center bg-black/50 px-4">
+      <div class="bg-white w-full max-w-2xl rounded-2xl shadow-2xl overflow-hidden animate-pop-in">
+        <div class="px-6 py-4 border-b border-slate-100 flex items-center justify-between bg-slate-50/50">
+          <div class="flex items-center gap-3">
+            <div class="size-9 bg-primary/10 text-primary rounded-lg flex items-center justify-center">
+              <span class="material-symbols-outlined font-bold">add_shopping_cart</span>
+            </div>
+            <div>
+              <h2 class="text-base font-extrabold text-slate-900">New Purchase Request</h2>
+              <p class="text-[10px] text-slate-500 font-bold uppercase tracking-widest">General Procurement Form</p>
+            </div>
+          </div>
+          <button id="closeCreateProductModal" class="size-8 flex items-center justify-center rounded-full hover:bg-slate-200 transition-colors text-slate-400">
+            <span class="material-symbols-outlined">close</span>
+          </button>
+        </div>
+        <div class="p-6 space-y-5">
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div class="md:col-span-2">
+              <label class="form-label">Product/Service Name</label>
+              <input class="form-input" placeholder="e.g. Dell UltraSharp 27-inch Monitor" type="text"/>
+            </div>
+            <div>
+              <label class="form-label">Category</label>
+              <select class="form-input">
+                <option value="">Select category</option>
+                <option value="hardware">Hardware</option>
+                <option value="software">Software &amp; SaaS</option>
+                <option value="office">Office Supplies</option>
+                <option value="services">Professional Services</option>
+              </select>
+            </div>
+            <div>
+              <label class="form-label">Estimated Amount</label>
+              <div class="relative">
+                <span class="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 font-bold text-sm">$</span>
+                <input class="form-input pl-7 border-primary/30 bg-primary/5 font-extrabold text-primary" placeholder="0.00" type="number"/>
+              </div>
+            </div>
+            <div class="md:col-span-2">
+              <label class="form-label">Description / Business Justification</label>
+              <textarea class="form-input min-h-[80px]" placeholder="Briefly explain why this purchase is needed..."></textarea>
+            </div>
+            <div class="md:col-span-2 bg-slate-50 p-4 rounded-xl border border-slate-100">
+              <label class="form-label mb-3">Payment Plan</label>
+              <div class="flex flex-wrap items-center gap-6">
+                <label class="flex items-center gap-2 cursor-pointer group">
+                  <input checked class="w-4 h-4 text-primary focus:ring-primary border-slate-300" name="payment_plan" type="radio"/>
+                  <span class="text-sm font-semibold text-slate-700">Single Payment</span>
+                </label>
+                <div class="flex items-center gap-3">
+                  <label class="flex items-center gap-2 cursor-pointer">
+                    <input class="w-4 h-4 text-primary focus:ring-primary border-slate-300" name="payment_plan" type="radio"/>
+                    <span class="text-sm font-semibold text-slate-700">Installments</span>
+                  </label>
+                  <div class="flex items-center bg-white border border-slate-200 rounded-md px-2 py-1">
+                    <span class="text-[10px] font-bold text-slate-400 uppercase mr-2">Qty:</span>
+                    <input class="w-12 p-0 border-none text-xs font-bold text-slate-700 focus:ring-0" max="24" min="2" type="number" value="3"/>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="md:col-span-2">
+              <label class="form-label">Invoices or Quotes</label>
+              <div class="border-2 border-dashed border-slate-200 rounded-xl p-6 flex flex-col items-center justify-center bg-slate-50/30 hover:bg-slate-50 hover:border-primary/50 transition-all cursor-pointer">
+                <span class="material-symbols-outlined text-slate-300 text-3xl mb-2">upload_file</span>
+                <p class="text-xs font-bold text-slate-500 uppercase tracking-wide">Drag and drop files or <span class="text-primary">browse</span></p>
+                <p class="text-[9px] text-slate-400 mt-1 uppercase">PDF, PNG or JPG (Max. 10MB)</p>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="px-6 py-4 bg-slate-50 border-t border-slate-100 flex items-center justify-end gap-3">
+          <button id="cancelCreateProduct" class="px-5 py-2 text-xs font-bold text-slate-500 hover:text-slate-700 uppercase tracking-widest transition-colors">Cancel</button>
+          <button class="bg-primary text-white px-6 py-2 rounded-lg text-xs font-bold hover:bg-primary/90 transition-all shadow-lg shadow-primary/20 flex items-center gap-2 uppercase tracking-widest">
+            <span>Send to Approver</span>
+            <span class="material-symbols-outlined text-sm">send</span>
+          </button>
+        </div>
+      </div>
+    </div>
     <script src="/js/loading.js"></script>
     <script>
       // Activate navigation link based on current path
@@ -748,6 +822,45 @@
             link.classList.add("no-active");
             link.classList.remove("active");
           }
+        });
+      })();
+    </script>
+    <script>
+      // Modal open/close logic for Create Product
+      (function () {
+        const openBtn = document.getElementById('openCreateProductModal');
+        const modal = document.getElementById('createProductModal');
+        const closeBtn = document.getElementById('closeCreateProductModal');
+        const cancelBtn = document.getElementById('cancelCreateProduct');
+
+        if (!openBtn || !modal) return;
+
+        function openModal() {
+          modal.classList.remove('hidden');
+          document.body.style.overflow = 'hidden';
+        }
+
+        function closeModal() {
+          modal.classList.add('hidden');
+          document.body.style.overflow = '';
+        }
+
+        openBtn.addEventListener('click', function (e) {
+          e.preventDefault();
+          openModal();
+        });
+
+        if (closeBtn) closeBtn.addEventListener('click', closeModal);
+        if (cancelBtn) cancelBtn.addEventListener('click', closeModal);
+
+        // Close on overlay click
+        modal.addEventListener('click', function (e) {
+          if (e.target === modal) closeModal();
+        });
+
+        // Close on ESC
+        document.addEventListener('keydown', function (e) {
+          if (e.key === 'Escape' && !modal.classList.contains('hidden')) closeModal();
         });
       })();
     </script>
