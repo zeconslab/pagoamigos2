@@ -882,11 +882,9 @@
 
         function openModal() {
           modal.classList.remove('hidden');
-          // Ensure visible even if .modal-overlay defines display via custom CSS
           modal.style.display = 'flex';
           // trigger overlay and content animations
           modal.classList.remove('animate-overlay');
-          // force reflow so animation restarts
           void modal.offsetWidth;
           modal.classList.add('animate-overlay');
 
@@ -896,15 +894,45 @@
             modalContent.classList.add('animate-pop-in');
           }
 
-          // Do not lock body scrolling — allow page scroll instead of modal internal scroll
+          // Responsive behavior:
+          // - On medium/large screens lock body scroll and make modal content scrollable.
+          // - On small screens allow page scroll (do not lock body) and let the page show full modal.
+          const isSmall = window.innerWidth < 640;
+          if (!isSmall) {
+            // medium+ screens: prevent background scroll and make modal content scroll internally
+            document.body.style.overflow = 'hidden';
+            modal.style.pointerEvents = 'auto';
+            if (modalContent) {
+              modalContent.style.maxHeight = 'calc(100vh - 4rem)';
+              modalContent.style.overflowY = 'auto';
+              modalContent.style.webkitOverflowScrolling = 'touch';
+            }
+          } else {
+            // small screens: allow page scroll; ensure overlay doesn't block touch
+            document.body.style.overflow = '';
+            modal.style.pointerEvents = 'none';
+            if (modalContent) {
+              modalContent.style.maxHeight = '';
+              modalContent.style.overflow = '';
+              modalContent.style.pointerEvents = 'auto';
+            }
+          }
         }
 
         function closeModal() {
-          // remove animation classes and hide after tiny delay to allow any reverse animation later
+          // remove animation classes and hide
           modal.classList.remove('animate-overlay');
           if (modalContent) modalContent.classList.remove('animate-pop-in');
           modal.style.display = 'none';
           modal.classList.add('hidden');
+          // restore body scroll and cleanup inline styles
+          document.body.style.overflow = '';
+          modal.style.pointerEvents = '';
+          if (modalContent) {
+            modalContent.style.maxHeight = '';
+            modalContent.style.overflow = '';
+            modalContent.style.pointerEvents = '';
+          }
         }
 
         openBtn.addEventListener('click', function (e) {
