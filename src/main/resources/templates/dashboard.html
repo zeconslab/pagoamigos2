@@ -728,8 +728,8 @@
       </footer>
     </div>
     <div th:replace="~{loading :: loading}"></div>
-    <div th:if="${successMessage != null}" th:replace="~{fragments/alerts :: alert(type='success', message=${successMessage}, duration=3000)}"></div>
-    <div th:if="${errorMessage != null}" th:replace="~{fragments/alerts :: alert(type='error', message=${errorMessage}, duration=3000)}"></div>
+    <div th:if="${successMessage != null}" th:replace="~{fragments/alerts :: alert(type='success', message=${successMessage})}"></div>
+    <div th:if="${errorMessage != null}" th:replace="~{fragments/alerts :: alert(type='error', message=${errorMessage})}"></div>
     <!-- Create Product Modal (hidden by default) -->
     <div
       id="createProductModal"
