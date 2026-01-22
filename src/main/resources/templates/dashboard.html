@@ -49,6 +49,20 @@
       :root {
         --primary-color: #e67e22;
       }
+      /* Size utilities used across templates (width & height) */
+      .size-1 { width: 0.5rem; height: 0.5rem; }
+      .size-2 { width: 0.75rem; height: 0.75rem; }
+      .size-5 { width: 1.25rem; height: 1.25rem; }
+      .size-6 { width: 1.5rem; height: 1.5rem; }
+      .size-7 { width: 1.75rem; height: 1.75rem; }
+      .size-8 { width: 2rem; height: 2rem; }
+      .size-10 { width: 2.5rem; height: 2.5rem; }
+      .size-16 { width: 4rem; height: 4rem; }
+      .size-1, .size-2, .size-5, .size-6, .size-7, .size-8, .size-10, .size-16 {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+      }
       .status-pill {
         @apply px-2 py-0.5 rounded text-[10px] font-bold uppercase tracking-wider;
       }
@@ -404,41 +418,27 @@
                     #1
                   </td>
 
-                  <td
-                    sec:authorize="hasRole('SOLICITANTE')"
-                    th:text="${product.validator != null ? product.validator.name : ''}"
-                  >
+                  <td sec:authorize="hasRole('SOLICITANTE')">
                     <div class="flex items-center gap-2">
-                      <div
-                        class="size-6 rounded-full bg-slate-100 overflow-hidden"
-                      >
+                      <div class="size-6 rounded-full bg-slate-100 overflow-hidden">
                         <img
                           alt="User"
                           src="https://lh3.googleusercontent.com/aida-public/AB6AXuDDpw55y6IInmLG61U0JZ1qfgn6vaj0W6kKt_71VEbZOiK_AT868Dvsjm4_VscETn_Lx4Z8l7D4lWUSh5vwkdhRGgZtjmF6TAAUSE3XrephQIohew0QPWzQ5ezJlM4P3-iuY-3XgUF7dhYShVIc1fbISvc4ZPb32k7A7sxUO_MM2xy3vfcoEHtopd7-Eo4vYO3SZRC-Z3oILrHZWqfCtn2DrbqsgVso5OjwGAajPjyZaaikZtt7477sVYXB2oyfrnneqp2peuzkfaQ"
                         />
                       </div>
-                      <span class="font-semibold text-slate-700"
-                        >Validador</span
-                      >
+                      <span class="font-semibold text-slate-700" th:text="${product.validator != null ? product.validator.name : 'Validador'}">Validador</span>
                     </div>
                   </td>
 
-                  <td
-                    sec:authorize="hasRole('VALIDATOR')"
-                    th:text="${product.creator != null ? product.creator.name : ''}"
-                  >
+                  <td sec:authorize="hasRole('VALIDATOR')">
                     <div class="flex items-center gap-2">
-                      <div
-                        class="size-6 rounded-full bg-slate-100 overflow-hidden"
-                      >
+                      <div class="size-6 rounded-full bg-slate-100 overflow-hidden">
                         <img
                           alt="User"
                           src="https://lh3.googleusercontent.com/aida-public/AB6AXuDDpw55y6IInmLG61U0JZ1qfgn6vaj0W6kKt_71VEbZOiK_AT868Dvsjm4_VscETn_Lx4Z8l7D4lWUSh5vwkdhRGgZtjmF6TAAUSE3XrephQIohew0QPWzQ5ezJlM4P3-iuY-3XgUF7dhYShVIc1fbISvc4ZPb32k7A7sxUO_MM2xy3vfcoEHtopd7-Eo4vYO3SZRC-Z3oILrHZWqfCtn2DrbqsgVso5OjwGAajPjyZaaikZtt7477sVYXB2oyfrnneqp2peuzkfaQ"
                         />
                       </div>
-                      <span class="font-semibold text-slate-700"
-                        >Solicitante</span
-                      >
+                      <span class="font-semibold text-slate-700" th:text="${product.creator != null ? product.creator.name : 'Solicitante'}">Solicitante</span>
                     </div>
                   </td>
 
