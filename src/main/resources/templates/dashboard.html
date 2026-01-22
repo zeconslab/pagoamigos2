@@ -366,9 +366,9 @@
                 class="flex items-center gap-1 text-[11px] font-bold text-slate-500 hover:text-slate-700 bg-white border border-slate-200 px-2 py-1 rounded"
               >
                 <span class="material-symbols-outlined text-sm">sort</span>
-                Priority
+                Prioridad
               </button>
-              <button
+              <button sec:authorize="hasRole('SOLICITANTE')"
                 id="openCreateProductModal"
                 class="ml-3 bg-primary text-white px-2 sm:px-3 py-1 rounded-lg font-semibold hover:opacity-90 transition-colors flex items-center gap-2"
                 aria-haspopup="dialog"
@@ -755,63 +755,63 @@
         <div class="p-6 space-y-5">
           <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div class="md:col-span-2">
-              <label class="form-label">Product/Service Name</label>
-              <input class="form-input" placeholder="e.g. Dell UltraSharp 27-inch Monitor" type="text"/>
+              <label class="form-label">Producto / Servicio</label>
+              <input class="form-input" placeholder="p. ej. Monitor Dell UltraSharp 27 pulgadas" type="text"/>
             </div>
             <div>
-              <label class="form-label">Category</label>
+              <label class="form-label">Categoría</label>
               <select class="form-input">
-                <option value="">Select category</option>
+                <option value="">Seleccionar categoría</option>
                 <option value="hardware">Hardware</option>
-                <option value="software">Software &amp; SaaS</option>
-                <option value="office">Office Supplies</option>
-                <option value="services">Professional Services</option>
+                <option value="software">Software y SaaS</option>
+                <option value="office">Suministros de oficina</option>
+                <option value="services">Servicios profesionales</option>
               </select>
             </div>
             <div>
-              <label class="form-label">Estimated Amount</label>
+              <label class="form-label">Monto estimado</label>
               <div class="relative">
                 <span class="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 font-bold text-sm">$</span>
                 <input class="form-input pl-7 border-primary/30 bg-primary/5 font-extrabold text-primary" placeholder="0.00" type="number"/>
               </div>
             </div>
             <div class="md:col-span-2">
-              <label class="form-label">Description / Business Justification</label>
-              <textarea class="form-input min-h-[80px]" placeholder="Briefly explain why this purchase is needed..."></textarea>
+              <label class="form-label">Descripción / Justificación del negocio</label>
+              <textarea class="form-input min-h-[80px]" placeholder="Explica brevemente por qué se necesita esta compra..."></textarea>
             </div>
             <div class="md:col-span-2 bg-slate-50 p-4 rounded-xl border border-slate-100">
-              <label class="form-label mb-3">Payment Plan</label>
+              <label class="form-label mb-3">Plan de pago</label>
               <div class="flex flex-wrap items-center gap-6">
                 <label class="flex items-center gap-2 cursor-pointer group">
                   <input checked class="w-4 h-4 text-primary focus:ring-primary border-slate-300" name="payment_plan" type="radio"/>
-                  <span class="text-sm font-semibold text-slate-700">Single Payment</span>
+                  <span class="text-sm font-semibold text-slate-700">Pago único</span>
                 </label>
                 <div class="flex items-center gap-3">
                   <label class="flex items-center gap-2 cursor-pointer">
                     <input class="w-4 h-4 text-primary focus:ring-primary border-slate-300" name="payment_plan" type="radio"/>
-                    <span class="text-sm font-semibold text-slate-700">Installments</span>
+                    <span class="text-sm font-semibold text-slate-700">Pagos a plazos</span>
                   </label>
                   <div class="flex items-center bg-white border border-slate-200 rounded-md px-2 py-1">
-                    <span class="text-[10px] font-bold text-slate-400 uppercase mr-2">Qty:</span>
+                    <span class="text-[10px] font-bold text-slate-400 uppercase mr-2">Cantidad:</span>
                     <input class="w-12 p-0 border-none text-xs font-bold text-slate-700 focus:ring-0" max="24" min="2" type="number" value="3"/>
                   </div>
                 </div>
               </div>
             </div>
             <div class="md:col-span-2">
-              <label class="form-label">Invoices or Quotes</label>
+              <label class="form-label">Facturas o cotizaciones</label>
               <div class="border-2 border-dashed border-slate-200 rounded-xl p-6 flex flex-col items-center justify-center bg-slate-50/30 hover:bg-slate-50 hover:border-primary/50 transition-all cursor-pointer">
                 <span class="material-symbols-outlined text-slate-300 text-3xl mb-2">upload_file</span>
-                <p class="text-xs font-bold text-slate-500 uppercase tracking-wide">Drag and drop files or <span class="text-primary">browse</span></p>
-                <p class="text-[9px] text-slate-400 mt-1 uppercase">PDF, PNG or JPG (Max. 10MB)</p>
+                <p class="text-xs font-bold text-slate-500 uppercase tracking-wide">Arrastra y suelta archivos o <span class="text-primary">examinar</span></p>
+                <p class="text-[9px] text-slate-400 mt-1 uppercase">PDF, PNG o JPG (Máx. 10MB)</p>
               </div>
             </div>
           </div>
         </div>
         <div class="px-6 py-4 bg-slate-50 border-t border-slate-100 flex items-center justify-end gap-3">
-          <button id="cancelCreateProduct" class="px-5 py-2 text-xs font-bold text-slate-500 hover:text-slate-700 uppercase tracking-widest transition-colors">Cancel</button>
+          <button id="cancelCreateProduct" class="px-5 py-2 text-xs font-bold text-slate-500 hover:text-slate-700 uppercase tracking-widest transition-colors">Cancelar</button>
           <button class="bg-primary text-white px-6 py-2 rounded-lg text-xs font-bold hover:bg-primary/90 transition-all shadow-lg shadow-primary/20 flex items-center gap-2 uppercase tracking-widest">
-            <span>Send to Approver</span>
+            <span>Enviar para aprobación</span>
             <span class="material-symbols-outlined text-sm">send</span>
           </button>
         </div>
