@@ -350,10 +350,9 @@
         <div
           class="px-4 py-2 bg-slate-50 border-t border-slate-100 flex items-center justify-between text-[10px] font-bold text-slate-400 uppercase tracking-widest">
           <span sec:authorize="hasRole('VALIDATOR')"
-            th:text="${pendingCount} + ' solicitudes a la espera de tu revisión'">0 solicitudes pendientes</span>
+            th:text="${pendingCount} + ' solicitudes a la espera de tu revisión'">0 solicitudes a la espera de tu revisión</span>
           <span sec:authorize="hasRole('SOLICITANTE')"
-            th:text="${pendingCount} + ' solicitudes a la espera de tu revisión'">0 solicitudes a la espera de tu
-            revisión</span>
+            th:text="${pendingCount} + ' solicitudes pendientes'">0 solicitudes pendientes</span>
 
           <div class="flex items-center gap-4">
             <button class="hover:text-primary disabled:opacity-30" disabled="">
