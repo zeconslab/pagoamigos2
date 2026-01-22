@@ -160,9 +160,10 @@
         </div>
         <div class="flex items-center gap-4">
           <div
-            class="relative flex items-center gap-2 px-2 py-1 bg-slate-50 rounded border border-slate-100"
+            id="userMenuWrapper"
+            class="relative flex items-center gap-2 px-2 py-1 bg-slate-50 rounded border border-slate-100 cursor-pointer"
           >
-            <div class="size-6 rounded-full bg-slate-200 overflow-hidden">
+            <div id="userAvatar" role="button" tabindex="0" aria-haspopup="true" aria-controls="userMenu" aria-expanded="false" class="size-6 rounded-full bg-slate-200 overflow-hidden focus:outline-none">
               <img
                 alt="User profile"
                 class="w-full h-full object-cover"
@@ -171,7 +172,7 @@
             </div>
             <div
               id="userMenuToggle"
-              class="flex flex-col cursor-pointer"
+              class="hidden sm:flex flex-col cursor-pointer"
               role="button"
               tabindex="0"
             >
@@ -201,8 +202,16 @@
 
             <div
               id="userMenu"
-              class="hidden absolute top-full right-0 mt-2 w-48 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5 focus:outline-none z-50"
+              class="hidden absolute top-full right-0 mt-2 w-56 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5 focus:outline-none z-50"
             >
+              <div class="px-4 py-3 border-b">
+                <div class="font-bold text-slate-800" sec:authentication="principal.fullName">Usuario</div>
+                <div class="text-xs text-slate-500 uppercase font-bold mt-1">
+                  <span sec:authorize="hasRole('VALIDATOR')">Validador</span>
+                  <span sec:authorize="hasRole('SOLICITANTE')">Solicitante</span>
+                  <span sec:authorize="!hasAnyRole('VALIDATOR','SOLICITANTE')">Usuario</span>
+                </div>
+              </div>
               <div
                 class="py-1"
                 role="menu"
@@ -739,12 +748,15 @@
       const btn = document.getElementById("userMenuButton");
       const menu = document.getElementById("userMenu");
       const toggle = document.getElementById("userMenuToggle");
+      const wrapper = document.getElementById("userMenuWrapper");
+      const avatar = document.getElementById("userAvatar");
       if (!btn || !menu) return;
 
       function closeMenu() {
         menu.classList.add("hidden");
         menu.classList.remove("dropdown-enter");
         btn.setAttribute("aria-expanded", "false");
+        if (avatar) avatar.setAttribute('aria-expanded', 'false');
       }
 
       function openMenu() {
@@ -753,6 +765,7 @@
         menu.offsetHeight;
         menu.classList.add("dropdown-enter");
         btn.setAttribute("aria-expanded", "true");
+        if (avatar) avatar.setAttribute('aria-expanded', 'true');
       }
 
       function toggleMenu(e) {
@@ -763,11 +776,34 @@
 
       btn.addEventListener("click", toggleMenu);
 
-      // Make the name/role area toggle the menu as well
+      // Make the name/role area toggle the menu as well (visible on sm+)
       if (toggle) {
         toggle.addEventListener("click", toggleMenu);
         toggle.addEventListener("keydown", function (e) {
           if (e.key === "Enter" || e.key === " ") {
+            e.preventDefault();
+            toggleMenu(e);
+          }
+        });
+      }
+
+      // Also allow clicking the avatar/wrapper to open menu (useful on mobile)
+      if (wrapper) {
+        wrapper.addEventListener('click', function (e) {
+          // if the click was on the expand button, let that handler run
+          if (e.target.closest('#userMenuButton')) return;
+          toggleMenu(e);
+        });
+        wrapper.addEventListener('keydown', function (e) {
+          if (e.key === 'Enter' || e.key === ' ') {
+            e.preventDefault();
+            toggleMenu(e);
+          }
+        });
+      } else if (avatar) {
+        avatar.addEventListener('click', toggleMenu);
+        avatar.addEventListener('keydown', function (e) {
+          if (e.key === 'Enter' || e.key === ' ') {
             e.preventDefault();
             toggleMenu(e);
           }
