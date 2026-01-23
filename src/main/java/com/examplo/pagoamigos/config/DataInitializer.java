@@ -2,6 +2,7 @@ package com.examplo.pagoamigos.config;
 
 import java.util.Set;
 import java.util.List;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.HashSet;
 
@@ -110,6 +111,7 @@ public class DataInitializer {
                     product.setStatus(1); // PENDIENTE
                     product.setCreator(solicitanteUser);
                     product.setValidator(validatorUser);
+                    product.setCreatedAt(LocalDateTime.now());
                     products.add(product);
                     productRepository.save(product);
                     logger.info("Producto creado: {} - ${}", names[i], prices[i]);
