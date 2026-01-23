@@ -10,6 +10,7 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.SimpleUrlAuthenticationFailureHandler;
+import org.springframework.security.web.header.writers.PermissionsPolicyHeaderWriter;
 
 @Configuration
 @EnableWebSecurity
@@ -73,9 +74,8 @@ public class SecurityConfig {
                 .referrerPolicy(referrer -> referrer
                     .policy(org.springframework.security.web.header.writers.ReferrerPolicyHeaderWriter.ReferrerPolicy.STRICT_ORIGIN_WHEN_CROSS_ORIGIN)
                 )
-                .permissionsPolicy(permissions -> permissions
-                    .policy("geolocation=(), microphone=(), camera=()")
-                )
+                    // 'permissionsPolicy' configurer deprecated — add header writer directly
+                    .addHeaderWriter(new PermissionsPolicyHeaderWriter("geolocation=(), microphone=(), camera=()"))
             )
             // CSRF habilitado por defecto (Spring Security 6+)
             .userDetailsService(userDetailsService);
