@@ -45,6 +45,109 @@
         },
       };
     </script>
+    <script>
+      // Client-side validation for Create Product Modal
+      (function(){
+        var form = document.getElementById('createProductForm');
+        if (!form) return;
+
+        var MAX = 10 * 1024 * 1024; // 10MB - align with UI
+        var nameEl = form.querySelector('input[name="name"]') || form.querySelector('[th\:field="*{name}"]');
+        var validatorEl = document.getElementById('validatorSelect');
+        var priceEl = form.querySelector('input[name="price"]') || form.querySelector('[th\:field="*{price}"]');
+        var hasInstallmentsCb = document.getElementById('hasInstallmentsCheckbox');
+        var installmentsCountEl = form.querySelector('input[name="installmentsCount"]') || form.querySelector('[th\:field="*{installmentsCount}"]');
+        var installmentFrequencyEl = form.querySelector('select[th\:field="*{installmentFrequency}"]') || form.querySelector('select[name="installmentFrequency"]');
+        var fileInput = document.getElementById('attachmentInput');
+
+        function hide(el){ if(!el) return; el.classList.add('hidden'); }
+        function show(el,msg){ if(!el) return; el.textContent = msg; el.classList.remove('hidden'); }
+
+        function clearAll(){
+          hide(document.getElementById('nameError'));
+          hide(document.getElementById('validatorError'));
+          hide(document.getElementById('priceError'));
+          hide(document.getElementById('installmentsCountError'));
+          hide(document.getElementById('installmentFrequencyError'));
+          // reuse existing attachmentError element
+          if(document.getElementById('attachmentError')) hide(document.getElementById('attachmentError'));
+        }
+
+        form.addEventListener('submit', function(e){
+          clearAll();
+          var firstErrorEl = null;
+          var hasError = false;
+
+          // Name
+          var nameVal = nameEl ? nameEl.value.trim() : '';
+          if (!nameVal) {
+            show(document.getElementById('nameError'),'El nombre del producto es obligatorio');
+            hasError = true;
+            firstErrorEl = firstErrorEl || document.getElementById('nameError');
+          }
+
+          // Validator
+          var validatorVal = validatorEl ? validatorEl.value : '';
+          if (!validatorVal) {
+            show(document.getElementById('validatorError'),'Selecciona un validador');
+            hasError = true;
+            firstErrorEl = firstErrorEl || document.getElementById('validatorError');
+          }
+
+          // Price
+          var priceVal = priceEl ? parseFloat(priceEl.value) : NaN;
+          if (isNaN(priceVal) || priceVal <= 0) {
+            show(document.getElementById('priceError'),'Ingresa un monto válido mayor a 0');
+            hasError = true;
+            firstErrorEl = firstErrorEl || document.getElementById('priceError');
+          }
+
+          // Installments (conditional)
+          if (hasInstallmentsCb && hasInstallmentsCb.checked) {
+            var cnt = installmentsCountEl ? parseInt(installmentsCountEl.value,10) : NaN;
+            if (isNaN(cnt) || cnt < 1 || cnt > 24) {
+              show(document.getElementById('installmentsCountError'),'La cantidad de cuotas debe ser entre 1 y 24');
+              hasError = true;
+              firstErrorEl = firstErrorEl || document.getElementById('installmentsCountError');
+            }
+            var freq = installmentFrequencyEl ? installmentFrequencyEl.value : '';
+            if (!freq) {
+              show(document.getElementById('installmentFrequencyError'),'Selecciona una frecuencia de pago');
+              hasError = true;
+              firstErrorEl = firstErrorEl || document.getElementById('installmentFrequencyError');
+            }
+          }
+
+          // Attachment (optional) - validate if provided
+          if (fileInput && fileInput.files && fileInput.files.length > 0) {
+            var f = fileInput.files[0];
+            var allowed = ['image/png','image/jpeg','application/pdf'];
+            if (f.size > MAX) {
+              show(document.getElementById('attachmentError'),'El archivo debe ser menor a 10MB');
+              hasError = true;
+              firstErrorEl = firstErrorEl || document.getElementById('attachmentError');
+            } else if (allowed.indexOf(f.type) === -1) {
+              show(document.getElementById('attachmentError'),'Formato no soportado');
+              hasError = true;
+              firstErrorEl = firstErrorEl || document.getElementById('attachmentError');
+            }
+          }
+
+          if (hasError) {
+            e.preventDefault();
+            if (firstErrorEl) {
+              try { firstErrorEl.scrollIntoView({behavior:'smooth', block:'center'}); } catch(e) {}
+              // try to focus first associated input
+              var associated = firstErrorEl.previousElementSibling;
+              if (associated && (associated.focus)) associated.focus();
+            }
+            return false;
+          }
+
+          // no client errors -> allow submit
+        });
+      })();
+    </script>
     <style type="text/tailwindcss">
       :root {
         --primary-color: #e67e22;
@@ -866,16 +969,19 @@
                 placeholder="p. ej. Monitor Dell UltraSharp 27 pulgadas"
                 type="text"
                 th:field="*{name}"
+                required
                 th:classappend="${#fields.hasErrors('name')} ? 'border-rose-500' : ''"
               />
-              <p th:if="${#fields.hasErrors('name')}" th:errors="*{name}" class="text-rose-600 text-xs mt-1"></p>
+              <p th:if="${#fields.hasErrors('name')}" th:errors="*{name}" class="text-rose-600 text-xs mt-1" id="serverNameError"></p>
+              <p id="nameError" class="text-rose-600 text-xs mt-1 hidden"></p>
             </div>
             <div>
               <label class="form-label">Validador</label>
-              <select class="form-input" id="validatorSelect" name="validatorId">
+              <select class="form-input" id="validatorSelect" name="validatorId" required>
                 <option value="" disabled selected>Seleccionar validador</option>
                 <option th:each="friend : ${friends}" th:value="${friend.id}" th:text="${friend.name + ' ' + friend.paternalLastName}">Amigo</option>
               </select>
+              <p id="validatorError" class="text-rose-600 text-xs mt-1 hidden"></p>
             </div>
             <div>
               <label class="form-label">Monto estimado</label>
@@ -888,11 +994,14 @@
                   class="form-input pl-7 border-primary/30 bg-primary/5 font-extrabold text-primary"
                   placeholder="0.00"
                   type="number"
+                  min="0.01"
                   step="0.01"
+                  required
                   th:field="*{price}"
                   th:classappend="${#fields.hasErrors('price')} ? 'border-rose-500' : ''"
                 />
-                <p th:if="${#fields.hasErrors('price')}" th:errors="*{price}" class="text-rose-600 text-xs mt-1"></p>
+                <p th:if="${#fields.hasErrors('price')}" th:errors="*{price}" class="text-rose-600 text-xs mt-1" id="serverPriceError"></p>
+                <p id="priceError" class="text-rose-600 text-xs mt-1 hidden"></p>
               </div>
             </div>
             <!-- file input removed (replaced by drag/drop zone below) -->
@@ -922,16 +1031,19 @@
                       type="number"
                       th:classappend="${#fields.hasErrors('installmentsCount')} ? 'border-rose-500' : ''"
                     />
-                    <p th:if="${#fields.hasErrors('installmentsCount')}" th:errors="*{installmentsCount}" class="text-rose-600 text-xs mt-1"></p>
+                    <p th:if="${#fields.hasErrors('installmentsCount')}" th:errors="*{installmentsCount}" class="text-rose-600 text-xs mt-1" id="serverInstallmentsCountError"></p>
+                    <p id="installmentsCountError" class="text-rose-600 text-xs mt-1 hidden"></p>
                   </div>
                   <div class="flex items-center bg-white border border-slate-200 rounded-md px-2 py-1">
                     <span class="text-[10px] font-bold text-slate-400 uppercase mr-2">Frecuencia:</span>
                     <select th:field="*{installmentFrequency}" class="form-input" th:classappend="${#fields.hasErrors('installmentFrequency')} ? 'border-rose-500' : ''">
+                      <option value="" disabled selected>Seleccionar frecuencia</option>
                       <option value="monthly">Mensual</option>
                       <option value="biweekly">Quincenal</option>
                       <option value="weekly">Semanal</option>
                     </select>
-                    <p th:if="${#fields.hasErrors('installmentFrequency')}" th:errors="*{installmentFrequency}" class="text-rose-600 text-xs mt-1"></p>
+                    <p th:if="${#fields.hasErrors('installmentFrequency')}" th:errors="*{installmentFrequency}" class="text-rose-600 text-xs mt-1" id="serverInstallmentFrequencyError"></p>
+                    <p id="installmentFrequencyError" class="text-rose-600 text-xs mt-1 hidden"></p>
                   </div>
                 </div>
               </div>
