@@ -895,10 +895,7 @@
                 <p th:if="${#fields.hasErrors('price')}" th:errors="*{price}" class="text-rose-600 text-xs mt-1"></p>
               </div>
             </div>
-            <div>
-              <label class="form-label">Imagen del producto</label>
-              <input type="file" name="attachment" accept="image/*" class="form-input p-1" />
-            </div>
+            <!-- file input removed (replaced by drag/drop zone below) -->
             <!-- Descripción removida: no hay campo 'description' en el modelo Product -->
             <div
               class="md:col-span-2 bg-slate-50 p-4 rounded-xl border border-slate-100"
@@ -940,8 +937,9 @@
               </div>
             </div>
             <div class="md:col-span-2">
-              <label class="form-label">Facturas o cotizaciones</label>
+              <label class="form-label">Imagen</label>
               <div
+                id="attachmentDropzone"
                 class="border-2 border-dashed border-slate-200 rounded-xl p-6 flex flex-col items-center justify-center bg-slate-50/30 hover:bg-slate-50 hover:border-primary/50 transition-all cursor-pointer"
               >
                 <span
@@ -952,11 +950,14 @@
                   class="text-xs font-bold text-slate-500 uppercase tracking-wide"
                 >
                   Arrastra y suelta archivos o
-                  <span class="text-primary">examinar</span>
+                  <span id="attachmentBrowse" class="text-primary">examinar</span>
                 </p>
+                <p id="attachmentFilename" class="text-sm text-slate-700 mt-2 hidden"></p>
+                <p id="attachmentError" class="text-rose-600 text-xs mt-1 hidden"></p>
                 <p class="text-[9px] text-slate-400 mt-1 uppercase">
                   PDF, PNG o JPG (Máx. 10MB)
                 </p>
+                <input id="attachmentInput" type="file" name="attachment" accept="image/png,image/jpeg,application/pdf" class="hidden" />
               </div>
             </div>
           </div>
@@ -1034,6 +1035,60 @@
           } catch (e) {
             // silent
           }
+        });
+      })();
+    </script>
+    <script>
+      // Drag & drop + click file picker for attachmentDropzone
+      (function(){
+        var drop = document.getElementById('attachmentDropzone');
+        var fileInput = document.getElementById('attachmentInput');
+        var browse = document.getElementById('attachmentBrowse');
+        var filenameEl = document.getElementById('attachmentFilename');
+        var errorEl = document.getElementById('attachmentError');
+        if (!drop || !fileInput) return;
+
+        var MAX = 10 * 1024 * 1024; // 10MB
+        function clearError(){ if(errorEl){ errorEl.textContent=''; errorEl.classList.add('hidden'); } }
+        function showError(msg){ if(errorEl){ errorEl.textContent = msg; errorEl.classList.remove('hidden'); } }
+        function setFileDisplay(file){ if(!filenameEl) return; if(file){ filenameEl.textContent = file.name; filenameEl.classList.remove('hidden'); } else { filenameEl.classList.add('hidden'); filenameEl.textContent=''; } }
+
+        drop.addEventListener('click', function(e){
+          e.preventDefault();
+          clearError();
+          fileInput.click();
+        });
+        if (browse) browse.addEventListener('click', function(e){ e.stopPropagation(); fileInput.click(); });
+
+        drop.addEventListener('dragover', function(e){ e.preventDefault(); drop.classList.add('border-primary'); drop.classList.add('bg-white'); });
+        drop.addEventListener('dragleave', function(e){ e.preventDefault(); drop.classList.remove('border-primary'); drop.classList.remove('bg-white'); });
+        drop.addEventListener('drop', function(e){
+          e.preventDefault(); drop.classList.remove('border-primary'); drop.classList.remove('bg-white');
+          clearError();
+          var f = (e.dataTransfer && e.dataTransfer.files && e.dataTransfer.files[0]) ? e.dataTransfer.files[0] : null;
+          if (!f) return;
+          if (f.size > MAX) { showError('El archivo debe ser menor a 10MB'); fileInput.value = ''; setFileDisplay(null); return; }
+          var allowed = ['image/png','image/jpeg','application/pdf'];
+          if (allowed.indexOf(f.type) === -1) { showError('Formato no soportado'); fileInput.value = ''; setFileDisplay(null); return; }
+          try {
+            var dt = new DataTransfer();
+            dt.items.add(f);
+            fileInput.files = dt.files;
+            setFileDisplay(f);
+          } catch(err){
+            // fallback: can't programmatically set files in some browsers
+            showError('No se pudo adjuntar el archivo automáticamente. Usa el selector.');
+          }
+        });
+
+        fileInput.addEventListener('change', function(){
+          clearError();
+          var f = fileInput.files && fileInput.files[0] ? fileInput.files[0] : null;
+          if (!f) { setFileDisplay(null); return; }
+          if (f.size > MAX) { showError('El archivo debe ser menor a 10MB'); fileInput.value = ''; setFileDisplay(null); return; }
+          var allowed = ['image/png','image/jpeg','application/pdf'];
+          if (allowed.indexOf(f.type) === -1) { showError('Formato no soportado'); fileInput.value = ''; setFileDisplay(null); return; }
+          setFileDisplay(f);
         });
       })();
     </script>
