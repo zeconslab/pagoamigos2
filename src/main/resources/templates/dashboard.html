@@ -558,7 +558,8 @@
               </div>
               </div>
 
-              <!-- View Modal fragment (moved to end of body) -->
+              <!-- View Modal fragment -->
+              <div th:replace="fragments/product_view :: productView"></div>
       </header>
       <main class="flex-1 p-4 max-w-7xl mx-auto w-full space-y-4">
         <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
@@ -1468,8 +1469,6 @@
         update();
       })();
     </script>
-    <!-- View modal fragment (server-side fragment expression, wrapped) -->
-    <div th:replace="~{fragments/product_view :: productView}"></div>
   </body>
   <script>
     (function () {
