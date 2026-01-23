@@ -107,31 +107,58 @@ public class DashboardController {
 
         Product saved = productRepository.save(product);
 
-        // Crear cuotas automáticamente si corresponde
-        if (Boolean.TRUE.equals(saved.getHasInstallments())) {
-            int count = (installmentsCount == null || installmentsCount <= 0) ? 1 : installmentsCount;
-            String freq = (installmentFrequency == null) ? "monthly" : installmentFrequency;
-            java.util.List<MonthlyPayment> quotas = new java.util.ArrayList<>();
-            LocalDate start = LocalDate.now();
-            for (int i = 0; i < count; i++) {
-                MonthlyPayment mp = new MonthlyPayment();
-                mp.setProduct(saved);
-                if ("biweekly".equalsIgnoreCase(freq) || "quincenal".equalsIgnoreCase(freq)) {
-                    // cada 15 días
-                    mp.setDueDate(start.plusDays(15L * (i + 1)));
-                } else {
-                    // mensual por defecto: meses
-                    mp.setDueDate(start.plusMonths(i + 1));
-                }
-                double price = (saved.getPrice() == null) ? 0.0 : saved.getPrice();
-                mp.setAmount(Math.round((price / count) * 100.0) / 100.0);
-                mp.setPaid(false);
-                quotas.add(mp);
-            }
-            monthlyPaymentRepository.saveAll(quotas);
+        // No crear cuotas aquí: las cuotas se generan cuando un validador aprueba la solicitud.
+        redirectAttributes.addFlashAttribute("successMessage", "Producto guardado correctamente");
+        return "redirect:/dashboard";
+    }
+
+    @PostMapping("/product/{id}/approve")
+    public String approveProduct(@PathVariable Long id,
+                                 Authentication authentication,
+                                 RedirectAttributes redirectAttributes) {
+
+        // Verificar que el usuario tenga rol de validador
+        boolean isValidator = authentication != null && authentication.getAuthorities().stream()
+                .anyMatch(a -> a.getAuthority().equals("ROLE_VALIDATOR"));
+        if (!isValidator) {
+            redirectAttributes.addFlashAttribute("errorMessage", "No autorizado para aprobar solicitudes");
+            return "redirect:/dashboard";
         }
 
-        redirectAttributes.addFlashAttribute("successMessage", "Producto guardado correctamente");
+        productRepository.findById(id).ifPresent(product -> {
+            product.setStatus(Estatus_Products.APROBADO.getCode());
+            productRepository.save(product);
+
+            // Si corresponde, crear las cuotas al momento de la aprobación
+            if (Boolean.TRUE.equals(product.getHasInstallments())) {
+                // evitar duplicados
+                if (monthlyPaymentRepository.findByProduct_Id(product.getId()).isEmpty()) {
+                    int count = (product.getInstallmentsCount() == null || product.getInstallmentsCount() <= 0)
+                            ? 1 : product.getInstallmentsCount();
+                    String freq = (product.getInstallmentFrequency() == null) ? "monthly" : product.getInstallmentFrequency();
+                    java.util.List<MonthlyPayment> quotas = new java.util.ArrayList<>();
+                    LocalDate start = LocalDate.now();
+                    for (int i = 0; i < count; i++) {
+                        MonthlyPayment mp = new MonthlyPayment();
+                        mp.setProduct(product);
+                        if ("biweekly".equalsIgnoreCase(freq) || "quincenal".equalsIgnoreCase(freq)) {
+                            mp.setDueDate(start.plusDays(15L * (i + 1)));
+                        } else if ("weekly".equalsIgnoreCase(freq) || "semanal".equalsIgnoreCase(freq)) {
+                            mp.setDueDate(start.plusWeeks(i + 1));
+                        } else {
+                            mp.setDueDate(start.plusMonths(i + 1));
+                        }
+                        double price = (product.getPrice() == null) ? 0.0 : product.getPrice();
+                        mp.setAmount(Math.round((price / count) * 100.0) / 100.0);
+                        mp.setPaid(false);
+                        quotas.add(mp);
+                    }
+                    monthlyPaymentRepository.saveAll(quotas);
+                }
+            }
+        });
+
+        redirectAttributes.addFlashAttribute("successMessage", "Solicitud aprobada correctamente");
         return "redirect:/dashboard";
     }
 }

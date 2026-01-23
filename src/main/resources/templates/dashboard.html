@@ -633,15 +633,15 @@
                           >close</span
                         >
                       </button>
-                      <button
-                        class="btn-action bg-emerald-50 border-emerald-100 text-emerald-600 hover:bg-emerald-600 hover:text-white"
-                        title="Approve"
-                      >
-                        <span
-                          class="material-symbols-outlined text-sm font-bold"
-                          >check</span
-                        >
-                      </button>
+                      <form th:action="@{/product/{id}/approve(id=${product.id})}" method="post" class="m-0"
+                            sec:authorize="hasRole('VALIDATOR')">
+                        <input th:if="${_csrfParameterName != null}" type="hidden" th:name="${_csrfParameterName}"
+                               th:value="${_csrfToken}" />
+                        <button type="submit" class="btn-action bg-emerald-50 border-emerald-100 text-emerald-600 hover:bg-emerald-600 hover:text-white"
+                                title="Approve">
+                            <span class="material-symbols-outlined text-sm font-bold">check</span>
+                        </button>
+                      </form>
                     </div>
                   </td>
                 </tr>
