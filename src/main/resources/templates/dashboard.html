@@ -55,7 +55,11 @@
         var nameEl = form.querySelector('input[name="name"]') || form.querySelector('[th\:field="*{name}"]');
         var validatorEl = document.getElementById('validatorSelect');
         var priceEl = form.querySelector('input[name="price"]') || form.querySelector('[th\:field="*{price}"]');
-        var hasInstallmentsCb = document.getElementById('hasInstallmentsCheckbox');
+        // helper to read the selected payment type (radios bound to hasInstallments)
+        var hasInstallmentsSelected = function() {
+          var el = form.querySelector('input[name="hasInstallments"]:checked');
+          return el ? (el.value === 'true') : false;
+        };
         var installmentsCountEl = form.querySelector('input[name="installmentsCount"]') || form.querySelector('[th\:field="*{installmentsCount}"]');
         var installmentFrequencyEl = form.querySelector('select[th\:field="*{installmentFrequency}"]') || form.querySelector('select[name="installmentFrequency"]');
         var fileInput = document.getElementById('attachmentInput');
@@ -103,7 +107,7 @@
           }
 
           // Installments (conditional)
-          if (hasInstallmentsCb && hasInstallmentsCb.checked) {
+          if (hasInstallmentsSelected && hasInstallmentsSelected()) {
             var cnt = installmentsCountEl ? parseInt(installmentsCountEl.value,10) : NaN;
             if (isNaN(cnt) || cnt < 1 || cnt > 24) {
               show(document.getElementById('installmentsCountError'),'La cantidad de cuotas debe ser entre 1 y 24');
@@ -1011,15 +1015,29 @@
             >
               <label class="form-label mb-3">Plan de pago</label>
               <div class="flex flex-wrap items-center gap-6">
-                <label class="flex items-center gap-2 cursor-pointer group">
-                  <input
-                    th:field="*{hasInstallments}"
-                    id="hasInstallmentsCheckbox"
-                    class="w-4 h-4 text-primary focus:ring-primary border-slate-300"
-                    type="checkbox"
-                  />
-                  <span class="text-sm font-semibold text-slate-700">Pagos a plazos</span>
-                </label>
+                <div class="flex items-center gap-4">
+                  <label class="flex items-center gap-2 cursor-pointer group">
+                    <input
+                      th:field="*{hasInstallments}"
+                      id="paymentSingle"
+                      class="w-4 h-4 text-primary focus:ring-primary border-slate-300"
+                      type="radio"
+                      value="false"
+                      checked="checked"
+                    />
+                    <span class="text-sm font-semibold text-slate-700">Pago único</span>
+                  </label>
+                  <label class="flex items-center gap-2 cursor-pointer group">
+                    <input
+                      th:field="*{hasInstallments}"
+                      id="paymentInstallments"
+                      class="w-4 h-4 text-primary focus:ring-primary border-slate-300"
+                      type="radio"
+                      value="true"
+                    />
+                    <span class="text-sm font-semibold text-slate-700">Pagos a plazos</span>
+                  </label>
+                </div>
                 <div id="installmentsOptions" class="flex items-center gap-3 hidden">
                   <div class="flex items-center bg-white border border-slate-200 rounded-md px-2 py-1">
                     <span class="text-[10px] font-bold text-slate-400 uppercase mr-2">Cantidad:</span>
@@ -1366,16 +1384,17 @@
       })();
     </script>
     <script>
-      // Toggle installments options when checkbox changes
+      // Toggle installments options when payment type radio changes
       (function () {
-        const cb = document.getElementById('hasInstallmentsCheckbox') || document.querySelector('input[name="hasInstallments"]');
+        const radios = Array.from(document.querySelectorAll('input[name="hasInstallments"]'));
         const opts = document.getElementById('installmentsOptions');
-        if (!cb || !opts) return;
+        if (!radios.length || !opts) return;
         function update() {
-          if (cb.checked) opts.classList.remove('hidden');
+          const sel = radios.find(r => r.checked);
+          if (sel && sel.value === 'true') opts.classList.remove('hidden');
           else opts.classList.add('hidden');
         }
-        cb.addEventListener('change', update);
+        radios.forEach(r => r.addEventListener('change', update));
         // initial state
         update();
       })();
