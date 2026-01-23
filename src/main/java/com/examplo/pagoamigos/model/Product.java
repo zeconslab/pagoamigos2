@@ -1,6 +1,7 @@
 package com.examplo.pagoamigos.model;
 
 import java.util.Set;
+import java.time.LocalDateTime;
 import java.util.HashSet;
 
 import jakarta.validation.constraints.DecimalMin;
@@ -72,4 +73,9 @@ public class Product {
     // Nombre de archivo de la imagen asociada (opcional)
     @Column(name = "image_filename", nullable = true)
     private String imageFilename;
+
+    // Fecha de creación del producto
+    @Column(name = "created_at", nullable = false, updatable = false)
+    private LocalDateTime createdAt = LocalDateTime.now();
+
 }
