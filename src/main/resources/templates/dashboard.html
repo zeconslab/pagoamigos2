@@ -46,68 +46,6 @@
       };
     </script>
     <script>
-      // View modal logic: open, populate and close
-      (function(){
-        function showModal(modal){
-          if(!modal) return;
-          modal.classList.remove('hidden');
-          modal.style.display = 'flex';
-          document.body.style.overflow = 'hidden';
-        }
-        function hideModal(modal){
-          if(!modal) return;
-          modal.classList.add('hidden');
-          modal.style.display = 'none';
-          document.body.style.overflow = '';
-        }
-
-        var modal = document.getElementById('viewModal');
-        if (!modal) return;
-        var btns = Array.from(document.querySelectorAll('.openViewModal')) || [];
-        var close = document.getElementById('viewModalClose');
-        var closeBtn = document.getElementById('viewModalCloseBtn');
-        var back = document.getElementById('viewModalBack');
-
-        function populateFromDataset(ds){
-          try{
-            var img = document.getElementById('viewModalImage');
-            if(img && ds.imageUrl) img.style.backgroundImage = 'url("'+ds.imageUrl+'")';
-            var status = document.getElementById('viewModalStatus'); if(status) status.textContent = ds.status || 'Status';
-            var ref = document.getElementById('viewModalRef'); if(ref) ref.textContent = ds.id ? ('PR-'+ds.id) : 'PR-0000';
-            var title = document.getElementById('viewModalTitle'); if(title) title.textContent = ds.name || '';
-            var price = document.getElementById('viewModalPrice'); if(price) price.textContent = ds.price ? ('$'+ds.price) : '$0.00';
-            var requester = document.getElementById('viewModalRequester'); if(requester) requester.textContent = ds.creator || '';
-            var vendor = document.getElementById('viewModalVendor'); if(vendor) vendor.textContent = ds.validator || '';
-            var created = document.getElementById('viewModalCreated'); if(created) created.textContent = ds.created || '';
-          }catch(e){/* silent */}
-        }
-
-        btns.forEach(function(b){
-          b.addEventListener('click', function(e){
-            var id = b.dataset && b.dataset.id ? b.dataset.id : null;
-            if (!id) {
-              // fallback to dataset population
-              populateFromDataset(b.dataset || {});
-              showModal(modal);
-              return;
-            }
-            // fetch product detail from server
-            fetch('/product/' + id + '/detail')
-              .then(function(res){ if(!res.ok) throw new Error('Network error'); return res.json(); })
-              .then(function(data){ populateFromDataset(data); showModal(modal); })
-              .catch(function(err){ console.error('Failed to load product detail', err); populateFromDataset(b.dataset || {}); showModal(modal); });
-          });
-        });
-
-        [close, closeBtn, back].forEach(function(el){ if(el) el.addEventListener('click', function(){ hideModal(modal); }); });
-
-        // overlay click closes
-        modal.addEventListener('click', function(e){ if(e.target === modal) hideModal(modal); });
-        // ESC closes
-        document.addEventListener('keydown', function(e){ if(e.key === 'Escape' && !modal.classList.contains('hidden')) hideModal(modal); });
-      })();
-    </script>
-    <script>
       // Client-side validation for Create Product Modal
       (function(){
         var form = document.getElementById('createProductForm');
@@ -555,11 +493,7 @@
               </div>
             </div>
           </div>
-              </div>
-              </div>
-
-              <!-- View Modal fragment -->
-              <div th:replace="fragments/product_view :: productView"></div>
+        </div>
       </header>
       <main class="flex-1 p-4 max-w-7xl mx-auto w-full space-y-4">
         <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
@@ -790,14 +724,10 @@
                     </span>
                   </td>
                   <td class="text-center">
-                    <button type="button" class="text-slate-400 hover:text-primary openViewModal"
-                            th:data-id="${product.id}"
-                            th:data-name="${product.name}"
-                            th:data-price="${product.price}"
-                            th:data-creator="${product.creator != null ? product.creator.name : 'Solicitante'}"
-                            th:data-validator="${product.validator != null ? product.validator.name : 'Validador'}"
-                            th:data-status="${product.status}">
-                      <span class="material-symbols-outlined text-lg">visibility</span>
+                    <button class="text-slate-400 hover:text-primary">
+                      <span class="material-symbols-outlined text-lg"
+                        >visibility</span
+                      >
                     </button>
                   </td>
                   <td class="text-right px-6">

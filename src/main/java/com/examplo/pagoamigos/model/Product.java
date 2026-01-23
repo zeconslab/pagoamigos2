@@ -72,8 +72,4 @@ public class Product {
     // Nombre de archivo de la imagen asociada (opcional)
     @Column(name = "image_filename", nullable = true)
     private String imageFilename;
-
-    // fecha de creacion
-    @Column(name = "created_at", nullable = false, updatable = false)
-    private java.time.LocalDateTime createdAt;
 }
