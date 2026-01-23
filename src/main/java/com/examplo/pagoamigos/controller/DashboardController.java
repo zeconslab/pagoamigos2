@@ -29,6 +29,11 @@ import java.io.IOException;
 
 import java.util.List;
 import java.util.ArrayList;
+import java.util.Map;
+import java.util.HashMap;
+import java.util.Optional;
+import java.util.stream.Collectors;
+import java.time.format.DateTimeFormatter;
 
 @Controller
 public class DashboardController {
@@ -41,6 +46,45 @@ public class DashboardController {
         this.productRepository = productRepository;
         this.userRepository = userRepository;
         this.monthlyPaymentRepository = monthlyPaymentRepository;
+    }
+
+    @GetMapping("/product/{id}/detail")
+    @ResponseBody
+    public Map<String,Object> productDetail(@PathVariable Long id) {
+        Map<String,Object> out = new HashMap<>();
+        Optional<Product> pOpt = productRepository.findById(id);
+        if (pOpt.isEmpty()) {
+            out.put("error","not found");
+            return out;
+        }
+        Product p = pOpt.get();
+        out.put("id", p.getId());
+        out.put("name", p.getName());
+        out.put("price", p.getPrice());
+        out.put("status", p.getStatus());
+        out.put("creator", p.getCreator() != null ? p.getCreator().getName() : null);
+        out.put("validator", p.getValidator() != null ? p.getValidator().getName() : null);
+        out.put("imageUrl", (p.getImageFilename() != null) ? ("/uploads/" + p.getImageFilename()) : null);
+        // created date if available
+        try {
+            DateTimeFormatter df = DateTimeFormatter.ofPattern("MMM dd, yyyy");
+            if (p.getCreatedAt() != null) out.put("created", df.format(p.getCreatedAt()));
+        } catch (Throwable t) {
+            // ignore if no createdAt
+        }
+
+        // include monthly payments if any
+        List<MonthlyPayment> pays = monthlyPaymentRepository.findByProduct_Id(p.getId());
+        List<Map<String,Object>> payList = pays.stream().map(mp -> {
+            Map<String,Object> m = new HashMap<>();
+            m.put("dueDate", mp.getDueDate() != null ? mp.getDueDate().toString() : null);
+            m.put("amount", mp.getAmount());
+            m.put("paid", mp.getPaid());
+            return m;
+        }).collect(Collectors.toList());
+        out.put("payments", payList);
+
+        return out;
     }
 
     @GetMapping("/dashboard")
@@ -107,6 +151,7 @@ public class DashboardController {
         }
 
         product.setStatus(Estatus_Products.PENDIENTE.getCode());
+        product.setCreatedAt(java.time.LocalDateTime.now());
 
         // Validaciones adicionales dependientes (si aplica cuotas validar cantidad)
         if (Boolean.TRUE.equals(product.getHasInstallments())) {
