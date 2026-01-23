@@ -3,6 +3,10 @@ package com.examplo.pagoamigos.model;
 import java.util.Set;
 import java.util.HashSet;
 
+import jakarta.validation.constraints.DecimalMin;
+import jakarta.validation.constraints.Min;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -26,7 +30,11 @@ public class Product {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @NotBlank(message = "El nombre del producto es obligatorio")
     private String name;
+
+    @NotNull(message = "El monto estimado es obligatorio")
+    @DecimalMin(value = "0.01", message = "El monto debe ser mayor a 0")
     private Double price;
     @Column(nullable = true)
     private Integer status;
@@ -34,8 +42,13 @@ public class Product {
     // Indica si el producto tendrá cuotas (pagos mensuales)
     private Boolean hasInstallments = false;
 
+    // Mapeo para columna existente en BD que no estaba en el modelo
+    @jakarta.persistence.Column(name = "monthly_payment_enabled", nullable = false)
+    private Boolean monthlyPaymentEnabled = false;
+
     // Número de cuotas si aplica
     @Column(nullable = true)
+    @Min(value = 1, message = "La cantidad de cuotas debe ser al menos 1")
     private Integer installmentsCount;
 
     // Frecuencia de las cuotas: 'monthly' o 'biweekly' (quincenal)
@@ -55,4 +68,8 @@ public class Product {
     // Cuotas mensuales asociadas al producto
     @jakarta.persistence.OneToMany(mappedBy = "product", cascade = jakarta.persistence.CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
     private Set<MonthlyPayment> monthlyPayments = new HashSet<>();
+
+    // Nombre de archivo de la imagen asociada (opcional)
+    @Column(name = "image_filename", nullable = true)
+    private String imageFilename;
 }

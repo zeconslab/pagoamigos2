@@ -19,6 +19,14 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import org.springframework.web.multipart.MultipartFile;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.nio.file.StandardCopyOption;
+import java.util.UUID;
+import java.io.IOException;
+
 import java.util.List;
 import java.util.ArrayList;
 
@@ -79,13 +87,12 @@ public class DashboardController {
     }
 
     @PostMapping("/product/save")
-    public String saveProduct(@ModelAttribute Product product,
+    public String saveProduct(@jakarta.validation.Valid @ModelAttribute Product product,
+                              org.springframework.validation.BindingResult bindingResult,
                               @RequestParam(name = "validatorId", required = false) Long validatorId,
-                              @RequestParam(name = "hasInstallments", required = false) Boolean hasInstallments,
-                              @RequestParam(name = "installmentsCount", required = false) Integer installmentsCount,
-                              @RequestParam(name = "installmentFrequency", required = false) String installmentFrequency,
                               Authentication authentication,
-                              RedirectAttributes redirectAttributes) {
+                              RedirectAttributes redirectAttributes,
+                              Model model) {
 
         // Asociar creador si está autenticado
         if (authentication != null) {
@@ -99,11 +106,43 @@ public class DashboardController {
         }
 
         product.setStatus(Estatus_Products.PENDIENTE.getCode());
-        // Setear flag de cuotas según parámetro (checkbox)
-        product.setHasInstallments(Boolean.TRUE.equals(hasInstallments));
-        // Guardar configuración de cuotas en el producto
-        product.setInstallmentsCount(installmentsCount);
-        product.setInstallmentFrequency(installmentFrequency);
+
+        // Validaciones adicionales dependientes (si aplica cuotas validar cantidad)
+        if (Boolean.TRUE.equals(product.getHasInstallments())) {
+            if (product.getInstallmentsCount() == null || product.getInstallmentsCount() < 1) {
+                bindingResult.rejectValue("installmentsCount", "Invalid.installmentsCount", "Ingrese la cantidad de cuotas");
+            }
+            if (product.getInstallmentFrequency() == null || product.getInstallmentFrequency().isEmpty()) {
+                bindingResult.rejectValue("installmentFrequency", "Invalid.installmentFrequency", "Seleccione la frecuencia de cuotas");
+            }
+        }
+
+        if (bindingResult.hasErrors()) {
+            // Re-popular datos necesarios para volver a mostrar el modal con errores
+            if (authentication != null) {
+                String email = authentication.getName();
+                userRepository.findByEmail(email).ifPresent(u -> model.addAttribute("friends", u.getFriends()));
+            }
+            // Añadir el objeto product y devolver la vista
+            model.addAttribute("product", product);
+            // También exponer lista de productos pendientes para la tabla
+            // Simplemente reutilizamos lógica mínima: cargar productos si hay autenticación
+            List<Product> products = new ArrayList<>();
+            if (authentication != null && authentication.getName() != null) {
+                String email = authentication.getName();
+                boolean isValidator = authentication.getAuthorities().stream().anyMatch(a -> a.getAuthority().equals("ROLE_VALIDATOR"));
+                userRepository.findByEmail(email).ifPresent(u -> {
+                    if (isValidator) products.addAll(productRepository.findByValidator_IdAndStatusWithValidator(u.getId(), Estatus_Products.PENDIENTE.getCode()));
+                    else products.addAll(productRepository.findByCreator_IdAndStatusWithCreator(u.getId(), Estatus_Products.PENDIENTE.getCode()));
+                });
+            }
+            model.addAttribute("products", products);
+            model.addAttribute("pendingCount", products.size());
+            return "dashboard";
+        }
+
+        // Sincronizar columna DB 'monthly_payment_enabled'
+        product.setMonthlyPaymentEnabled(Boolean.TRUE.equals(product.getHasInstallments()));
 
         Product saved = productRepository.save(product);
 
