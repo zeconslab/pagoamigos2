@@ -90,6 +90,7 @@ public class DashboardController {
     public String saveProduct(@jakarta.validation.Valid @ModelAttribute Product product,
                               org.springframework.validation.BindingResult bindingResult,
                               @RequestParam(name = "validatorId", required = false) Long validatorId,
+                              @RequestParam(name = "attachment", required = false) MultipartFile attachment,
                               Authentication authentication,
                               RedirectAttributes redirectAttributes,
                               Model model) {
@@ -141,6 +142,55 @@ public class DashboardController {
             return "dashboard";
         }
 
+        // Manejo de archivo adjunto (imagen)
+        if (attachment != null && !attachment.isEmpty()) {
+            // Validaciones básicas: tipo y tamaño (max 5MB)
+            String contentType = attachment.getContentType();
+            long maxSize = 5L * 1024L * 1024L; // 5 MB
+            if (contentType == null || !contentType.toLowerCase().startsWith("image/")) {
+                bindingResult.rejectValue("imageFilename", "Invalid.image", "El archivo debe ser una imagen");
+            } else if (attachment.getSize() > maxSize) {
+                bindingResult.rejectValue("imageFilename", "Invalid.image.size", "La imagen debe ser menor a 5MB");
+            } else {
+                try {
+                    Path uploadDir = Paths.get("uploads");
+                    if (!Files.exists(uploadDir)) Files.createDirectories(uploadDir);
+                    String original = attachment.getOriginalFilename();
+                    String ext = "";
+                    if (original != null && original.contains(".")) {
+                        ext = original.substring(original.lastIndexOf('.') + 1);
+                    }
+                    String savedName = UUID.randomUUID().toString() + (ext.isEmpty() ? "" : ("." + ext));
+                    Path target = uploadDir.resolve(savedName);
+                    Files.copy(attachment.getInputStream(), target, StandardCopyOption.REPLACE_EXISTING);
+                    product.setImageFilename(savedName);
+                } catch (IOException e) {
+                    bindingResult.rejectValue("imageFilename", "Invalid.image.save", "Error al guardar la imagen");
+                }
+            }
+
+            if (bindingResult.hasErrors()) {
+                // Re-popular datos necesarios para volver a mostrar el modal con errores
+                if (authentication != null) {
+                    String email = authentication.getName();
+                    userRepository.findByEmail(email).ifPresent(u -> model.addAttribute("friends", u.getFriends()));
+                }
+                model.addAttribute("product", product);
+                List<Product> products = new ArrayList<>();
+                if (authentication != null && authentication.getName() != null) {
+                    String email = authentication.getName();
+                    boolean isValidator2 = authentication.getAuthorities().stream().anyMatch(a -> a.getAuthority().equals("ROLE_VALIDATOR"));
+                    userRepository.findByEmail(email).ifPresent(u -> {
+                        if (isValidator2) products.addAll(productRepository.findByValidator_IdAndStatusWithValidator(u.getId(), Estatus_Products.PENDIENTE.getCode()));
+                        else products.addAll(productRepository.findByCreator_IdAndStatusWithCreator(u.getId(), Estatus_Products.PENDIENTE.getCode()));
+                    });
+                }
+                model.addAttribute("products", products);
+                model.addAttribute("pendingCount", products.size());
+                return "dashboard";
+            }
+        }
+
         // Sincronizar columna DB 'monthly_payment_enabled'
         product.setMonthlyPaymentEnabled(Boolean.TRUE.equals(product.getHasInstallments()));
 
@@ -148,6 +198,8 @@ public class DashboardController {
 
         // No crear cuotas aquí: las cuotas se generan cuando un validador aprueba la solicitud.
         redirectAttributes.addFlashAttribute("successMessage", "Producto guardado correctamente");
+        // Pasar id guardado para mostrar overlay reutilizable en la vista
+        redirectAttributes.addFlashAttribute("savedProductId", saved.getId());
         return "redirect:/dashboard";
     }
 

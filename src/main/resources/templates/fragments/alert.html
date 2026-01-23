@@ -1,0 +1,30 @@
+<div th:fragment="savedOverlay (productId)">
+  <div th:if="${productId != null}" class="fixed inset-0 z-[100] flex items-center justify-center bg-slate-900/40 backdrop-blur-sm">
+    <div class="glass-panel w-full max-w-md mx-4 p-8 rounded-2xl shadow-[0_20px_50px_rgba(0,0,0,0.15)] text-center transform transition-all">
+      <div class="mb-6 flex justify-center">
+        <div class="size-20 rounded-full bg-emerald-100 flex items-center justify-center text-emerald-600 shadow-inner">
+          <span class="material-symbols-outlined text-5xl font-bold">check_circle</span>
+        </div>
+      </div>
+      <h3 class="text-xl font-extrabold text-slate-900 mb-2">Solicitud <span th:text="${'#SL-' + productId}"></span> guardada correctamente</h3>
+      <p class="text-slate-500 text-sm mb-8 leading-relaxed">
+        La solicitud fue creada. Puedes revisarla en la cola de aprobaciones.
+      </p>
+      <button id="dismissSavedOverlay" class="w-full py-3 px-4 bg-slate-900 text-white rounded-xl font-bold text-xs uppercase tracking-widest hover:bg-slate-800 transition-all shadow-lg hover:shadow-xl active:scale-[0.98]">
+        Cerrar
+      </button>
+    </div>
+  </div>
+  <script th:inline="javascript">
+    /*<![CDATA[*/
+    (function(){
+      var btn = document.getElementById('dismissSavedOverlay');
+      if (!btn) return;
+      btn.addEventListener('click', function(){
+        var overlay = btn.closest('.fixed.inset-0');
+        if (overlay) overlay.remove();
+      });
+    })();
+    /*]]>*/
+  </script>
+</div>

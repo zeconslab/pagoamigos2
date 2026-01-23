@@ -815,6 +815,7 @@
       </footer>
     </div>
     <div th:replace="~{loading :: loading}"></div>
+    <div th:if="${savedProductId != null}" th:replace="fragments/alert :: savedOverlay(productId=${savedProductId})"></div>
     <!-- Create Product Modal (hidden by default) -->
     <div
       id="createProductModal"
