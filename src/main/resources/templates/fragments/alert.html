@@ -1,6 +1,6 @@
 <div th:fragment="savedOverlay (productId)">
   <div th:if="${productId != null}" class="fixed inset-0 z-[100] flex items-center justify-center bg-slate-900/40 backdrop-blur-sm">
-    <div class="glass-panel w-full max-w-md mx-4 p-8 rounded-2xl shadow-[0_20px_50px_rgba(0,0,0,0.15)] text-center transform transition-all">
+    <div class="bg-white w-full max-w-md mx-4 p-8 rounded-2xl shadow-[0_20px_50px_rgba(0,0,0,0.15)] text-center transform transition-all border border-slate-100">
       <div class="mb-6 flex justify-center">
         <div class="size-20 rounded-full bg-emerald-100 flex items-center justify-center text-emerald-600 shadow-inner">
           <span class="material-symbols-outlined text-5xl font-bold">check_circle</span>
